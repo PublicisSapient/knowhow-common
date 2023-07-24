@@ -16,15 +16,26 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.repository.application;
+package com.publicissapient.kpidashboard.common.model.application;
 
-import com.publicissapient.kpidashboard.common.model.application.ActiveItrFetchDetails;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ActiveItrFetchRepository extends MongoRepository<ActiveItrFetchDetails, ObjectId> {
-	ActiveItrFetchDetails findBySprintId(String sprintId);
-
+@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class SprintTraceLogDTO {
+	private ObjectId id;
+	private String sprintId;
+	private boolean fetchSuccessful;
+	private boolean errorInFetch;
+	private String lastSyncDateTime;
 }
