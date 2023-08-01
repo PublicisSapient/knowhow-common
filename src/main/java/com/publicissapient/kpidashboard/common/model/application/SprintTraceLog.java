@@ -18,31 +18,32 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
-import java.io.Serializable;
-import java.util.List;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
- * Data count used for response of all the kpis having kpi level filters.
+ * Represents entity to store details of active itr data fetch
  */
-
+@Data
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class DataCountGroup implements Serializable {
-	private static final long serialVersionUID = -2956276113452875220L;
-	private String filter;
-	private String filter1;
-	private String filter2;
-	private List<DataCount> value;
-	// releaseBurnup kpi
-	private String duration;
-
+@Document(collection = "sprint_trace_log")
+public class SprintTraceLog extends BasicModel {
+	private String sprintId;
+	private boolean fetchSuccessful;
+	private boolean errorInFetch;
+	// in millisecond
+	private long lastSyncDateTime;
 }

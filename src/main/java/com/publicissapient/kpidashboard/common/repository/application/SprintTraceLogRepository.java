@@ -16,33 +16,15 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.application;
+package com.publicissapient.kpidashboard.common.repository.application;
 
-import java.io.Serializable;
-import java.util.List;
+import com.publicissapient.kpidashboard.common.model.application.SprintTraceLog;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-/**
- * Data count used for response of all the kpis having kpi level filters.
- */
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public class DataCountGroup implements Serializable {
-	private static final long serialVersionUID = -2956276113452875220L;
-	private String filter;
-	private String filter1;
-	private String filter2;
-	private List<DataCount> value;
-	// releaseBurnup kpi
-	private String duration;
+@Repository
+public interface SprintTraceLogRepository extends MongoRepository<SprintTraceLog, ObjectId> {
+	SprintTraceLog findBySprintId(String sprintId);
 
 }

@@ -16,33 +16,30 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.application;
+package com.publicissapient.kpidashboard.common.model.application;//NOPMD
 
-import java.io.Serializable;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
- * Data count used for response of all the kpis having kpi level filters.
+ * The Structure of each FieldMapping is defined
  */
-
+@SuppressWarnings("PMD.TooManyFields")
+@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class DataCountGroup implements Serializable {
-	private static final long serialVersionUID = -2956276113452875220L;
-	private String filter;
-	private String filter1;
-	private String filter2;
-	private List<DataCount> value;
-	// releaseBurnup kpi
-	private String duration;
+@Document(collection = "field_mapping_structure")
+public class FieldMappingStructure extends BaseFieldMappingStructure {
+	private List<BaseFieldMappingStructure> nestedFields;
 
 }

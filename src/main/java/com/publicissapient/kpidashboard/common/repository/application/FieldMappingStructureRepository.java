@@ -16,33 +16,19 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.application;
+package com.publicissapient.kpidashboard.common.repository.application;
 
-import java.io.Serializable;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * Data count used for response of all the kpis having kpi level filters.
- */
+import com.publicissapient.kpidashboard.common.model.application.FieldMappingStructure;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public class DataCountGroup implements Serializable {
-	private static final long serialVersionUID = -2956276113452875220L;
-	private String filter;
-	private String filter1;
-	private String filter2;
-	private List<DataCount> value;
-	// releaseBurnup kpi
-	private String duration;
+@Repository
+public interface FieldMappingStructureRepository extends MongoRepository<FieldMappingStructure, ObjectId> {
+
+	List<FieldMappingStructure> findByFieldNameIn(List<String> fieldName);
 
 }

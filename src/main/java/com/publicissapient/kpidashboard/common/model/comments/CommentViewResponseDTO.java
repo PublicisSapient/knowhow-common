@@ -16,33 +16,29 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.application;
-
-import java.io.Serializable;
-import java.util.List;
+package com.publicissapient.kpidashboard.common.model.comments;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-/**
- * Data count used for response of all the kpis having kpi level filters.
- */
-
+@Data
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class DataCountGroup implements Serializable {
-	private static final long serialVersionUID = -2956276113452875220L;
-	private String filter;
-	private String filter1;
-	private String filter2;
-	private List<DataCount> value;
-	// releaseBurnup kpi
-	private String duration;
+public class CommentViewResponseDTO {
 
+	private String node;
+	private String level;
+	private String nodeChildId;
+	private String kpiId;
+	private String commentId;
+	private String commentBy;
+	private String commentOn;
+	private String comment;
 }
