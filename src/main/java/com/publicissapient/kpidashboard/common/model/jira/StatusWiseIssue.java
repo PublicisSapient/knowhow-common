@@ -15,59 +15,30 @@
  * limitations under the License.
  *
  ******************************************************************************/
+package com.publicissapient.kpidashboard.common.model.jira;
 
-package com.publicissapient.kpidashboard.common.model.application;//NOPMD
-
-import java.util.List;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+/**
+ * @author aksshriv1
+ */
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * The Structure of each FieldMapping is defined
- */
-@SuppressWarnings("PMD.TooManyFields")
 @Data
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseFieldMappingStructure extends BasicModel {
-	private String fieldName;
-	private String fieldLabel;
-	private String fieldType;
-	private String fieldCategory;
-	private String toggleLabel;
-	private String section;
-	private boolean processorCommon;
-	private MappingToolTip tooltip;
-	private List<Options> options;
-	private List<String> filterGroup;
+@EqualsAndHashCode
+public class StatusWiseIssue {
 
-	@Data
-	@Getter
-	@Setter
-	class MappingToolTip {
-		String definition;
-		String kpiImpacted;
-		String toggleDefinition;
-	}
-
-	@Data
-	@Getter
-	@Setter
-	class Options {
-		String label;
-		String value;
-	}
+    private Double issueCount;
+    private String issueStoryPoint;
 
 }
