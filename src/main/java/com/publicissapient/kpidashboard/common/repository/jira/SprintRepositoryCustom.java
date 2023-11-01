@@ -15,33 +15,28 @@
  * limitations under the License.
  *
  ******************************************************************************/
+package com.publicissapient.kpidashboard.common.repository.jira;
 
-package com.publicissapient.kpidashboard.common.model.jira;
+import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
+/**
+ * @author pragauta3
+ *
+ */
+@Repository
+public interface SprintRepositoryCustom {
 
-import org.springframework.data.mongodb.core.mapping.Document;
+	/**
+	 * @param basicProjectConfigIds
+	 * @param sprintStatusList
+	 * @param limit
+	 * @return SprintDetails
+	 */
+	List<SprintDetails> findByBasicProjectConfigIdInAndStateInOrderByStartDateDesc(Set<ObjectId> basicProjectConfigIds,
+			List<String> sprintStatusList, long limit);
 
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Document(collection = "assignee_details")
-public class AssigneeDetails extends BasicModel {
-
-	private String basicProjectConfigId;
-	private String source;
-	private Set<Assignee> assignee;
-	private int assigneeSequence;
 }
