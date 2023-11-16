@@ -15,16 +15,18 @@
  * limitations under the License.
  *
  ******************************************************************************/
+package com.publicissapient.kpidashboard.common.feature;
 
-package com.publicissapient.kpidashboard.common.repository.application;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.publicissapient.kpidashboard.common.model.application.SprintTraceLog;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface SprintTraceLogRepository extends MongoRepository<SprintTraceLog, ObjectId> {
-	SprintTraceLog findFirstBySprintId(String sprintId);
-
+/**
+ * @author purgupta2
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface FeatureAssociation {
+    FeatureEnum value();
 }
