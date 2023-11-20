@@ -15,16 +15,21 @@
  * limitations under the License.
  *
  ******************************************************************************/
+package com.publicissapient.kpidashboard.common.feature;
 
-package com.publicissapient.kpidashboard.common.repository.application;
+import org.togglz.core.Feature;
+import org.togglz.core.annotation.Label;
+import org.togglz.core.context.FeatureContext;
 
-import com.publicissapient.kpidashboard.common.model.application.SprintTraceLog;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+/**
+ * @author purgupta2
+ */
+public enum FeatureEnum implements Feature {
 
-@Repository
-public interface SprintTraceLogRepository extends MongoRepository<SprintTraceLog, ObjectId> {
-	SprintTraceLog findFirstBySprintId(String sprintId);
+    @Label("Custom-api Daily Standup")
+    DAILY_STANDUP;
 
+    public boolean isActive() {
+        return FeatureContext.getFeatureManager().isActive(this);
+    }
 }

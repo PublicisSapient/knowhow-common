@@ -15,16 +15,22 @@
  * limitations under the License.
  *
  ******************************************************************************/
+package com.publicissapient.kpidashboard.common.feature;
 
-package com.publicissapient.kpidashboard.common.repository.application;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.togglz.core.user.NoOpUserProvider;
+import org.togglz.core.user.UserProvider;
 
-import com.publicissapient.kpidashboard.common.model.application.SprintTraceLog;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+/**
+ * @author purgupta2
+ */
+@Configuration
+public class ToggleConfiguration {
 
-@Repository
-public interface SprintTraceLogRepository extends MongoRepository<SprintTraceLog, ObjectId> {
-	SprintTraceLog findFirstBySprintId(String sprintId);
-
+    @Bean
+    public UserProvider userProvider() {
+        return new NoOpUserProvider();
+    }
 }
+
