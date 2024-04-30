@@ -16,27 +16,18 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.jira;
+package com.publicissapient.kpidashboard.common.repository.azure;
 
-import java.time.LocalDateTime;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.publicissapient.kpidashboard.common.model.azure.AzureStateCategory;
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class JiraHistoryChangeLog {
+/**
+ * @author shi6
+ */
+public interface AzureStateCategoryRepository extends MongoRepository<AzureStateCategory, ObjectId> {
 
-	private String changedFrom;
-	private String changedTo;
-	private LocalDateTime updatedOn;
+	AzureStateCategory findByBasicProjectConfigId(String basicProjectConfigId);
 
 }
