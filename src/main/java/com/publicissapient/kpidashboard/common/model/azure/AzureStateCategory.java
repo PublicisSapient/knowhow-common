@@ -16,9 +16,13 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.jira;
+package com.publicissapient.kpidashboard.common.model.azure;
 
-import java.time.LocalDateTime;
+import java.util.Set;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,16 +31,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * @author shi6
+ */
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class JiraHistoryChangeLog {
-
-	private String changedFrom;
-	private String changedTo;
-	private LocalDateTime updatedOn;
+@Document(collection = "azure_state_category")
+public class AzureStateCategory extends BasicModel {
+	private String basicProjectConfigId;
+	private Set<String> completedList;
+	private Set<String> resolvedList;
+	private Set<String> inProgressList;
+	private Set<String> proposedList;
+	private Set<String> removedList;
 
 }
