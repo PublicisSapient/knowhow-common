@@ -18,13 +18,6 @@
 
 package com.publicissapient.kpidashboard.common.model.rbac;
 
-import java.util.List;
-import java.util.Map;
-
-import org.bson.types.ObjectId;
-
-import com.publicissapient.kpidashboard.common.constant.AuthType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,26 +25,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * The User info dto.
- */
 @Data
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoDTO {
-	private ObjectId id;
+public class UserAccessApprovalResponseDTO {
+
 	private String username;
-	private List<String> authorities;
-	private AuthType authType;
-	private String firstName;
-	private String middleName;
-	private String lastName;
-	private String displayName;
-	private String createdOn;
-	private String emailAddress;
-	private List<ProjectsAccess> projectsAccess;
-	private Map<String , Boolean> notificationEmail;
+
+	private String email;
+
+	private boolean approved;
+
+	private boolean whitelistDomainEmail;
 }
