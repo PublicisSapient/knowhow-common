@@ -16,37 +16,25 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.model.jira;//NOPMD
-
-import java.util.List;
+package com.publicissapient.kpidashboard.common.repository.rbac;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.repository.CrudRepository;
 
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+import com.publicissapient.kpidashboard.common.constant.AuthenticationEvent;
+import com.publicissapient.kpidashboard.common.model.rbac.UsersSession;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public interface UsersSessionRepository extends CrudRepository<UsersSession, ObjectId> {
 
-@Builder
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Document(collection = "board_metadata")
-public class BoardMetadata extends BasicModel implements Cloneable {
-
-	private ObjectId projectBasicConfigId;
-	private ObjectId projectToolConfigId;
-	private String metadataTemplateCode;
-	private List<Metadata> metadata;
-
-	@Override
-	public BoardMetadata clone() throws CloneNotSupportedException {
-		return (BoardMetadata) super.clone();
-	}
+	/**
+	 * Find the latest login history for a user
+	 * 
+	 * @param userName
+	 *            username
+	 * @param event
+	 *            {@link AuthenticationEvent}
+	 * @return most recent logout of user
+	 */
+	UsersSession findTopByUserNameAndEventOrderByTimeStampDesc(String userName, AuthenticationEvent event);
 
 }
