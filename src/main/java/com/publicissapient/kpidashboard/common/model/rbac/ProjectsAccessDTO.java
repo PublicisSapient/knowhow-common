@@ -15,18 +15,20 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.repository.application;
+package com.publicissapient.kpidashboard.common.model.rbac;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.stereotype.Repository;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import com.publicissapient.kpidashboard.common.model.application.OrganizationHierarchy;
+import java.util.List;
 
-@Repository
-public interface OrganizationHierarchyRepository extends MongoRepository<OrganizationHierarchy, ObjectId> {
-
-    @Query(value = "{ 'nodeId': ?0 }", delete = true)
-    void deleteByNodeId(String nodeId);
+@Data
+@Getter
+@Setter
+@ToString
+public class ProjectsAccessDTO {
+    String role;
+    List<AccessNodeDTO> accessNodes;
 }
