@@ -15,33 +15,25 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.feature;
 
-import org.togglz.core.Feature;
-import org.togglz.core.annotation.EnabledByDefault;
-import org.togglz.core.annotation.Label;
-import org.togglz.core.context.FeatureContext;
+package com.publicissapient.kpidashboard.common.service;
 
-/**
- * @author purgupta2
- */
-public enum FeatureEnum implements Feature {
-	@EnabledByDefault
-	@Label("Custom-api Daily Standup")
-	DAILY_STANDUP,
+import com.publicissapient.kpidashboard.common.model.jira.ConfigurationTemplateDocument;
+import com.publicissapient.kpidashboard.common.repository.jira.ConfigurationTemplateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-	@EnabledByDefault
-	@Label("Google Analytics")
-	GOOGLE_ANALYTICS,
+import java.util.List;
+import java.util.stream.StreamSupport;
 
-	@Label("Recommendations")
-	RECOMMENDATIONS,
+@Service
+public class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
 
-	@EnabledByDefault
-	@Label("New UI")
-	NEW_UI_SWITCH;
+    @Autowired
+    private ConfigurationTemplateRepository configurationTemplateRepository;
 
-	public boolean isActive() {
-		return FeatureContext.getFeatureManager().isActive(this);
-	}
+    @Override
+    public List<ConfigurationTemplateDocument> getConfigurationTemplate() {
+        return StreamSupport.stream(configurationTemplateRepository.findAll().spliterator(), false).toList();
+    }
 }

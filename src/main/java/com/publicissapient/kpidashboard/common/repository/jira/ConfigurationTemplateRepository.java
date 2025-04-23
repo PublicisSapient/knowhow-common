@@ -15,33 +15,17 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.feature;
 
-import org.togglz.core.Feature;
-import org.togglz.core.annotation.EnabledByDefault;
-import org.togglz.core.annotation.Label;
-import org.togglz.core.context.FeatureContext;
+package com.publicissapient.kpidashboard.common.repository.jira;
+
+import com.publicissapient.kpidashboard.common.model.jira.ConfigurationTemplateDocument;
+import org.bson.types.ObjectId;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * @author purgupta2
+ * The interface Configuration Template Repository.
+ *
+ * @author girpatha
  */
-public enum FeatureEnum implements Feature {
-	@EnabledByDefault
-	@Label("Custom-api Daily Standup")
-	DAILY_STANDUP,
-
-	@EnabledByDefault
-	@Label("Google Analytics")
-	GOOGLE_ANALYTICS,
-
-	@Label("Recommendations")
-	RECOMMENDATIONS,
-
-	@EnabledByDefault
-	@Label("New UI")
-	NEW_UI_SWITCH;
-
-	public boolean isActive() {
-		return FeatureContext.getFeatureManager().isActive(this);
-	}
+public interface ConfigurationTemplateRepository extends CrudRepository<ConfigurationTemplateDocument, ObjectId> {
 }

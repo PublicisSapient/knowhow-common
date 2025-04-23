@@ -15,33 +15,28 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.feature;
 
-import org.togglz.core.Feature;
-import org.togglz.core.annotation.EnabledByDefault;
-import org.togglz.core.annotation.Label;
-import org.togglz.core.context.FeatureContext;
+package com.publicissapient.kpidashboard.common.model.jira; // NOPMD
 
-/**
- * @author purgupta2
- */
-public enum FeatureEnum implements Feature {
-	@EnabledByDefault
-	@Label("Custom-api Daily Standup")
-	DAILY_STANDUP,
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-	@EnabledByDefault
-	@Label("Google Analytics")
-	GOOGLE_ANALYTICS,
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "configuration_template")
+public class ConfigurationTemplateDocument extends BasicModel {
 
-	@Label("Recommendations")
-	RECOMMENDATIONS,
-
-	@EnabledByDefault
-	@Label("New UI")
-	NEW_UI_SWITCH;
-
-	public boolean isActive() {
-		return FeatureContext.getFeatureManager().isActive(this);
-	}
+	private String tool;
+	private String templateName;
+	private String templateCode;
+	private boolean isKanban;
+	private boolean disabled;
 }

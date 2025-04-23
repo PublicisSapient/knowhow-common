@@ -15,33 +15,13 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.feature;
 
-import org.togglz.core.Feature;
-import org.togglz.core.annotation.EnabledByDefault;
-import org.togglz.core.annotation.Label;
-import org.togglz.core.context.FeatureContext;
+package com.publicissapient.kpidashboard.common.service;
 
-/**
- * @author purgupta2
- */
-public enum FeatureEnum implements Feature {
-	@EnabledByDefault
-	@Label("Custom-api Daily Standup")
-	DAILY_STANDUP,
+import com.publicissapient.kpidashboard.common.model.jira.ConfigurationTemplateDocument;
 
-	@EnabledByDefault
-	@Label("Google Analytics")
-	GOOGLE_ANALYTICS,
+import java.util.List;
 
-	@Label("Recommendations")
-	RECOMMENDATIONS,
-
-	@EnabledByDefault
-	@Label("New UI")
-	NEW_UI_SWITCH;
-
-	public boolean isActive() {
-		return FeatureContext.getFeatureManager().isActive(this);
-	}
+public interface TemplateConfigurationService {
+    List<ConfigurationTemplateDocument> getConfigurationTemplate();
 }
