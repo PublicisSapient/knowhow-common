@@ -525,4 +525,14 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyincludeActiveSprintInBacklogKPI;
 
 	private List<ConfigurationHistoryChangeLog> historydefectRejectionLabelsKPI37;
+
+    //LateRefinement
+    private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
+    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
+
+    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
 }
