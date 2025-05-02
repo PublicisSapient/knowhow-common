@@ -100,6 +100,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 	private static final String ISSUE_ID = "issueId";
 	private static final String SPRINT_END_DATE = "sprintEndDate";
 	private static final String ADDITIONAL_FILTER = "additionalFilters";
+	public static final String QUERY_LABELS = "labels";
 
 	@Autowired
 	private MongoTemplate operations;
@@ -345,7 +346,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(JIRA_ISSUE_STATUS);
 		query.fields().include(URL);
 		query.fields().include(NAME);
-		query.fields().include("labels");
+		query.fields().include(QUERY_LABELS);
 		query.fields().include("uatDefectGroup");
 		query.fields().include(SPRINT_ID);
 		query.fields().include(ADDITIONAL_FILTER);
@@ -625,6 +626,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(ADDITIONAL_FILTER);
 		query.fields().include(LOGGED_WORK_MINUTES);
 		query.fields().include(PROJECT_NAME);
+		query.fields().include(QUERY_LABELS);
 		return operations.find(query, JiraIssue.class);
 	}
 
@@ -703,7 +705,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 			Criteria projectCriteria = new Criteria();
 			projectCriteria.and(PROJECT_ID).is(project);
 			filterMap.forEach((subk, subv) -> {
-				if (subk.equalsIgnoreCase("labels")) {
+				if (subk.equalsIgnoreCase(QUERY_LABELS)) {
 					projectCriteria.and(subk).nin((List<Pattern>) subv);
 				} else {
 					projectCriteria.and(subk).in((List<Pattern>) subv);
