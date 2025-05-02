@@ -524,6 +524,8 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historyincludeActiveSprintInBacklogKPI;
 
+	private List<ConfigurationHistoryChangeLog> historydefectRejectionLabelsKPI37;
+
     //LateRefinement
     private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
     private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
