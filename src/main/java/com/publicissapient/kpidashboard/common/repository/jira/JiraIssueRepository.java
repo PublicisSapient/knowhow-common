@@ -236,4 +236,13 @@ public interface JiraIssueRepository
 
 	@Query(value = "{ 'basicProjectConfigId': { $in: ?0 } }", fields = "{ '_id': 1 , 'sprintID': 1, 'basicProjectConfigId':1 }")
 	List<JiraIssue> findByBasicProjectConfigIdIn(List<String> basicProjectConfigIds);
+
+    /**
+     * Find all issues associated with a specific sprint ID
+     *
+     * @param sprintId the sprint ID to search for
+     * @return list of JiraIssues in the sprint
+     */
+    @Query("{'sprintID': ?0}")
+    List<JiraIssue> findBySprintID(String sprintId);
 }
