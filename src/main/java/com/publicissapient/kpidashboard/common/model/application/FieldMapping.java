@@ -558,6 +558,18 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraStatusToConsiderKPI127;
 
 	private boolean includeActiveSprintInBacklogKPI;
+
+	private List<String> defectRejectionLabelsKPI37;
+    //LateRefinement
+    private List<String> jiraStatusKPI187;
+    private List<String> jiraIssueTypeNamesKPI187;
+
+    //Future Refinement
+    private List<String> jiraIssueTypeNamesKPI188;
+    private String jiraRefinementCriteriaKPI188;
+    private String jiraRefinementByCustomFieldKPI188;
+    private String jiraRefinementMinLengthKPI188;
+    private List<String> jiraRefinementKeywordsKPI188;
 	/**
 	 * Get jira issue type names string [ ].
 	 *
