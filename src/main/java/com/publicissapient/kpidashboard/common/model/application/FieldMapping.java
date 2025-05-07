@@ -570,6 +570,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
     private String jiraRefinementByCustomFieldKPI188;
     private String jiraRefinementMinLengthKPI188;
     private List<String> jiraRefinementKeywordsKPI188;
+
+    private List<String> jiraLabelsKPI120;
 	/**
 	 * Get jira issue type names string [ ].
 	 *
