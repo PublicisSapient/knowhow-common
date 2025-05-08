@@ -823,6 +823,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(TYPE_NAME);
 		query.fields().include(PROJECT_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(QUERY_LABELS);
 		return new ArrayList<>(operations.find(query, JiraIssue.class));
 	}
 
