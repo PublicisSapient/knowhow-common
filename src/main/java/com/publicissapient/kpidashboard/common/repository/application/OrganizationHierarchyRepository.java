@@ -29,4 +29,6 @@ public interface OrganizationHierarchyRepository extends MongoRepository<Organiz
 
 	@Query(value = "{ 'nodeId': ?0 }", delete = true)
 	void deleteByNodeId(String nodeId);
+
+	OrganizationHierarchy findByNodeId(String nodeId);
 }
