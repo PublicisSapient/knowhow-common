@@ -27,12 +27,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -167,6 +169,12 @@ public class DateUtil {
 		}
 	}
 
+	/**
+	 * already a UTC Time "2023-10-02T03:51:00.000Z", in format DateUtil.TIME_FORMAT_WITH_SEC
+	 * @param time
+	 * @param format
+	 * @return
+	 */
 	public static LocalDateTime stringToLocalDateTime(String time, String format) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 		return LocalDateTime.parse(time, formatter);
@@ -407,4 +415,21 @@ public class DateUtil {
 		Instant dateTime = Instant.parse(date);
 		return dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT));
 	}
+
+	public static LocalDateTime localDateTimeToUTC(LocalDateTime localDateTime) {
+		return localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+	}
+
+	public static String localDateTimeToUTC(String time) {
+		LocalDateTime localDateTime = LocalDateTime.parse(time);
+		return localDateTimeToUTC(localDateTime).toString();
+	}
+
+	public static String tranformUTCLocalTimeToZFormat(LocalDateTime ldt) {
+		ldt = ldt.truncatedTo(ChronoUnit.SECONDS);
+		Instant instant = ldt.toInstant(ZoneOffset.UTC);
+		return DateTimeFormatter.ISO_INSTANT.format(instant);
+	}
+
+
 }
