@@ -34,10 +34,11 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.stream.Stream;
 
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
@@ -429,6 +430,15 @@ public class DateUtil {
 		ldt = ldt.truncatedTo(ChronoUnit.SECONDS);
 		Instant instant = ldt.toInstant(ZoneOffset.UTC);
 		return DateTimeFormatter.ISO_INSTANT.format(instant);
+	}
+
+	public static String tranformUTCLocalDateTimeStringToZFormat(String utcTime) {
+		if (StringUtils.isNotEmpty(utcTime)) {
+			LocalDateTime ldt = LocalDateTime.parse(utcTime);
+			return tranformUTCLocalTimeToZFormat(ldt);
+		} else {
+			return CommonConstant.BLANK;
+		}
 	}
 
 	public static LocalDateTime todaysTime(){
