@@ -23,7 +23,10 @@
   <packaging>jar</packaging>
   <description>Common package used by all microservices</description>
   <scm>
+    <connection>scm:git:https://github.com/PublicisSapient/knowhow-common.git</connection>
+    <developerConnection>scm:git:https://github.com/PublicisSapient/knowhow-common.git</developerConnection>
     <tag>4.6.1</tag>
+    <url>https://github.com/PublicisSapient/knowhow-common.git</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
