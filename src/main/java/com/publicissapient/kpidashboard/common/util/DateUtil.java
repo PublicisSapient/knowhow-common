@@ -431,5 +431,13 @@ public class DateUtil {
 		return DateTimeFormatter.ISO_INSTANT.format(instant);
 	}
 
+	public static LocalDateTime todaysTime(){
+		return DateUtil.localDateTimeToUTC(LocalDateTime.now());
+	}
+
+	public static LocalDate todaysDate(){
+		return DateUtil.localDateTimeToUTC(LocalDateTime.now()).toLocalDate();
+	}
+
 
 }
