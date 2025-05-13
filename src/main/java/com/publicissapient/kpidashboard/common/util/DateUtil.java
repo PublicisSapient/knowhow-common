@@ -433,12 +433,17 @@ public class DateUtil {
 	}
 
 	public static String tranformUTCLocalDateTimeStringToZFormat(String utcTime) {
+		if(StringUtils.isEmpty(utcTime)){
+			return CommonConstant.BLANK;
+		}
+		if(utcTime.equalsIgnoreCase("-")){
+			return "-";
+		}
 		if (StringUtils.isNotEmpty(utcTime)) {
 			LocalDateTime ldt = LocalDateTime.parse(utcTime);
 			return tranformUTCLocalTimeToZFormat(ldt);
-		} else {
-			return CommonConstant.BLANK;
 		}
+		return utcTime;
 	}
 
 	public static LocalDateTime todaysTime(){
