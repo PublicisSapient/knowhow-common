@@ -39,7 +39,11 @@ public enum FeatureEnum implements Feature {
 
 	@EnabledByDefault
 	@Label("New UI")
-	NEW_UI_SWITCH;
+	NEW_UI_SWITCH,
+
+	@EnabledByDefault
+	@Label("Rally")
+	RALLY;
 
 	public boolean isActive() {
 		return FeatureContext.getFeatureManager().isActive(this);
