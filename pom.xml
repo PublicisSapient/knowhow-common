@@ -19,7 +19,7 @@
   </parent>
   <groupId>com.publicissapient.kpidashboard</groupId>
   <artifactId>common</artifactId>
-  <version>1.2.3</version>
+  <version>17.2.3</version>
   <packaging>jar</packaging>
   <description>Common package used by all microservices</description>
   <scm>
