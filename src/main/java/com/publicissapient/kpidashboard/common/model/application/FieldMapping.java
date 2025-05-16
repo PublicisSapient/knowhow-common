@@ -124,6 +124,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String jiraDefectRejectionStatusKPI14;
 	private String jiraDefectRejectionStatusQAKPI111;
 	private String jiraDefectRejectionStatusKPI34;
+	private String jiraDefectRejectionStatusKPI191;
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
@@ -134,6 +135,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> jiraDefectRemovalStatus;
 	private List<String> jiraDefectRemovalStatusKPI34;
+	private List<String> jiraDefectRemovalStatusKPI191;
 	private List<String> jiraDefectRemovalIssueType;
 	// Added for Defect Reopen Rate KPI.
 	private List<String> jiraDefectClosedStatus;
@@ -258,6 +260,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> resolutionTypeForRejectionKPI14;
 	private List<String> resolutionTypeForRejectionQAKPI111;
 	private List<String> resolutionTypeForRejectionKPI34;
+	private List<String> resolutionTypeForRejectionKPI191;
 
 	private List<String> jiraQADefectDensityIssueType;
 	private List<String> jiraQAKPI111IssueType;
@@ -445,6 +448,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	// threshold field
 	private String thresholdValueKPI14;
+	private String thresholdValueKPI191;
 	private String thresholdValueKPI82;
 	private String thresholdValueKPI111;
 	private String thresholdValueKPI35;
@@ -570,6 +574,13 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
     private String jiraRefinementByCustomFieldKPI188;
     private String jiraRefinementMinLengthKPI188;
     private List<String> jiraRefinementKeywordsKPI188;
+
+    private List<String> jiraLabelsKPI120;
+
+	private List<String> resolutionTypeForRejectionKPI190;
+	private String jiraDefectRejectionStatusKPI190;
+	private List<String> jiraDefectClosedStatusKPI190;
+	private String thresholdValueKPI190;
 	/**
 	 * Get jira issue type names string [ ].
 	 *
