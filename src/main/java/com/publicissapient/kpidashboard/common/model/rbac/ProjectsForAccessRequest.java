@@ -42,5 +42,6 @@ public class ProjectsForAccessRequest {
 
 	private String projectName;
 	private String projectId;
+	private String projectNodeId;
 	private List<HierarchyValue> hierarchy;
 }
