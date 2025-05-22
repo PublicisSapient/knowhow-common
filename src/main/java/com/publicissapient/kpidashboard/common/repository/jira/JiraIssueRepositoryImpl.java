@@ -824,6 +824,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(PROJECT_NAME);
 		query.fields().include(PRIORITY);
 		query.fields().include(QUERY_LABELS);
+		query.fields().include("defectStoryID");
 		return new ArrayList<>(operations.find(query, JiraIssue.class));
 	}
 
