@@ -39,7 +39,8 @@ public enum NormalizedJira {
 	TO_BE_AUTOMATED("To be automated"),
 	QA_DEFECT_VALUE("QA"),
 	STATUS("Closed"),
-	ISSUE_TYPE("Epic");
+	ISSUE_TYPE("Epic"),
+	USER_STORY_TYPE("Story");
 
 	private String normalizedValue;
 
