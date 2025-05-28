@@ -114,6 +114,9 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String jiraDefectRejectionStatusKPI14;
 	private String jiraDefectRejectionStatusQAKPI111;
 	private String jiraDefectRejectionStatusKPI34;
+	private String jiraDefectRejectionStatusKPI191;
+	private List<String> jiraDefectRemovalStatusKPI191;
+	private List<String> resolutionTypeForRejectionKPI191;
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
@@ -433,6 +436,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 
 	// threshold field
 	private String thresholdValueKPI14;
+	private String thresholdValueKPI191;
 	private String thresholdValueKPI82;
 	private String thresholdValueKPI111;
 	private String thresholdValueKPI35;
@@ -553,6 +557,11 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> defectRejectionLabelsKPI37;
 
     private List<String> jiraLabelsKPI120;
+
+	private List<String> resolutionTypeForRejectionKPI190;
+	private String jiraDefectRejectionStatusKPI190;
+	private String defectReopenStatusKPI190;
+	private String thresholdValueKPI190;
 	/**
 	 * Get jira issue type names string [ ].
 	 *
