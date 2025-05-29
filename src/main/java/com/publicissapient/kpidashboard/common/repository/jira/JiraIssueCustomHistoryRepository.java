@@ -72,7 +72,7 @@ public interface JiraIssueCustomHistoryRepository
 	 * @param storyID
 	 *          the story id
 	 * @param basicProjectConfigId
-	 *          basicProjectConfigIdn
+	 *          basicProjectConfigId
 	 * @return the list
 	 */
 	List<JiraIssueCustomHistory> findByStoryIDInAndBasicProjectConfigIdIn(List<String> storyID,
