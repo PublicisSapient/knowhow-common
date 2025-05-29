@@ -61,8 +61,4 @@ public class ConfigurationHistoryChangeLog {
 		this.changedBy = changedBy;
 		this.updatedOn = updatedOn;
 	}
-
-	public String getUpdatedOn() {
-		return DateUtil.localDateTimeToUTC(updatedOn);
-	}
 }
