@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -407,4 +408,25 @@ public class DateUtil {
 		Instant dateTime = Instant.parse(date);
 		return dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT));
 	}
+
+	public static LocalDateTime localDateTimeToUTC(LocalDateTime localDateTime) {
+
+		return localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+
+	}
+
+	public static String localDateTimeToUTC(String time) {
+
+		LocalDateTime localDateTime = LocalDateTime.parse(time);
+
+		return localDateTimeToUTC(localDateTime).toString();
+
+	}
+
+	public static LocalDateTime getTodayTime() {
+
+		return DateUtil.localDateTimeToUTC(LocalDateTime.now());
+
+	}
+
 }
