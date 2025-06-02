@@ -468,5 +468,26 @@ public class DateUtil {
         String truncatedTime = time.split("\\.")[0];
         return localDateTimeToUTC(LocalDateTime.parse(truncatedTime, DateTimeFormatter.ofPattern(TIME_FORMAT)));
 	}
+
+	public static LocalDateTime localDateTimeToUTC(LocalDateTime localDateTime) {
+
+		return localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+
+	}
+
+	public static String localDateTimeToUTC(String time) {
+
+		LocalDateTime localDateTime = LocalDateTime.parse(time);
+
+		return localDateTimeToUTC(localDateTime).toString();
+
+	}
+
+	public static LocalDateTime getTodayTime() {
+
+		return DateUtil.localDateTimeToUTC(LocalDateTime.now());
+
+	}
+
 }
 

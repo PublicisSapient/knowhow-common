@@ -78,7 +78,7 @@ public interface JiraIssueCustomHistoryRepository
 	List<JiraIssueCustomHistory> findByStoryIDInAndBasicProjectConfigIdIn(List<String> storyID,
 			List<String> basicProjectConfigId);
 
-	@Query(value = "{ 'basicProjectConfigId' : ?0  }", fields = "{ 'storyID':1, 'storyType' : 1 , 'createdDate' : 1,'statusUpdationLog':1, 'fixVersionUpdationLog':1}")
+	@Query(value = "{ 'basicProjectConfigId' : ?0  }", fields = "{ 'storyID':1, 'storyType' : 1 , 'createdDate' : 1,'statusUpdationLog':1, 'fixVersionUpdationLog':1, 'sprintUpdationLog': 1 }")
 	List<JiraIssueCustomHistory> findByBasicProjectConfigIdIn(String basicProjectConfigId);
 
 	@Query(value = "{ 'basicProjectConfigId' : ?0, 'storyID' : { $nin: ?1 } }", fields = "{ 'storyID':1, 'storyType' : 1 , 'createdDate' : 1,'statusUpdationLog':1, 'fixVersionUpdationLog':1, 'estimate': 1, 'description': 1, 'url': 1, 'basicProjectConfigId': 1}")

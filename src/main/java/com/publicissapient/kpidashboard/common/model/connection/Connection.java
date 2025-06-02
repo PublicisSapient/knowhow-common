@@ -82,6 +82,8 @@ public class Connection extends BasicModel {
 	private String repoToolProvider;
 	private boolean brokenConnection;
 	private String connectionErrorMsg;
+	private String notifiedOn;
+	private Integer notificationCount;
 
 	public boolean getIsOAuth() {
 		return this.isOAuth;
