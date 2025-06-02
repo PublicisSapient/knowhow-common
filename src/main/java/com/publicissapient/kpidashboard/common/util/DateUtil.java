@@ -46,7 +46,6 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
-import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.Week;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +79,7 @@ public class DateUtil {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String NOT_APPLICABLE = "NA";
     public static final String DD_MM = "dd/MM";
-
+    public static final String ZERO_TIME_FORMAT = "T00:00:00";
     private DateUtil() {
         // to prevent creation on object
     }
@@ -414,16 +413,6 @@ public class DateUtil {
         return dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT));
     }
 
-
-    public static LocalDateTime localDateTimeToUTC(LocalDateTime localDateTime) {
-        return localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
-    }
-
-    public static String localDateTimeToUTC(String time) {
-        LocalDateTime localDateTime = LocalDateTime.parse(time);
-        return localDateTimeToUTC(localDateTime).toString();
-    }
-
     public static String tranformUTCLocalTimeToZFormat(LocalDateTime ldt) {
         ldt = ldt.truncatedTo(ChronoUnit.SECONDS);
         Instant instant = ldt.toInstant(ZoneOffset.UTC);
@@ -443,10 +432,6 @@ public class DateUtil {
             return tranformUTCLocalTimeToZFormat(ldt);
         }
         return utcTime;
-    }
-
-    public static LocalDateTime getTodayTime() {
-        return DateUtil.localDateTimeToUTC(LocalDateTime.now());
     }
 
     public static LocalDate getTodayDate() {
@@ -470,21 +455,16 @@ public class DateUtil {
 	}
 
 	public static LocalDateTime localDateTimeToUTC(LocalDateTime localDateTime) {
-
 		return localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
-
 	}
 
 	public static String localDateTimeToUTC(String time) {
-
 		LocalDateTime localDateTime = LocalDateTime.parse(time);
-
 		return localDateTimeToUTC(localDateTime).toString();
 
 	}
 
 	public static LocalDateTime getTodayTime() {
-
 		return DateUtil.localDateTimeToUTC(LocalDateTime.now());
 
 	}
