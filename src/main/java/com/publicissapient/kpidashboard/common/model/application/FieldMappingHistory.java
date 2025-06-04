@@ -111,6 +111,7 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalStatus;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalStatusKPI34;
+	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalStatusKPI191;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalIssueType;
 	// Added for Defect Reopen Rate KPI.
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectClosedStatus;
@@ -227,6 +228,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI35;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI82;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI135;
+	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI191;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI133;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionRCAKPI36;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI14;
@@ -371,6 +373,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyuploadDataKPI16;
 	private LocalDateTime historycreatedDate;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI155;
+	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI191;
 	private List<ConfigurationHistoryChangeLog> historyjiraDodKPI155;
 	private List<ConfigurationHistoryChangeLog> historyjiraLiveStatusKPI155;
 
@@ -413,6 +416,7 @@ public class FieldMappingHistory extends BasicModel {
 
 	// threshold field
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI14;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI191;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI82;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI111;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI35;
@@ -523,4 +527,23 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyclosedIssueStatusToConsiderKpi113;
 
 	private List<ConfigurationHistoryChangeLog> historyincludeActiveSprintInBacklogKPI;
+
+	private List<ConfigurationHistoryChangeLog> historydefectRejectionLabelsKPI37;
+
+    //LateRefinement
+    private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
+    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
+
+    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
+    private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
+
+    private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI120;
+
+	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI190;
+	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI190;
+	private List<ConfigurationHistoryChangeLog> historydefectReopenStatusKPI190;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI190;
 }
