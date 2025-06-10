@@ -83,7 +83,7 @@ public class Connection extends BasicModel {
 	private boolean brokenConnection;
 	private String connectionErrorMsg;
 	private String notifiedOn;
-	private Integer notificationCount;
+	private int notificationCount;
 
 	public boolean getIsOAuth() {
 		return this.isOAuth;
