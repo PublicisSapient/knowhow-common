@@ -469,5 +469,18 @@ public class DateUtil {
 
 	}
 
+    /**
+     * there are certain dates which are already in Z format in database,
+     * if we provide those is Z again, it will change on UI, so we need to explicitly handle that on backend
+     * @param time
+     * @return
+     */
+    public static String convertToGenericString(String time) {
+        if (StringUtils.isEmpty(time)) {
+            return "-";
+        }
+        return DateUtil.dateTimeConverter(time, DateUtil.TIME_FORMAT_WITH_SEC, DateUtil.DISPLAY_DATE_FORMAT);
+    }
+
 }
 
