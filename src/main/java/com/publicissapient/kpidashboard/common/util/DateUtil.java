@@ -76,7 +76,7 @@ public class DateUtil {
 
     public static final String BASIC_DATE_FORMAT = "dd-MM-yyyy";
 
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    public static final String HOUR_MINUTE = "yyyy-MM-dd'T'HH:mm";
     public static final String NOT_APPLICABLE = "NA";
     public static final String DD_MM = "dd/MM";
     public static final String ZERO_TIME_FORMAT = "T00:00:00";
