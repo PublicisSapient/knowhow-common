@@ -80,6 +80,7 @@ public class DateUtil {
     public static final String NOT_APPLICABLE = "NA";
     public static final String DD_MM = "dd/MM";
     public static final String ZERO_TIME_FORMAT = "T00:00:00";
+    public static final String MONTH_YEAR = "MMM yyyy";
     private DateUtil() {
         // to prevent creation on object
     }
@@ -480,6 +481,13 @@ public class DateUtil {
             return "-";
         }
         return DateUtil.dateTimeConverter(time, DateUtil.TIME_FORMAT_WITH_SEC, DateUtil.DISPLAY_DATE_FORMAT);
+    }
+
+    public static String convertToMonthYearFormat(String time) {
+        if (StringUtils.isEmpty(time)) {
+            return "-";
+        }
+        return DateUtil.dateTimeConverter(time, DateUtil.HOUR_MINUTE, MONTH_YEAR );
     }
 
 }
