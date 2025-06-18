@@ -318,7 +318,7 @@ public class DateUtil {
     public static Pair<String, String> getWeekRangeUsingDateTime(LocalDateTime currentDateTime) {
         // Set to start of day to mimic original DateTime behavior
         LocalDateTime monday = currentDateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toLocalDate().atStartOfDay();
-        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atStartOfDay();
+        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atTime(23, 59, 59);
 
         String formattedMonday = tranformUTCLocalTimeToZFormat(monday);
         String formattedSunday = tranformUTCLocalTimeToZFormat(sunday);
