@@ -75,11 +75,12 @@ public class DateUtil {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String BASIC_DATE_FORMAT = "dd-MM-yyyy";
-
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String HOUR_MINUTE = "yyyy-MM-dd'T'HH:mm";
     public static final String NOT_APPLICABLE = "NA";
     public static final String DD_MM = "dd/MM";
     public static final String ZERO_TIME_FORMAT = "T00:00:00";
+    public static final String MONTH_YEAR = "MMM yyyy";
     private DateUtil() {
         // to prevent creation on object
     }
@@ -317,7 +318,7 @@ public class DateUtil {
     public static Pair<String, String> getWeekRangeUsingDateTime(LocalDateTime currentDateTime) {
         // Set to start of day to mimic original DateTime behavior
         LocalDateTime monday = currentDateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toLocalDate().atStartOfDay();
-        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atStartOfDay();
+        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atTime(23, 59, 59);
 
         String formattedMonday = tranformUTCLocalTimeToZFormat(monday);
         String formattedSunday = tranformUTCLocalTimeToZFormat(sunday);
@@ -480,6 +481,13 @@ public class DateUtil {
             return "-";
         }
         return DateUtil.dateTimeConverter(time, DateUtil.TIME_FORMAT_WITH_SEC, DateUtil.DISPLAY_DATE_FORMAT);
+    }
+
+    public static String convertToMonthYearFormat(String time) {
+        if (StringUtils.isEmpty(time)) {
+            return "-";
+        }
+        return DateUtil.dateTimeConverter(time, DateUtil.HOUR_MINUTE, MONTH_YEAR );
     }
 
 }
