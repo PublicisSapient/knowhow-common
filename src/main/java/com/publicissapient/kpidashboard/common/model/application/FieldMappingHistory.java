@@ -546,4 +546,14 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI190;
 	private List<ConfigurationHistoryChangeLog> historydefectReopenStatusKPI190;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI190;
+
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI193;
+	private List<ConfigurationHistoryChangeLog> historyjiraDodKPI193;
+	private List<ConfigurationHistoryChangeLog> historyjiraDorKPI193;
+	private List<ConfigurationHistoryChangeLog> historyjiraLiveStatusKPI193;
+	private List<ConfigurationHistoryChangeLog> historystoryFirstStatusKPI193;
+
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI192;
+	private List<ConfigurationHistoryChangeLog> historyjiraLiveStatusKPI192;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI192;
 }
