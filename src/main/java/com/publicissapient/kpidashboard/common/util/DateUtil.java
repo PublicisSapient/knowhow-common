@@ -315,17 +315,12 @@ public class DateUtil {
         return formattedMonday + " - " + formattedSunday;
     }
 
-    public static Pair<String, String> getWeekRangeUsingDateTime(LocalDateTime currentDateTime) {
+    public static  String getWeekRangeUsingDateTime(LocalDateTime currentDateTime) {
         // Set to start of day to mimic original DateTime behavior
         LocalDateTime monday = currentDateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toLocalDate().atStartOfDay();
-        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atTime(23, 59, 59);
-
-        String formattedMonday = tranformUTCLocalTimeToZFormat(monday);
-        String formattedSunday = tranformUTCLocalTimeToZFormat(sunday);
-
+        LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate().atStartOfDay();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DD_MM);
-        return Pair.of(monday.format(dateTimeFormatter) + " - " + sunday.format(dateTimeFormatter),
-                formattedMonday + " to " + formattedSunday);
+        return monday.format(dateTimeFormatter) + " - " + sunday.format(dateTimeFormatter);
     }
 
     public static String getWeekRangeUsingDateTime(DateTime currentDate) {
