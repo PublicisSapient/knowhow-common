@@ -1,6 +1,7 @@
 package com.publicissapient.kpidashboard.common.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -10,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -116,8 +118,17 @@ public class NotificationServiceImpl implements NotificationService {
 			helper.setText(html, true);
 			helper.setSubject(emailEvent.getSubject());
 			helper.setFrom(emailEvent.getFrom());
+			addAttachments(customData, helper);
 			javaMailSender.send(message);
 			log.info("Email successfully sent for the key : {}", templateKey);
+		}
+	}
+
+	private void addAttachments(Map<String, String> customData, MimeMessageHelper helper) throws MessagingException {
+		if (customData.containsKey("pdf_attachment")) {
+			String base64Pdf = customData.get("pdf_attachment");
+			byte[] pdfBytes = Base64.getDecoder().decode(base64Pdf);
+			helper.addAttachment("KnowHOW.pdf", new ByteArrayResource(pdfBytes));
 		}
 	}
 
