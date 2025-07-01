@@ -20,9 +20,7 @@
 package com.publicissapient.kpidashboard.common.config;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -37,36 +35,17 @@ import java.util.Map;
 
 @Data
 @Component
-@ConfigurationProperties
-@PropertySource("classpath:application.properties")
+@ConfigurationProperties(prefix = "broken-connection")
 public class NotificationConfig {
-
-	@Value("${brokenConnection.MaximumEmailNotificationCount}")
-	private String brokenConnectionMaximumEmailNotificationCount;
-
-	@Value("${brokenConnection.EmailNotificationFrequency}")
-	private String brokenConnectionEmailNotificationFrequency;
-
-	@Value("${brokenConnection.EmailNotificationSubject}")
-	private String brokenConnectionEmailNotificationSubject;
-
-	@Value("${brokenConnection.fix.url}")
-	private String brokenConnectionFixUrl;
-
-	@Value("${brokenConnection.help.url}")
-	private String brokenConnectionHelpUrl;
-
-	@Value("${kafka.mailtopic}")
+	private String maximumEmailNotificationCount;
+	private String emailNotificationFrequency;
+	private String emailNotificationSubject;
+	private String fixUrl;
+	private String helpUrl;
 	private String kafkaMailTopic;
-
-	@Value("${forgotPassword.uiHost}")
 	private String uiHost;
-
 	private Map<String, String> mailTemplate;
-
-	@Value("${notification.switch}")
 	private boolean notificationSwitch;
-
-	@Value("${flag.mailWithoutKafka}")
 	private boolean mailWithoutKafka;
 }
+

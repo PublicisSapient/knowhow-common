@@ -68,7 +68,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	private NotificationService notificationService;
 
 	@Autowired
-	UserInfoRepository userInfoRepository;
+	private UserInfoRepository userInfoRepository;
 
 	@Autowired
 	private NotificationConfig notificationConfig;
@@ -275,7 +275,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	}
 
 	private boolean shouldSendNotification(Connection connection) {
-		String value = notificationConfig.getBrokenConnectionMaximumEmailNotificationCount();
+		String value = notificationConfig.getMaximumEmailNotificationCount();
 		log.info("BrokenConnectionMaximumEmailNotificationCount from config: {}", value);
 		int maxCount = 0;
 		try {
@@ -284,7 +284,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 			log.warn("Invalid max notification count: {}", value);
 		}
 
-		int frequencyDays = Integer.parseInt(notificationConfig.getBrokenConnectionEmailNotificationFrequency());
+		int frequencyDays = Integer.parseInt(notificationConfig.getEmailNotificationFrequency());
 		if (maxCount <= 0) return false;
 
 		int count = connection.getNotificationCount();
@@ -314,17 +314,17 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 
 		boolean notifyUserOnError = Boolean.TRUE.equals(isErrorAlertNotificationEnabled(userInfo));
 
-		String subjectTemplate = notificationConfig.getBrokenConnectionEmailNotificationSubject();
+		String subjectTemplate = notificationConfig.getEmailNotificationSubject();
 		String notificationSubject = subjectTemplate.replace("{{Tool_Name}}", connection.getType());
 
-		String fixUrl = notificationConfig.getUiHost() + notificationConfig.getBrokenConnectionFixUrl();
+		String fixUrl = notificationConfig.getUiHost() + notificationConfig.getFixUrl();
 
 		if (notifyUserOnError && StringUtils.isNotBlank(email) && StringUtils.isNotBlank(notificationSubject)) {
 			Map<String, String> customData = createCustomData(
 					userInfo.getDisplayName(),
 					connection.getType(),
 					fixUrl,
-					notificationConfig.getBrokenConnectionHelpUrl()
+					notificationConfig.getHelpUrl()
 			);
 
 			String templateKey = notificationConfig.getMailTemplate().getOrDefault(NOTIFICATION_KEY, "");
