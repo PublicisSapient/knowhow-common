@@ -311,8 +311,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 			return;
 		}
 		String email = userInfo.getEmailAddress();
-		//Authentication authentication = authenticationRepository.findByUsername(connection.getCreatedBy());
-		//String email = authentication == null ? userInfo.getEmailAddress() : authentication.getEmail();
+
 		boolean notifyUserOnError = Boolean.TRUE.equals(isErrorAlertNotificationEnabled(userInfo));
 
 		String subjectTemplate = notificationConfig.getBrokenConnectionEmailNotificationSubject();
