@@ -193,9 +193,9 @@ public class ProcessorToolConnectionServiceImplTest {
 		connection.setType("Jenkins");
 		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
 
-		when(notificationConfig.getBrokenConnectionMaximumEmailNotificationCount()).thenReturn("5");
-		when(notificationConfig.getBrokenConnectionEmailNotificationFrequency()).thenReturn("1");
-		when(notificationConfig.getBrokenConnectionEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection");
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection");
 		when(notificationConfig.getMailTemplate()).thenReturn(Map.of("Broken_Connection", "template-key"));
 		when(notificationConfig.getKafkaMailTopic()).thenReturn("mail-topic");
 		when(notificationConfig.isNotificationSwitch()).thenReturn(true);
@@ -237,8 +237,8 @@ public class ProcessorToolConnectionServiceImplTest {
 		connection.setType("Jenkins");
 		connection.setNotifiedOn(LocalDateTime.now().minusDays(1).toString());
 		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
-		when(notificationConfig.getBrokenConnectionMaximumEmailNotificationCount()).thenReturn("5");
-		when(notificationConfig.getBrokenConnectionEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
 
@@ -251,8 +251,8 @@ public class ProcessorToolConnectionServiceImplTest {
 		connection.setType("Jenkins");
 		connection.setNotifiedOn("invalid-timestamp");
 		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
-		when(notificationConfig.getBrokenConnectionMaximumEmailNotificationCount()).thenReturn("3");
-		when(notificationConfig.getBrokenConnectionEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("3");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
 
@@ -265,9 +265,9 @@ public class ProcessorToolConnectionServiceImplTest {
 		connection.setNotifiedOn(null);
 		connection.setType("Jenkins");
 		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
-		when(notificationConfig.getBrokenConnectionMaximumEmailNotificationCount()).thenReturn("5");
-		when(notificationConfig.getBrokenConnectionEmailNotificationFrequency()).thenReturn("1");
-		when(notificationConfig.getBrokenConnectionEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection"); // subject is blank
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection"); // subject is blank
 
 		UserInfo userInfo = new UserInfo();
 		userInfo.setEmailAddress("user@example.com");
