@@ -20,19 +20,34 @@ package com.publicissapient.kpidashboard.common.processortool.service.impl;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import com.publicissapient.kpidashboard.common.config.NotificationConfig;
+import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
+import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
+import com.publicissapient.kpidashboard.common.service.NotificationService;
 import org.bson.types.ObjectId;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -56,11 +71,27 @@ public class ProcessorToolConnectionServiceImplTest {
 	ProcessorToolConnectionServiceImpl processorToolConnectionServiceImpl;
 	@Mock
 	private ProjectToolConfigRepository projectToolConfigRepository;
+
+	@Mock
+	private UserInfoRepository userInfoRepository;
+
+	@Mock
+	private NotificationConfig notificationConfig;
+
+	@Mock
+	private NotificationService notificationService;
+
+	@Mock
+	private KafkaTemplate<String, Object> kafkaTemplate;
+
 	@Mock
 	private ConnectionRepository connectionRepository;
+
 	private List<Connection> connectionList = Lists.newArrayList();
 
 	private List<ProjectToolConfig> projectToolList = Lists.newArrayList();
+	private Connection connection;
+	private final ObjectId connectionId = new ObjectId();
 
 	/** method includes pre processes for test cases */
 	@BeforeEach
@@ -97,6 +128,12 @@ public class ProcessorToolConnectionServiceImplTest {
 		t2.setJobName("dsab");
 		projectToolList.add(t1);
 		projectToolList.add(t2);
+
+		connection = new Connection();
+		connection.setId(connectionId);
+		connection.setCreatedBy("user123");
+		connection.setNotificationCount(0);
+		connection.setBrokenConnection(false);
 	}
 
 	/** method includes post processes for test cases */
@@ -136,5 +173,112 @@ public class ProcessorToolConnectionServiceImplTest {
 
 	private Set<ObjectId> connectionIdSet() {
 		return Sets.newHashSet(new ObjectId("5f9014743cb73ce896167658"), new ObjectId("5f9014743cb73ce896167659"));
+	}
+
+	@Test
+	void shouldResetConnectionWhenErrorMsgIsEmpty() {
+		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
+
+		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "");
+
+		Assertions.assertFalse(connection.isBrokenConnection());
+		Assertions.assertNull(connection.getConnectionErrorMsg());
+		Assertions.assertEquals(0, connection.getNotificationCount());
+		verify(connectionRepository).save(connection);
+	}
+
+	@Test
+	void shouldTriggerNotificationWhenErrorMsgExists() {
+		connection.setNotificationCount(0);
+		connection.setType("Jenkins");
+		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
+
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection");
+		when(notificationConfig.getMailTemplate()).thenReturn(Map.of("Broken_Connection", "template-key"));
+		when(notificationConfig.getKafkaMailTopic()).thenReturn("mail-topic");
+		when(notificationConfig.isNotificationSwitch()).thenReturn(true);
+		when(notificationConfig.isMailWithoutKafka()).thenReturn(false);
+
+		UserInfo userInfo = new UserInfo();
+		userInfo.setEmailAddress("user@example.com");
+		userInfo.setDisplayName("User");
+		Map<String, Boolean> alertNotifications = new HashMap<>();
+		alertNotifications.put("errorAlertNotification",true);
+		userInfo.setNotificationEmail(alertNotifications);
+
+
+
+		when(userInfoRepository.findByUsername("user123")).thenReturn(userInfo);
+
+		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Error!");
+
+		Assertions.assertTrue(connection.isBrokenConnection());
+		Assertions.assertEquals("Error!", connection.getConnectionErrorMsg());
+		Assertions.assertNotNull(connection.getNotifiedOn());
+		Assertions.assertEquals(1, connection.getNotificationCount());
+		verify(notificationService).sendNotificationEvent(
+				eq(List.of("user@example.com")),
+				anyMap(),
+				eq("Action Required: Restore Your {{toolName}} Connection"),
+				eq("Broken_Connection"),
+				eq("mail-topic"),
+				eq(true),
+				eq(kafkaTemplate),
+				eq("template-key"),
+				eq(false)
+		);
+	}
+
+	@Test
+	void shouldNotNotifyWhenNotificationCountExceedsMax() {
+		connection.setNotificationCount(5);
+		connection.setType("Jenkins");
+		connection.setNotifiedOn(LocalDateTime.now().minusDays(1).toString());
+		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+
+		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
+
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
+	}
+
+	@Test
+	void shouldNotifyWhenNotifiedOnIsInvalid() {
+		connection.setNotificationCount(0);
+		connection.setType("Jenkins");
+		connection.setNotifiedOn("invalid-timestamp");
+		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("3");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+
+		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
+
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
+	}
+
+	@Test
+	void shouldNotNotifyWhenEmailOrSubjectIsBlank() {
+		connection.setNotificationCount(0);
+		connection.setNotifiedOn(null);
+		connection.setType("Jenkins");
+		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
+		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
+		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
+		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection"); // subject is blank
+
+		UserInfo userInfo = new UserInfo();
+		userInfo.setEmailAddress("user@example.com");
+		Map<String, Boolean> alertNotifications = new HashMap<>();
+		alertNotifications.put("errorAlertNotification",false);
+		userInfo.setNotificationEmail(alertNotifications);
+		when(userInfoRepository.findByUsername("user123")).thenReturn(userInfo);
+
+
+		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
+
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
 	}
 }
