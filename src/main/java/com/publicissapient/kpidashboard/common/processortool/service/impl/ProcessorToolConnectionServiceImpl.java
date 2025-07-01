@@ -35,9 +35,9 @@ import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
 import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
 import com.publicissapient.kpidashboard.common.service.NotificationService;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -55,26 +55,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnectionService {
 
 	private static final String NOTIFICATION_KEY = "Broken_Connection";
-	@Autowired
-	private ProjectToolConfigRepository projectToolConfigRepository;
-
-	@Autowired
-	private ConnectionRepository connectionRepository;
-
-	@Autowired
-	private NotificationService notificationService;
-
-	@Autowired
-	private UserInfoRepository userInfoRepository;
-
-	@Autowired
-	private NotificationConfig notificationConfig;
-
-	@Autowired
-	private KafkaTemplate<String, Object> kafkaTemplate;
+	private final ProjectToolConfigRepository projectToolConfigRepository;
+	private final ConnectionRepository connectionRepository;
+	private final NotificationService notificationService;
+	private final UserInfoRepository userInfoRepository;
+	private final NotificationConfig notificationConfig;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	/**
 	 * find all tools and map it with their respective connections
