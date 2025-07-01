@@ -18,6 +18,10 @@
 
 package com.publicissapient.kpidashboard.common.processortool.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +29,16 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.config.NotificationConfig;
+import com.publicissapient.kpidashboard.common.constant.NotificationEnum;
+import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
+import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
+import com.publicissapient.kpidashboard.common.service.NotificationService;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
@@ -44,13 +55,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnectionService {
 
-	@Autowired
-	private ProjectToolConfigRepository projectToolConfigRepository;
-
-	@Autowired
-	private ConnectionRepository connectionRepository;
+	private static final String NOTIFICATION_KEY = "Broken_Connection";
+	private final ProjectToolConfigRepository projectToolConfigRepository;
+	private final ConnectionRepository connectionRepository;
+	private final NotificationService notificationService;
+	private final UserInfoRepository userInfoRepository;
+	private final NotificationConfig notificationConfig;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	/**
 	 * find all tools and map it with their respective connections
@@ -185,12 +199,13 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	}
 
 	/**
-	 * @param toolConnection
-	 *          toolConnection
+	 * @param connection
+	 *          connection
 	 */
-	public void validateConnectionFlag(ProcessorToolConnection toolConnection) {
-		if (toolConnection.isBrokenConnection()) {
-			updateBreakingConnection(toolConnection.getConnectionId(), null);
+	public void validateConnectionFlag(ProcessorToolConnection connection) {
+		log.info("Validating the connection for {}",connection.getConnectionName());
+		if (connection.isBrokenConnection()) {
+			updateBreakingConnection(connection.getId(), connection.getConnectionErrorMsg());
 		}
 	}
 
@@ -206,30 +221,135 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	}
 
 	/**
-	 * update breaking connection detail
+	 * update breaking connection flag
 	 *
 	 * @param connection
-	 *          connection
 	 * @param conErrorMsg
-	 *          conErrorMsg
 	 */
 	@Override
 	public void updateBreakingConnection(ObjectId connection, String conErrorMsg) {
+		if (connection == null) return;
 
-		if (connection != null) {
+		Optional<Connection> existingConnOpt = connectionRepository.findById(connection);
+		if (existingConnOpt.isPresent()) {
+			Connection existingConnection = existingConnOpt.get();
+			log.info("Updating breaking connection for connection: {}", existingConnection.getConnectionName());
 
-			Optional<Connection> existingConnOpt = connectionRepository.findById(connection);
-			if (existingConnOpt.isPresent()) {
-				Connection existingConnection = existingConnOpt.get();
-				if (StringUtils.isEmpty(conErrorMsg)) {
-					existingConnection.setBrokenConnection(false);
-					existingConnection.setConnectionErrorMsg(conErrorMsg);
-				} else {
-					existingConnection.setBrokenConnection(true);
-					existingConnection.setConnectionErrorMsg(conErrorMsg);
-				}
-				connectionRepository.save(existingConnection);
+			if (StringUtils.isEmpty(conErrorMsg)) {
+				resetConnectionState(existingConnection);
+			} else {
+				handleBrokenConnection(existingConnection, conErrorMsg);
 			}
+
+			connectionRepository.save(existingConnection);
 		}
 	}
+
+
+	private void resetConnectionState(Connection connection) {
+		connection.setBrokenConnection(false);
+		connection.setConnectionErrorMsg(null);
+		connection.setNotifiedOn(null);
+		connection.setNotificationCount(0);
+	}
+
+	private void handleBrokenConnection(Connection connection, String errorMsg) {
+		connection.setBrokenConnection(true);
+		connection.setConnectionErrorMsg(errorMsg);
+
+		if (shouldSendNotification(connection)) {
+			sendBrokenConnectionNotification(connection);
+			connection.setNotifiedOn(DateUtil.getTodayTime().toString());
+			connection.setNotificationCount(connection.getNotificationCount() + 1);
+		}
+	}
+
+	private boolean shouldSendNotification(Connection connection) {
+		String value = notificationConfig.getMaximumEmailNotificationCount();
+		log.info("BrokenConnectionMaximumEmailNotificationCount from config: {}", value);
+		int maxCount = 0;
+		try {
+			maxCount = Integer.parseInt(value.replace("'", "").trim());
+		} catch (NumberFormatException e) {
+			log.warn("Invalid max notification count: {}", value);
+		}
+
+		int frequencyDays = Integer.parseInt(notificationConfig.getEmailNotificationFrequency());
+		if (maxCount <= 0) return false;
+
+		int count = connection.getNotificationCount();
+		log.info("NotificationCount:{}",count);
+		if (count >= maxCount) return false;
+
+		String notifiedOn = Optional.of(connection)
+									.map(Connection::getNotifiedOn).orElse("");
+		if (StringUtils.isBlank(notifiedOn)) return true;
+
+		try {
+			LocalDateTime lastNotified = LocalDateTime.parse(DateUtil.localDateTimeToUTC(notifiedOn));
+			return DateUtil.getTodayTime().isAfter(lastNotified.plusDays(frequencyDays));
+		} catch (DateTimeParseException e) {
+			log.warn("Invalid notifiedOn timestamp for connection ID {}: {}", connection.getId(), notifiedOn, e);
+			return false;
+		}
+	}
+
+	void sendBrokenConnectionNotification(Connection connection) {
+		UserInfo userInfo = userInfoRepository.findByUsername(connection.getCreatedBy());
+		if (userInfo == null) {
+			log.warn("No userInfo found for username: {}", connection.getCreatedBy());
+			return;
+		}
+		String email = userInfo.getEmailAddress();
+
+		boolean notifyUserOnError = Boolean.TRUE.equals(isErrorAlertNotificationEnabled(userInfo));
+
+		String subjectTemplate = notificationConfig.getEmailNotificationSubject();
+		String notificationSubject = subjectTemplate.replace("{{Tool_Name}}", connection.getType());
+
+		String fixUrl = notificationConfig.getUiHost() + notificationConfig.getFixUrl();
+
+		if (notifyUserOnError && StringUtils.isNotBlank(email) && StringUtils.isNotBlank(notificationSubject)) {
+			Map<String, String> customData = createCustomData(
+					userInfo.getDisplayName(),
+					connection.getType(),
+					fixUrl,
+					notificationConfig.getHelpUrl()
+			);
+
+			String templateKey = notificationConfig.getMailTemplate().getOrDefault(NOTIFICATION_KEY, "");
+
+			log.info("Sending broken connection notification to user: {}", email);
+			notificationService.sendNotificationEvent(
+					Collections.singletonList(email),
+					customData,
+					notificationSubject,
+					NOTIFICATION_KEY,
+					notificationConfig.getKafkaMailTopic(),
+					notificationConfig.isNotificationSwitch(),
+					kafkaTemplate,
+					templateKey,
+					notificationConfig.isMailWithoutKafka()
+			);
+		} else {
+			log.info("Notification not sent. Conditions failed — email: {}, notifyUserOnError: {}, subject blank: {}",
+					 email, notifyUserOnError, StringUtils.isBlank(notificationSubject));
+		}
+	}
+
+	private Boolean isErrorAlertNotificationEnabled(UserInfo userInfo) {
+		return userInfo.getNotificationEmail() != null
+			   && Boolean.TRUE.equals(userInfo.getNotificationEmail().get("errorAlertNotification"));
+	}
+
+	private Map<String, String> createCustomData(String userName, String toolName, String connectionFixUrl, String helpUrl) {
+		Map<String, String> customData = new HashMap<>();
+		customData.put(NotificationEnum.USER_NAME.getValue(), userName);
+		customData.put(NotificationEnum.TOOL_NAME.getValue(), toolName);
+		customData.put(NotificationEnum.FIX_URL.getValue(), connectionFixUrl);
+		customData.put(NotificationEnum.HELP_URL.getValue(), helpUrl);
+		return customData;
+	}
+
 }
+
