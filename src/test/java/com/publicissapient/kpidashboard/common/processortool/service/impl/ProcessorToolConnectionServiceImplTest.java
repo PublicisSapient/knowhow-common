@@ -47,7 +47,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -80,9 +79,6 @@ public class ProcessorToolConnectionServiceImplTest {
 
 	@Mock
 	private NotificationService notificationService;
-
-	@Mock
-	private KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Mock
 	private ConnectionRepository connectionRepository;
@@ -222,12 +218,8 @@ public class ProcessorToolConnectionServiceImplTest {
 				eq(List.of("user@example.com")),
 				anyMap(),
 				eq("Action Required: Restore Your {{toolName}} Connection"),
-				eq("Broken_Connection"),
-				eq("mail-topic"),
 				eq(true),
-				eq(kafkaTemplate),
-				eq("template-key"),
-				eq(false)
+				eq("template-key")
 		);
 	}
 
@@ -242,7 +234,7 @@ public class ProcessorToolConnectionServiceImplTest {
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
 
-		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), anyBoolean(), any());
 	}
 
 	@Test
@@ -255,8 +247,7 @@ public class ProcessorToolConnectionServiceImplTest {
 		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
-
-		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), anyBoolean(), any());
 	}
 
 	@Test
@@ -279,6 +270,6 @@ public class ProcessorToolConnectionServiceImplTest {
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
 
-		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), any(), any(), anyBoolean(), any(), any(), anyBoolean());
+		verify(notificationService, never()).sendNotificationEvent(any(), any(), any(), anyBoolean(), any());
 	}
 }

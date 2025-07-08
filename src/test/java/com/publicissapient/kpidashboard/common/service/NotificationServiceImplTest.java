@@ -28,21 +28,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.knowhow.retro.notifications.model.EmailEvent;
+import com.knowhow.retro.notifications.producer.EmailProducer;
+import com.knowhow.retro.notifications.utils.TemplateParserHelper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.mail.MailSendException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import com.publicissapient.kpidashboard.common.kafka.producer.NotificationEventProducer;
 import com.publicissapient.kpidashboard.common.model.application.EmailServerDetail;
 import com.publicissapient.kpidashboard.common.model.application.GlobalConfig;
-import com.publicissapient.kpidashboard.common.model.notification.EmailEvent;
 import com.publicissapient.kpidashboard.common.repository.application.GlobalConfigRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -52,17 +53,15 @@ public class NotificationServiceImplTest {
 	private NotificationServiceImpl notificationService;
 
 	@Mock
-	private NotificationEventProducer notificationEventProducer;
-
-	@Mock
 	private GlobalConfigRepository globalConfigRepository;
 	@Mock
 	private SpringTemplateEngine templateEngine;
 	@Mock
-	private KafkaTemplate<String, Object> kafkaTemplate;
+	private TemplateParserHelper templateParserHelper;
 
 	private GlobalConfig globalConfig;
-
+   @Mock
+	private ObjectProvider<EmailProducer> emailProducer;
 	private List<GlobalConfig> globalConfigs = new ArrayList<>();
 
 	@BeforeEach
@@ -87,12 +86,10 @@ public class NotificationServiceImplTest {
 		String notSubject = "";
 		String notKey = "key";
 		String topic = "topic";
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null, null,
-				notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
 				globalConfig.getEmailServerDetail().getEmailPort());
-		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic, true, kafkaTemplate);
-		notificationService.sendNotificationEvent(emailList, customData, notSubject, notKey, topic, true, kafkaTemplate,
-				"abc", false);
+		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
 	}
 
 	@Test
@@ -106,12 +103,11 @@ public class NotificationServiceImplTest {
 		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn("abc");
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null, null,
-				notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
 				globalConfig.getEmailServerDetail().getEmailPort());
-		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic, false, kafkaTemplate);
-		Assert.assertThrows(MailSendException.class, () -> notificationService.sendEmailWithoutKafka(emailList, customData,
-				notSubject, notKey, topic, true, "Forgot_Password_Template"));
+		Assert.assertThrows(MailSendException.class, () -> notificationService.sendNotificationEvent(emailList,
+				customData, notSubject, true, "Forgot_Password_Template"));
 	}
 
 	@Test
@@ -125,12 +121,10 @@ public class NotificationServiceImplTest {
 		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn(null);
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null, null,
-				notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
 				globalConfig.getEmailServerDetail().getEmailPort());
-		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic, false, kafkaTemplate);
-		notificationService.sendEmailWithoutKafka(emailList, customData, notSubject, notKey, topic, false,
-				"Forgot_Password_Template");
+		notificationService.sendNotificationEvent(emailList, customData, notSubject, false, "Forgot_Password_Template");
 	}
 
 	@Test
@@ -143,11 +137,10 @@ public class NotificationServiceImplTest {
 		String notKey = "key";
 		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null, null,
-				notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
 				globalConfig.getEmailServerDetail().getEmailPort());
-		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic, true, kafkaTemplate);
-		notificationService.sendNotificationEvent(emailList, customData, notSubject, notKey, topic, true, kafkaTemplate,
-				"abc", false);
+		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
+
 	}
 }
