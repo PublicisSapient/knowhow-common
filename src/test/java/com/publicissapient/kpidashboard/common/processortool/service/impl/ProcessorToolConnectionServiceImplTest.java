@@ -193,9 +193,7 @@ public class ProcessorToolConnectionServiceImplTest {
 		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
 		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection");
 		when(notificationConfig.getMailTemplate()).thenReturn(Map.of("Broken_Connection", "template-key"));
-		when(notificationConfig.getKafkaMailTopic()).thenReturn("mail-topic");
 		when(notificationConfig.isNotificationSwitch()).thenReturn(true);
-		when(notificationConfig.isMailWithoutKafka()).thenReturn(false);
 
 		UserInfo userInfo = new UserInfo();
 		userInfo.setEmailAddress("user@example.com");

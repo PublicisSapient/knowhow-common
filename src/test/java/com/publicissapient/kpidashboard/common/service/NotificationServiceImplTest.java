@@ -84,46 +84,31 @@ public class NotificationServiceImplTest {
 		Map<String, String> customData = new HashMap<>();
 		customData.put("abc", "xyz");
 		String notSubject = "";
-		String notKey = "key";
-		String topic = "topic";
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
-				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
-				globalConfig.getEmailServerDetail().getEmailPort());
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
 	}
 
 	@Test
-	public void testSendEmailWithoutKafka() {
+	public void testSentWithJMS() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
 		customData.put("abc", "xyz");
 		String notSubject = "subject";
-		String notKey = "key";
-		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn("abc");
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
-				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
-				globalConfig.getEmailServerDetail().getEmailPort());
 		Assert.assertThrows(MailSendException.class, () -> notificationService.sendNotificationEvent(emailList,
 				customData, notSubject, true, "Forgot_Password_Template"));
 	}
 
 	@Test
-	public void testSendEmailWithoutKafkaKeyNotFound() {
+	public void testSendEmailWithJMSKeyNotFound() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
 		customData.put("abc", "xyz");
 		String notSubject = "subject";
-		String notKey = "key";
-		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn(null);
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
-				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
-				globalConfig.getEmailServerDetail().getEmailPort());
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, false, "Forgot_Password_Template");
 	}
 
@@ -134,12 +119,7 @@ public class NotificationServiceImplTest {
 		Map<String, String> customData = new HashMap<>();
 		customData.put("abc", "xyz");
 		String notSubject = "subject";
-		String notKey = "key";
-		String topic = "topic";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
-		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
-				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
-				globalConfig.getEmailServerDetail().getEmailPort());
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
 
 	}

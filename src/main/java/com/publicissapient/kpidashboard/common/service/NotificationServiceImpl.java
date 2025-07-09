@@ -26,7 +26,6 @@ import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-
 import com.publicissapient.kpidashboard.common.model.application.EmailServerDetail;
 import com.publicissapient.kpidashboard.common.model.application.GlobalConfig;
 
@@ -52,7 +51,11 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void sendNotificationEvent(List<String> emailAddresses, Map<String, String> customData, String notSubject,
 			boolean notificationSwitch, String templateKey) {
-
+		if (!notificationSwitch) {
+			log.info(
+					"Notification Switch is Off. If want to send notification set true for notification.switch in property");
+			return;
+		}
 		if (StringUtils.isNotBlank(notSubject)) {
 			EmailServerDetail emailServerDetail = getEmailServerDetail();
 			if (emailServerDetail != null) {
@@ -61,12 +64,17 @@ public class NotificationServiceImpl implements NotificationService {
 						emailServerDetail.getEmailPort());
 				EmailProducer emailProvider = emailProducer.getIfAvailable();
 				if (emailProvider != null) {
-                    String fileName = "templates/" + templateKey;
-                    emailEvent.setBody(templateParserHelper.getContentFromFile(fileName));
-                    emailProvider.sendEmail(emailEvent);
-					emailProvider.sendEmail(emailEvent);
+					try {
+						String fileName = "templates/" + templateKey;
+						emailEvent.setBody(templateParserHelper.getContentFromFile(fileName));
+						emailProvider.sendEmail(emailEvent);
+					} catch (Exception e) {
+						log.error("Email not sent for the key with Rabitmq : {} due to {} ", templateKey,
+								e.getMessage());
+						sentFromJavaMail(emailEvent, templateKey);
+					}
 				} else {
-					sentFromJavaMail(emailEvent, notificationSwitch,templateKey);
+					sentFromJavaMail(emailEvent, templateKey);
 				}
 			} else {
 				log.error("Notification Event not sent : notification emailServer Details not found in db");
@@ -78,25 +86,20 @@ public class NotificationServiceImpl implements NotificationService {
 
 	}
 
-	public void sentFromJavaMail(EmailEvent emailEvent, boolean notificationSwitch, String templateKey) {
-		if (notificationSwitch) {
-			JavaMailSenderImpl javaMailSender = getJavaMailSender(emailEvent);
-			MimeMessage message = javaMailSender.createMimeMessage();
-			try {
-				sentMailViaJavaMail(templateKey, emailEvent, javaMailSender, message);
-			} catch (MessagingException me) {
-				log.error("Email not sent for the key : {}", templateKey);
-			} catch (TemplateInputException tie) {
-				log.error("Template not found for the key : {}", templateKey);
-				throw new RecoverableDataAccessException("Template not found for the key :" + templateKey);
-			} catch (TemplateProcessingException tpe) {
-				throw new RecoverableDataAccessException("Template not parsed for the key :" + templateKey);
-			}
-
-		} else {
-			log.info(
-					"Notification Switch is Off. If want to send notification set true for notification.switch in property");
+	public void sentFromJavaMail(EmailEvent emailEvent, String templateKey) {
+		JavaMailSenderImpl javaMailSender = getJavaMailSender(emailEvent);
+		MimeMessage message = javaMailSender.createMimeMessage();
+		try {
+			sentMailViaJavaMail(templateKey, emailEvent, javaMailSender, message);
+		} catch (MessagingException me) {
+			log.error("Email not sent for the key : {}", templateKey);
+		} catch (TemplateInputException tie) {
+			log.error("Template not found for the key : {}", templateKey);
+			throw new RecoverableDataAccessException("Template not found for the key :" + templateKey);
+		} catch (TemplateProcessingException tpe) {
+			throw new RecoverableDataAccessException("Template not parsed for the key :" + templateKey);
 		}
+
 	}
 
 	private void sentMailViaJavaMail(String templateKey, EmailEvent emailEvent, JavaMailSenderImpl javaMailSender,
