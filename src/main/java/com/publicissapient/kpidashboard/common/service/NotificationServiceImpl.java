@@ -2,7 +2,6 @@ package com.publicissapient.kpidashboard.common.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
