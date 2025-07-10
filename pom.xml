@@ -349,7 +349,7 @@
     <dependency>
       <groupId>com.knowhow.retro</groupId>
       <artifactId>knowhow-retro-notifications-lib</artifactId>
-      <version>1.2.2</version>
+      <version>1.2.3</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -437,6 +437,14 @@
       <version>${commons-io.version}</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/PublicisSapient/knowhow-ai-gateway-client</url>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
       <plugin>
