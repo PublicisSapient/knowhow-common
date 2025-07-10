@@ -441,7 +441,7 @@
     <repository>
       <id>github</id>
       <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/PublicisSapient/knowhow-ai-gateway-client</url>
+      <url>https://maven.pkg.github.com/PublicisSapient/knowhow-retro-notifications-lib</url>
     </repository>
   </repositories>
 
