@@ -17,8 +17,8 @@
 
 package com.publicissapient.kpidashboard.common.model.notification;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -31,8 +31,9 @@ import java.util.List;
 @Data
 public class EmailRequestPayload {
 	@NotEmpty(message = "Recipients list cannot be empty.")
-	private List<String> recipients;
+	private List<@Email(message = "Invalid email address") String> recipients;
 	private String userName;
+	@Email(message = "User email is invalid.")
 	private String userEmail;
 	private String accessLevel;
 	private String accessItems;
@@ -45,6 +46,7 @@ public class EmailRequestPayload {
 	private String feedbackContent;
 	private String feedbackCategory;
 	private String feedbackType;
+	@Email(message = "Admin email is invalid.")
 	private String adminEmail;
 	private String toolName;
 	private String helpUrl;
