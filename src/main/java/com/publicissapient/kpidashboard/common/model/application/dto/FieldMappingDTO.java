@@ -562,6 +562,9 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String jiraDefectRejectionStatusKPI190;
 	private String defectReopenStatusKPI190;
 	private String thresholdValueKPI190;
+	private String jiraDefectSeverityKPI194;
+
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *
