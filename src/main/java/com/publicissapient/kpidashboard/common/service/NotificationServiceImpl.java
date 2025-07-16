@@ -15,6 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -47,6 +48,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final ObjectProvider<EmailProducer> emailProducer;
 
+	private final Environment environment;
+
 	@Override
 	public void sendNotificationEvent(List<String> emailAddresses, Map<String, String> customData, String notSubject,
 			boolean notificationSwitch, String templateKey) {
@@ -62,10 +65,21 @@ public class NotificationServiceImpl implements NotificationService {
 						notSubject, null, customData, emailServerDetail.getEmailHost(),
 						emailServerDetail.getEmailPort());
 				EmailProducer emailProvider = emailProducer.getIfAvailable();
+				/*
+				spring.rabbitmq.host=localhost
+spring.rabbitmq.virtual-host=/
+spring.rabbitmq.username=
+spring.rabbitmq.password=
+				 */
+				log.info(environment.getProperty("spring.rabbitmq.host"));
+				log.info(environment.getProperty("spring.rabbitmq.virtual-host"));
+				log.info(environment.getProperty("spring.rabbitmq.username"));
+				log.info(environment.getProperty("spring.rabbitmq.password"));
 				if (emailProvider != null) {
 					try {
 						String fileName = "templates/" + templateKey;
 						emailEvent.setBody(templateParserHelper.getContentFromFile(fileName));
+						log.info("Email pushed to RabbitMQ for fileName {}", fileName);
 						emailProvider.sendEmail(emailEvent);
 					} catch (Exception e) {
 						log.error("Email not sent for the key with Rabitmq : {} due to {} ", templateKey,
