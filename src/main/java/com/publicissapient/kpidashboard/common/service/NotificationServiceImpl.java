@@ -64,25 +64,20 @@ public class NotificationServiceImpl implements NotificationService {
 				EmailEvent emailEvent = new EmailEvent(emailServerDetail.getFromEmail(), emailAddresses, null, null,
 						notSubject, null, customData, emailServerDetail.getEmailHost(),
 						emailServerDetail.getEmailPort());
+
+				String rabbitHost = environment.getProperty("spring.rabbitmq.host");
+				boolean isRabbitConfigured = StringUtils.isNotBlank(rabbitHost);
+
 				EmailProducer emailProvider = emailProducer.getIfAvailable();
-				/*
-				spring.rabbitmq.host=localhost
-spring.rabbitmq.virtual-host=/
-spring.rabbitmq.username=
-spring.rabbitmq.password=
-				 */
-				log.info(environment.getProperty("spring.rabbitmq.host"));
-				log.info(environment.getProperty("spring.rabbitmq.virtual-host"));
-				log.info(environment.getProperty("spring.rabbitmq.username"));
-				log.info(environment.getProperty("spring.rabbitmq.password"));
-				if (emailProvider != null) {
+
+				if (isRabbitConfigured && emailProvider != null) {
 					try {
 						String fileName = "templates/" + templateKey;
 						emailEvent.setBody(templateParserHelper.getContentFromFile(fileName));
-						log.info("Email pushed to RabbitMQ for fileName {}", fileName);
 						emailProvider.sendEmail(emailEvent);
+						log.info("Email successfully Pushed to RabbitMQ for the key : {}", templateKey);
 					} catch (Exception e) {
-						log.error("Email not sent for the key with Rabitmq : {} due to {} ", templateKey,
+						log.error("Email not sent for the key with RabbitMQ : {} due to {} ", templateKey,
 								e.getMessage());
 						sentFromJavaMail(emailEvent, templateKey);
 					}

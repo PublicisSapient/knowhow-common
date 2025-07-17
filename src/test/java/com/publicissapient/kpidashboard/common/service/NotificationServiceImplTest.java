@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -28,10 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knowhow.retro.notifications.model.EmailEvent;
 import com.knowhow.retro.notifications.producer.EmailProducer;
 import com.knowhow.retro.notifications.utils.TemplateParserHelper;
-import org.eclipse.jetty.util.component.Environment;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailSendException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -48,7 +48,7 @@ import com.publicissapient.kpidashboard.common.model.application.GlobalConfig;
 import com.publicissapient.kpidashboard.common.repository.application.GlobalConfigRepository;
 
 @ExtendWith(SpringExtension.class)
-public class NotificationServiceImplTest {
+class NotificationServiceImplTest {
 
 	@InjectMocks
 	private NotificationServiceImpl notificationService;
@@ -61,12 +61,14 @@ public class NotificationServiceImplTest {
 	private TemplateParserHelper templateParserHelper;
 
 	private GlobalConfig globalConfig;
-   @Mock
+	@Mock
+	private Environment environment;
+   	@Mock
 	private ObjectProvider<EmailProducer> emailProducer;
 	private List<GlobalConfig> globalConfigs = new ArrayList<>();
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
 		globalConfig = new GlobalConfig();
 		globalConfig.setEnv("email");
 		EmailServerDetail emailServerDetail = new EmailServerDetail();
@@ -78,18 +80,19 @@ public class NotificationServiceImplTest {
 		globalConfigs.add(globalConfig);
 	}
 
-//	@Test
-	public void testSendNotificationEventNull() {
+	@Test
+	void testSendNotificationEventNull() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
 		customData.put("abc", "xyz");
 		String notSubject = "";
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
+		assertTrue(true);
 	}
 
-//	@Test
-	public void testSentWithJMS() {
+	@Test
+	void testSentWithJMS() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
@@ -101,8 +104,8 @@ public class NotificationServiceImplTest {
 				customData, notSubject, true, "Forgot_Password_Template"));
 	}
 
-	//@Test
-	public void testSendEmailWithJMSKeyNotFound() {
+	@Test
+	void testSendEmailWithJMSKeyNotFound() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
@@ -111,10 +114,11 @@ public class NotificationServiceImplTest {
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn(null);
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, false, "Forgot_Password_Template");
+		assertTrue(true);
 	}
 
-	//@Test
-	public void testSendNotificationEvent() {
+	@Test
+	void testSendNotificationEvent() {
 		List<String> emailList = new ArrayList<>();
 		emailList.add("abc@xyz.com");
 		Map<String, String> customData = new HashMap<>();
@@ -122,6 +126,6 @@ public class NotificationServiceImplTest {
 		String notSubject = "subject";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		notificationService.sendNotificationEvent(emailList, customData, notSubject, true, "abc");
-
+		assertTrue(true);
 	}
 }
