@@ -24,6 +24,8 @@ import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.application.OrganizationHierarchy;
 
+import java.util.List;
+
 @Repository
 public interface OrganizationHierarchyRepository extends MongoRepository<OrganizationHierarchy, ObjectId> {
 
@@ -31,4 +33,6 @@ public interface OrganizationHierarchyRepository extends MongoRepository<Organiz
 	void deleteByNodeId(String nodeId);
 
 	OrganizationHierarchy findByNodeId(String nodeId);
+
+	List<OrganizationHierarchy> findByExternalIdsIn(List<String> externalId);
 }
