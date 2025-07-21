@@ -34,5 +34,5 @@ public interface OrganizationHierarchyRepository extends MongoRepository<Organiz
 
 	OrganizationHierarchy findByNodeId(String nodeId);
 
-	List<OrganizationHierarchy> findByExternalIdsIn(List<String> externalId);
+	List<OrganizationHierarchy> findByExternalIdIn(List<String> externalId);
 }
