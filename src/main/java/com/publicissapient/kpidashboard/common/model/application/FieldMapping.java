@@ -593,6 +593,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> resolutionTypeForRejectionKPI194;
 	private List<String> jiraDefectRejectionStatusKPI194;
 	private String thresholdValueKPI194;
+	private String jiraDefectSeverityByCustomFieldKPI194;
 
 	/**
 	 * Get jira issue type names string [ ].
