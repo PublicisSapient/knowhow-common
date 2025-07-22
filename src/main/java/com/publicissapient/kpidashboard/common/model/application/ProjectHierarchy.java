@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -44,6 +45,8 @@ public class ProjectHierarchy extends OrganizationHierarchy implements Serializa
 	private String releaseState;
 	private String beginDate;
 	private String endDate;
+	@Transient
+	private boolean onHold;
 
 	@Override
 	public boolean equals(Object o) {
@@ -65,9 +68,10 @@ public class ProjectHierarchy extends OrganizationHierarchy implements Serializa
 
 	public ProjectHierarchy(String nodeId, String nodeName, String nodeDisplayName, String hierarchyLevelId,
 			String parentId, LocalDateTime createdDate, LocalDateTime modifiedDate, ObjectId basicProjectConfigId,
-			String createdBy, String updatedBy) {
+			String createdBy, String updatedBy, boolean onHold) {
 		super(nodeId, nodeName, nodeDisplayName, hierarchyLevelId, parentId, createdDate, modifiedDate, createdBy,
 				updatedBy);
 		this.basicProjectConfigId = basicProjectConfigId;
+		this.onHold = onHold;
 	}
 }
