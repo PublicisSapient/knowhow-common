@@ -54,6 +54,8 @@ public class OrganizationHierarchy extends BasicModel implements Serializable {
 
 	private String nodeName;
 
+	private String externalId;
+
 	private String nodeDisplayName;
 
 	private String hierarchyLevelId;
