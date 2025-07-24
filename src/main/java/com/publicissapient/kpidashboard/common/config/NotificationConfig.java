@@ -42,10 +42,8 @@ public class NotificationConfig {
 	private String emailNotificationSubject;
 	private String fixUrl;
 	private String helpUrl;
-	private String kafkaMailTopic;
 	private String uiHost;
 	private Map<String, String> mailTemplate;
 	private boolean notificationSwitch;
-	private boolean mailWithoutKafka;
 }
 
