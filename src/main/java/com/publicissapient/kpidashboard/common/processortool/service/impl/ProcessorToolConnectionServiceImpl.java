@@ -38,7 +38,6 @@ import com.publicissapient.kpidashboard.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
@@ -64,7 +63,6 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	private final NotificationService notificationService;
 	private final UserInfoRepository userInfoRepository;
 	private final NotificationConfig notificationConfig;
-	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	/**
 	 * find all tools and map it with their respective connections
@@ -324,12 +322,8 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 					Collections.singletonList(email),
 					customData,
 					notificationSubject,
-					NOTIFICATION_KEY,
-					notificationConfig.getKafkaMailTopic(),
 					notificationConfig.isNotificationSwitch(),
-					kafkaTemplate,
-					templateKey,
-					notificationConfig.isMailWithoutKafka()
+					templateKey
 			);
 		} else {
 			log.info("Notification not sent. Conditions failed — email: {}, notifyUserOnError: {}, subject blank: {}",
