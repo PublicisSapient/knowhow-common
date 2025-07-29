@@ -65,8 +65,8 @@ public interface AccessRequestsRepository extends MongoRepository<AccessRequest,
 	 *          item id
 	 * @return pending requests which have provided item
 	 */
-	@Query("{'status':'Pending', 'accessNode.accessItems.itemId': ?0}")
-	List<AccessRequest> findPendingAccessRequestsByAccessItemId(String itemId);
+	@Query("{'accessNode.accessItems.itemId': ?0}")
+	List<AccessRequest> findAccessRequestsByAccessItemId(String itemId);
 
 	/**
 	 * Find pending requests
@@ -90,4 +90,5 @@ public interface AccessRequestsRepository extends MongoRepository<AccessRequest,
 	AccessRequest findById(String id);
 
     void deleteById(List<ObjectId> obsoleteAccessRequests);
+	void deleteByUsername(String userName);
 }

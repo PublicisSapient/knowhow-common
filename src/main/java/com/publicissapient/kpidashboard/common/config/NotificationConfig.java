@@ -15,36 +15,35 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package com.publicissapient.kpidashboard.common.model.notification;
 
-import java.io.Serializable;
-import java.util.List;
+
+package com.publicissapient.kpidashboard.common.config;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
- * This class is represent kafka message format
+ * This class is used to bind external configurations to a bean in application
+ * code. You can inject and use this bean throughout your application code just
+ * like any other spring bean.
  *
- * @author pkum34
+ * @author rendk
  */
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Data
-public class EmailEvent implements Serializable {
-
-	/** */
-	private static final long serialVersionUID = -1334987659830782650L;
-
-	private String from;
-	private List<String> to;
-	private List<String> cc;
-	private List<String> bcc;
-	private String subject;
-	private String body;
-	private Map<String, String> customData;
-	private String emailHost;
-	private int emailPort;
+@Component
+@ConfigurationProperties(prefix = "broken-connection")
+public class NotificationConfig {
+	private String maximumEmailNotificationCount;
+	private String emailNotificationFrequency;
+	private String emailNotificationSubject;
+	private String fixUrl;
+	private String helpUrl;
+	private String uiHost;
+	private Map<String, String> mailTemplate;
+	private boolean notificationSwitch;
 }
+
