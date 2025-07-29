@@ -71,7 +71,7 @@ public class ProjectBasicConfig extends BasicModel {
 	private boolean saveAssigneeDetails;
 	private boolean developerKpiEnabled;
 	private boolean projectOnHold;
-
+	private String projectOnHoldTime;
 	private ObjectId clonedFrom;
 
 	/**
