@@ -89,6 +89,9 @@ public interface ProjectBasicConfigRepository extends MongoRepository<ProjectBas
 	@Query("{ 'projectOnHold': ?0 }")
 	List<ProjectBasicConfig> findActiveProjects(Boolean projectOnHold);
 
+	@Query("{ 'projectOnHold': ?0 , 'id': id}")
+	Optional<ProjectBasicConfig> findActiveProjectsById(Boolean projectOnHold, String id);
+
 	@Query("{ 'kanban': ?0, 'projectOnHold': ?1 }")
 	List<ProjectBasicConfig> findByKanbanAndProjectOnHold(boolean isKanban, boolean projectOnHold);
 }
