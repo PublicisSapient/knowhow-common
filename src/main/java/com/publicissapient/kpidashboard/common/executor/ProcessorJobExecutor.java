@@ -51,6 +51,8 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 	private final String processorName;
 	private List<String> projectsBasicConfigIds;
 	private ExecutionLogContext executionLogContext;
+	//	field for scm processor tool label
+	private String processorLabel;
 
 	@Autowired
 	protected ProcessorJobExecutor(TaskScheduler taskScheduler, String processorName) {
@@ -77,6 +79,14 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 
 	public void setProjectsBasicConfigIds(List<String> projectsBasicConfigIds) {
 		this.projectsBasicConfigIds = projectsBasicConfigIds;
+	}
+
+	public  String getProcessorLabel() {
+		return processorLabel;
+	}
+
+	public void setProcessorLabel(String processorLabel) {
+		this.processorLabel = processorLabel;
 	}
 
 	@Override
@@ -130,7 +140,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 
 	public abstract T getProcessor();
 
-	public abstract ProcessorRepository<T> getProcessorRepository();
+    public abstract ProcessorRepository<T> getProcessorRepository();
 
 	public abstract String getCron();
 

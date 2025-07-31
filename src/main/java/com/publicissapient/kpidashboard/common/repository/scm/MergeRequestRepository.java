@@ -1,9 +1,12 @@
 package com.publicissapient.kpidashboard.common.repository.scm;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 
@@ -43,4 +46,18 @@ public interface MergeRequestRepository
 	 * @return
 	 */
 	List<MergeRequests> findByProcessorItemIdAndRevisionNumberIn(ObjectId processorItemId, Set<String> revisionNumber);
+
+    /**
+     * Finds merge requests by repository name.
+     *
+     * @param repositoryName the repository name
+     * @param pageable pagination information
+     * @return page of merge requests for the specified repository
+     */
+    Page<MergeRequests> findByRepositoryName(String repositoryName, Pageable pageable);
+
+	Optional<MergeRequests> findByProcessorItemIdAndExternalId(ObjectId processorItemId, String externalId);
+
+	Page<MergeRequests> findByProcessorItemIdAndState(ObjectId processorItemId, MergeRequests.MergeRequestState state, Pageable pageable);
 }
+

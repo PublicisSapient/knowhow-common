@@ -63,6 +63,9 @@ public class RunProcessorController {
 		log.info("Received request to run the processor: {} for projects {}", jobExecuter.getProcessor().getProcessorName(),
 				processorExecutionBasicConfig.getProjectBasicConfigIds());
 
+		if (processorExecutionBasicConfig.getScmProcessorName() != null) {
+			jobExecuter.setProcessorLabel(processorExecutionBasicConfig.getScmProcessorName());
+		}
 		jobExecuter.setProjectsBasicConfigIds(processorExecutionBasicConfig.getProjectBasicConfigIds());
 		jobExecuter.setExecutionLogContext(ExecutionLogContext.getContext());
 		PROCESSOR_EXECUTORS.execute(jobExecuter);

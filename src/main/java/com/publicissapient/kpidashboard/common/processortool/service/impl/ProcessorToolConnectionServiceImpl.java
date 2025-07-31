@@ -193,6 +193,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		processorToolConnection.setPatOAuthToken(connection.getPatOAuthToken());
 		processorToolConnection.setAzureIterationStatusFieldUpdate(toolConfig.isAzureIterationStatusFieldUpdate());
 		processorToolConnection.setProjectComponent(toolConfig.getProjectComponent());
+		processorToolConnection.setGitFullUrl(toolConfig.getGitFullUrl());
 		return processorToolConnection;
 	}
 
