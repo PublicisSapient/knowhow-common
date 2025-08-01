@@ -101,7 +101,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 	private static final String SPRINT_END_DATE = "sprintEndDate";
 	private static final String ADDITIONAL_FILTER = "additionalFilters";
 	public static final String QUERY_LABELS = "labels";
-
+	public static final String SEVERITY = "severity";
 	@Autowired
 	private MongoTemplate operations;
 
@@ -217,6 +217,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(NAME);
 		query.fields().include(TYPE_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(ROOT_CAUSE);
 		query.fields().include(AGGREGATE_TIME_REMAINING_ESTIMATE_MINUTES);
 		query.fields().include(AGGREGATE_TIME_ORIGINAL_ESTIMATE_MINUTES);
@@ -266,6 +267,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(NAME);
 		query.fields().include(TYPE_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(AGGREGATE_TIME_REMAINING_ESTIMATE_MINUTES);
 		query.fields().include(AGGREGATE_TIME_ORIGINAL_ESTIMATE_MINUTES);
 		query.fields().include(LOGGED_WORK_MINUTES);
@@ -338,6 +340,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(STATUS);
 		query.fields().include(RESOLUTION);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(ROOT_CAUSE);
 		query.fields().include(DEFECT_STORY_ID);
 		query.fields().include(STORY_POINTS);
@@ -379,6 +382,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(TICKET_CREATED_DATE_FIELD);
 		query.fields().include(NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(ADDITIONAL_FILTER);
 		query.fields().include(PROJECT_NAME);
 		return operations.find(query, JiraIssue.class);
@@ -481,6 +485,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(LOGGED_WORK_MINUTES);
 		query.fields().include(PROJECT_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		return operations.find(query, JiraIssue.class);
 	}
 
@@ -565,6 +570,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(RESOLUTION);
 		query.fields().include(PROJECT_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(ROOT_CAUSE);
 		query.fields().include(NUMBER);
 		query.fields().include(DEFECT_STORY_ID);
@@ -619,6 +625,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(DEFECT_STORY_ID);
 		query.fields().include(TYPE_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(ROOT_CAUSE);
 		query.fields().include(AGGREGATE_TIME_ORIGINAL_ESTIMATE_MINUTES);
 		query.fields().include(SPRINT_ASSET_STATE);
@@ -823,6 +830,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(TYPE_NAME);
 		query.fields().include(PROJECT_NAME);
 		query.fields().include(PRIORITY);
+		query.fields().include(SEVERITY);
 		query.fields().include(QUERY_LABELS);
 		query.fields().include("defectStoryID");
 		return new ArrayList<>(operations.find(query, JiraIssue.class));
