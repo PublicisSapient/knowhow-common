@@ -64,7 +64,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<LabelCount> defectPriorityKPI82;
 	private List<String> defectPriorityKPI133;
 	private List<String> defectPriorityKPI34;
-	private List<String> defectPriorityKPI195;
+	private List<String> excludedDefectPrioritiesKPI195;
 	private String[] jiraIssueTypeNames;
 	private String[] jiraIssueTypeNamesAVR;
 	private List<String> jiraIssueEpicType;
@@ -105,7 +105,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraDodKPI142;
 	private List<String> jiraDodKPI144;
 	private List<String> jiraDodKPI143;
-	private List<String> jiraDodQAKPI195;
+	private List<String> includedDefectClosureStatusesKPI195;
 
 	private String jiraDefectCreatedStatus;
 	private String jiraDefectCreatedStatusKPI14;
@@ -129,7 +129,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String jiraDefectRejectionStatusQAKPI111;
 	private String jiraDefectRejectionStatusKPI34;
 	private String jiraDefectRejectionStatusKPI191;
-	private String jiraDefectRejectionStatusQAKPI195;
+	private String excludedDefectRejectionStatusesKPI195;
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
@@ -137,7 +137,6 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> jiraDefectSeepageIssueType;
 	private List<String> jiraIssueTypeKPI35;
-	private List<String> issueTypeKPI195;
 
 	private List<String> jiraDefectRemovalStatus;
 	private List<String> jiraDefectRemovalStatusKPI34;
@@ -247,7 +246,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> includeRCAForKPI133;
 	private List<String> includeRCAForKPI35;
 	private List<String> includeRCAForKPI34;
-	private List<String> includeRCAForQAKPI195;
+	private List<String> includedDefectRootCausesKPI195;
 
 	// For Lloyds KPIs
 	private List<String> jiraDorToLiveIssueType;
@@ -268,7 +267,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> resolutionTypeForRejectionQAKPI111;
 	private List<String> resolutionTypeForRejectionKPI34;
 	private List<String> resolutionTypeForRejectionKPI191;
-	private List<String> resolutionTypeForRejectionQAKPI195;
+	private List<String> excludedDefectResolutionTypesKPI195;
 
 	private List<String> jiraQADefectDensityIssueType;
 	private List<String> jiraQAKPI111IssueType;
@@ -441,7 +440,6 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraLabelsKPI82;
 	private List<String> jiraLabelsQAKPI111;
 	private List<String> jiraLabelsKPI133;
-	private List<String> jiraLabelsQAKPI195;
 	private List<String> jiraIssueWaitStateKPI170;
 	private List<String> jiraIssueClosedStateKPI170;
 
@@ -603,7 +601,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI194;
 	private String jiraDefectSeverityByCustomFieldKPI194;
 
-	private List<BaseFieldMappingStructure.Options> defectSLAKPI195;
+	private List<BaseFieldMappingStructure.Options> includedSeveritySlasKPI195;
 
 	/**
 	 * Get jira issue type names string [ ].
