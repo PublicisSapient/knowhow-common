@@ -1,58 +1,24 @@
 package com.publicissapient.kpidashboard.common.model.scm;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
- * Domain model representing a merge request (pull request) in a Git repository.
- * 
- * This entity stores metadata about merge requests including:
- * - Basic information (title, description, state)
- * - Branch information (source and target branches)
- * - User information (author, assignees, reviewers)
- * - Timestamps (created, updated, merged, closed)
- * - Statistics (lines changed, files changed, commit count)
- * - Platform-specific data
- * 
- * Uses compound unique index on repositoryName and externalId to ensure
- * uniqueness within each repository while allowing the same external ID
- * across different repositories.
- */
-
-/**
- * Domain model representing a merge request (pull request) in a Git repository.
- *
- * This entity stores metadata about merge requests including:
- * - Basic information (title, description, state)
- * - Branch information (source and target branches)
- * - User information (author, assignees, reviewers)
- * - Timestamps (created, updated, merged, closed)
- * - Statistics (lines changed, files changed, commit count)
- * - Platform-specific data
- *
- * Uses compound unique index on processorItemId and externalId to ensure
- * uniqueness within each project configuration while allowing the same external ID
- * across different project configurations.
- */
-@Document(collection = "merge_requests")
+@Document(collection = "scm_merge_requests")
 @CompoundIndex(def = "{'processorItemId': 1, 'externalId': 1}", unique = true)
 @Data
 @Builder
@@ -60,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MergeRequests extends BasicModel {
+public class ScmMergeRequests extends BasicModel {
 
     /**
      * Tool configuration ID that identifies the repository/project
@@ -210,7 +176,7 @@ public class MergeRequests extends BasicModel {
     /**
      * Timestamp when the merge request was picked for review
      */
-    private LocalDateTime pickedForReviewOn;
+    private Long pickedForReviewOn;
 
     /**
      * Timestamp of the first commit in this merge request
