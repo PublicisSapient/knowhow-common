@@ -421,8 +421,18 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 	private Criteria getCommonFiltersCriteria(Map<String, List<String>> mapOfFilters, Criteria criteria) {
 		Criteria theCriteria = criteria;
 		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
-			if (CollectionUtils.isNotEmpty(entry.getValue())) {
-				theCriteria = theCriteria.and(entry.getKey()).in(entry.getValue());
+			String key = entry.getKey();
+			List<String> values = entry.getValue();
+			if (CollectionUtils.isNotEmpty(values)) {
+				// Handle $exists checks
+				if (values.size() == 1 && values.get(0).toLowerCase().startsWith("exists:")) {
+					boolean exists = Boolean.parseBoolean(values.get(0).split(":")[1]);
+					theCriteria = theCriteria.and(key).exists(exists);
+				}
+				// Handle normal `in` queries
+				else {
+					theCriteria = theCriteria.and(key).in(values);
+				}
 			}
 		}
 		return theCriteria;
