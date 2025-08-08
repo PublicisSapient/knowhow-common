@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class DataCount implements Serializable {
+
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String data;
