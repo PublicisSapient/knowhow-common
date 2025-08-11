@@ -19,13 +19,13 @@
   </parent>
   <groupId>com.publicissapient.kpidashboard</groupId>
   <artifactId>common</artifactId>
-  <version>13.3.1-SNAPSHOT</version>
+  <version>13.3.1</version>
   <packaging>jar</packaging>
   <description>Common package used by all microservices</description>
   <scm>
     <connection>scm:git:https://github.com/PublicisSapient/knowhow-common.git</connection>
     <developerConnection>scm:git:https://github.com/PublicisSapient/knowhow-common.git</developerConnection>
-    <tag>4.6.1</tag>
+    <tag>13.3.1</tag>
     <url>https://github.com/PublicisSapient/knowhow-common.git</url>
   </scm>
   <properties>
