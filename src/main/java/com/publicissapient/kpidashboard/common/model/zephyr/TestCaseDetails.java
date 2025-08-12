@@ -54,6 +54,5 @@ public class TestCaseDetails extends BasicModel {
 	private String defectRaisedBy;
 	private String testCaseStatus;
 
-	// 🔽 New field for executions
 	private List<TestCaseExecutionData> executions;
 }
