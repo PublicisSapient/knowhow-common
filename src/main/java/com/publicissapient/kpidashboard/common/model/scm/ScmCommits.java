@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -80,6 +81,12 @@ public class ScmCommits extends BasicModel {
      */
     @DBRef
     private User commitAuthor;
+    //todo:: check this impl
+    /**
+     * Transient field to hold commit author details
+     */
+    @Transient
+    private User commitAuthorDetails;
 
     /**
      * ID of the user who committed the commit (if different from author)

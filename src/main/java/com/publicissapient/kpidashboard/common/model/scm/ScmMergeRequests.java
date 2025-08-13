@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -75,7 +76,12 @@ public class ScmMergeRequests extends BasicModel {
      */
     @DBRef
     private User authorId;
-
+    //todo:: check this impl
+    /**
+     * Used at aggregation pipeline for author details
+     */
+    @Transient
+    private User authorDetails;
     /**
      * Direct reference to the User ID who created the merge request
      * This field stores the User's id as a String for easier querying
