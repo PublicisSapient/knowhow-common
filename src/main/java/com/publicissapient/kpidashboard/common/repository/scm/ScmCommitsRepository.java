@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ScmCommitsRepository extends MongoRepository<ScmCommits, String> {
+public interface ScmCommitsRepository extends MongoRepository<ScmCommits, String>, ScmCommitRepositoryCustom {
 
     /**
      * Finds a commit by SHA hash.

@@ -8,7 +8,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface ScmMergeRequestsRepository extends MongoRepository<ScmMergeRequests, String> {
+public interface ScmMergeRequestsRepository
+		extends MongoRepository<ScmMergeRequests, String>, ScmMergeRequestRepositoryCustom {
 
     /**
      * Finds a merge request by tool configuration ID and external ID (unique constraint).
