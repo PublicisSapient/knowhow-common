@@ -54,6 +54,8 @@ public class RunProcessorController {
 	@Autowired(required = false)
 	private ProcessorJobExecutor<?> jobExecuter;
 
+	private ProjectBasicConfigRepository projectBasicConfigRepository;
+
 	@RequestMapping(value = "/processor/run", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map> runProcessorForProjects(
 			@RequestBody ProcessorExecutionBasicConfig processorExecutionBasicConfig) {
@@ -66,6 +68,7 @@ public class RunProcessorController {
 		if (processorExecutionBasicConfig.getScmProcessorName() != null) {
 			jobExecuter.setProcessorLabel(processorExecutionBasicConfig.getScmProcessorName());
 		}
+		projectBasicConfigRepository.findActiveProjects(false);
 		jobExecuter.setProjectsBasicConfigIds(processorExecutionBasicConfig.getProjectBasicConfigIds());
 		jobExecuter.setExecutionLogContext(ExecutionLogContext.getContext());
 		PROCESSOR_EXECUTORS.execute(jobExecuter);
