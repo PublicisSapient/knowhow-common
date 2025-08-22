@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ScmMergeRequestsRepository
@@ -47,5 +48,7 @@ public interface ScmMergeRequestsRepository
      * @return page of merge requests for the tool configuration with the specified state
      */
     Page<ScmMergeRequests> findByProcessorItemIdAndState(ObjectId processorItemId, ScmMergeRequests.MergeRequestState state, Pageable pageable);
+
+    void deleteByProcessorItemIdIn(List<ObjectId> processorItemId);
 
 }

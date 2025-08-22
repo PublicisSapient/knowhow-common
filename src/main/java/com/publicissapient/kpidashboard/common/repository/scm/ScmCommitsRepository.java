@@ -264,6 +264,8 @@ public interface ScmCommitsRepository extends MongoRepository<ScmCommits, String
      */
     boolean existsByShaAndProcessorItemId(String sha, String processorItemId);
 
+    void deleteByProcessorItemIdIn(List<ObjectId> processorItemId);
+
     /**
      * Interface for author commit statistics projection.
      */
