@@ -244,6 +244,15 @@ public class ScmMergeRequests extends BasicModel {
     private String repoSlug;
     private String projKey;
 
+    public Integer getLinesChanged() {
+        if (linesChanged == null) {
+            int added = (addedLines != null) ? addedLines : 0;
+            int removed = (removedLines != null) ? removedLines : 0;
+            return added + removed;
+        }
+        return linesChanged;
+    }
+
     /**
      * Helper class for pull request statistics.
      */
