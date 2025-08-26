@@ -81,12 +81,6 @@ public class ScmCommits extends BasicModel {
      */
     @DBRef
     private User commitAuthor;
-    //todo:: check this impl
-    /**
-     * Transient field to hold commit author details
-     */
-    @Transient
-    private User commitAuthorDetails;
 
     /**
      * ID of the user who committed the commit (if different from author)
