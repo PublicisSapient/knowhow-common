@@ -55,6 +55,7 @@ public class RunProcessorController {
 	@Autowired(required = false)
 	private ProcessorJobExecutor<?> jobExecuter;
 
+    @Autowired
 	private ProjectBasicConfigRepository projectBasicConfigRepository;
 
 	@RequestMapping(value = "/processor/run", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
