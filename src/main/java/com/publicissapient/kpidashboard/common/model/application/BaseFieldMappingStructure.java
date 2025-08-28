@@ -72,10 +72,12 @@ public class BaseFieldMappingStructure extends BasicModel {
 	@Setter
 	public static class Options {
 		String label;
-		Object value;
 		String labelValue;
 		String operator;
 		String maxValue;
 		String minValue;
+
+		Object value;
+		Object structuredValue;
 	}
 }
