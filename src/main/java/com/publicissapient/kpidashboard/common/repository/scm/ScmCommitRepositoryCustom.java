@@ -27,6 +27,6 @@ import com.mongodb.BasicDBList;
 
 public interface ScmCommitRepositoryCustom {
 
-	List<ScmCommits> findCommitList(List<ObjectId> collectorItemIdList, Long startDate, Long endDate,
+	List<ScmCommits> findCommitList(Long startDate, Long endDate,
 			BasicDBList filterList);
 }

@@ -23,20 +23,23 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.stereotype.Repository;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
 import com.publicissapient.kpidashboard.common.model.scm.ScmCommits;
-import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
+@AllArgsConstructor
 public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom {
+
 	private static final String IDENT_SCM_COMMIT_TIMESTAMP = "$commitTimestamp";
 	private static final String SCM_COMMIT_TIMESTAMP = "commitTimestamp";
 	private static final String COUNT = "count";
@@ -45,48 +48,67 @@ public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom 
 	private static final String ID = "_id";
 	private static final String DATE = "date";
 
-	@Autowired
+	private static final String MATCH = "$match";
+	private static final String OR = "$or";
+	private static final String GTE = "$gte";
+	private static final String LTE = "$lte";
+	private static final String GROUP = "$group";
+	private static final String SUM = "$sum";
+	private static final String SORT = "$sort";
+	private static final String DATE_TO_STRING = "$dateToString";
+	private static final String FORMAT = "format";
+	private static final String DATE_FORMAT = "%Y-%m-%d";
+	private static final String ADD = "$add";
+	private static final String COLLECTION_NAME = "scm_commit_details";
+
 	private MongoOperations operations;
 
 	@Override
-	public List<ScmCommits> findCommitList(List<ObjectId> collectorItemIdList, Long startDate, Long endDate,
-			BasicDBList filterList) {
-		// Define pipeline stages
-		List<BasicDBObject> pipeline = Arrays.asList(
-				// Match stage: Filter documents based on timestamp and filter list
-				new BasicDBObject("$match",
-						new BasicDBObject("$or", filterList).append(SCM_COMMIT_TIMESTAMP,
-								new BasicDBObject("$gte", startDate).append("$lte", endDate))),
+	public List<ScmCommits> findCommitList(Long startDate, Long endDate, BasicDBList filterList) {
+		List<BasicDBObject> pipeline = buildAggregationPipeline(startDate, endDate, filterList);
+		return executeAggregation(pipeline);
+	}
 
-				// Lookup stage: Join with scm_users collection to fetch commitAuthor details
-				new BasicDBObject("$lookup",
-						new BasicDBObject("from", "scm_users").append("localField", "commitAuthorId")
-								.append("foreignField", "_id").append("as", "commitAuthorDetails")),
+	private List<BasicDBObject> buildAggregationPipeline(Long startDate, Long endDate, BasicDBList filterList) {
+		return Arrays.asList(buildMatchStage(startDate, endDate, filterList), buildProjectStage(), buildGroupStage(),
+				buildFinalProjectStage(), buildSortStage());
+	}
 
-				// Project stage: Add commit timestamp and include processor item ID
-				new BasicDBObject(IDENT_PROJECT,
-						new BasicDBObject(SCM_COMMIT_TIMESTAMP,
-								new BasicDBObject("$add", new Object[] { new Date(0), IDENT_SCM_COMMIT_TIMESTAMP }))
-								.append(PROCESSOR_ITEM_ID, 1)),
+	private BasicDBObject buildMatchStage(Long startDate, Long endDate, BasicDBList filterList) {
+		return new BasicDBObject(MATCH, new BasicDBObject(OR, filterList).append(SCM_COMMIT_TIMESTAMP,
+				new BasicDBObject(GTE, startDate).append(LTE, endDate)));
+	}
 
-				// Group stage: Group by date and processor item ID, and calculate count
-				new BasicDBObject("$group", new BasicDBObject(ID, new BasicDBObject(DATE,
-						new BasicDBObject("$dateToString",
-								new BasicDBObject("format", "%Y-%m-%d").append(DATE, IDENT_SCM_COMMIT_TIMESTAMP)))
-						.append(PROCESSOR_ITEM_ID, "$processorItemId")).append(COUNT, new BasicDBObject("$sum", 1))),
+	private BasicDBObject buildProjectStage() {
+		return new BasicDBObject(IDENT_PROJECT,
+				new BasicDBObject(SCM_COMMIT_TIMESTAMP,
+						new BasicDBObject(ADD, new Object[] { new Date(0), IDENT_SCM_COMMIT_TIMESTAMP }))
+						.append(PROCESSOR_ITEM_ID, 1));
+	}
 
-				// Project stage: Restructure the output fields
-				new BasicDBObject(IDENT_PROJECT,
-						new BasicDBObject(ID, 0).append(DATE, "$_id.date")
-								.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1)),
+	private BasicDBObject buildGroupStage() {
+		return new BasicDBObject(GROUP,
+				new BasicDBObject(ID, new BasicDBObject(DATE,
+						new BasicDBObject(DATE_TO_STRING,
+								new BasicDBObject(FORMAT, DATE_FORMAT).append(DATE, IDENT_SCM_COMMIT_TIMESTAMP)))
+						.append(PROCESSOR_ITEM_ID, "$processorItemId")).append(COUNT, new BasicDBObject(SUM, 1)));
+	}
 
-				// Sort stage: Sort by date in ascending order
-				new BasicDBObject("$sort", new BasicDBObject(DATE, 1)));
+	private BasicDBObject buildFinalProjectStage() {
+		return new BasicDBObject(IDENT_PROJECT, new BasicDBObject(ID, 0).append(DATE, "$_id.date")
+				.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1));
+	}
 
-		// Execute aggregation query
-		AggregateIterable<Document> cursor = operations.getCollection("scm_commit_details").aggregate(pipeline);
+	private BasicDBObject buildSortStage() {
+		return new BasicDBObject(SORT, new BasicDBObject(DATE, 1));
+	}
 
-		// Convert results to ScmCommits objects
+	private List<ScmCommits> executeAggregation(List<BasicDBObject> pipeline) {
+		AggregateIterable<Document> cursor = operations.getCollection(COLLECTION_NAME).aggregate(pipeline);
+		return convertDocumentsToScmCommits(cursor);
+	}
+
+	private List<ScmCommits> convertDocumentsToScmCommits(AggregateIterable<Document> cursor) {
 		List<ScmCommits> commitList = new ArrayList<>();
 		try (MongoCursor<Document> iterator = cursor.iterator()) {
 			while (iterator.hasNext()) {
@@ -95,7 +117,6 @@ public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom 
 				commitList.add(scmCommit);
 			}
 		}
-
 		return commitList;
 	}
 }
