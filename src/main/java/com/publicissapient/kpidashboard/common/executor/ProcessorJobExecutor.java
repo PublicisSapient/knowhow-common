@@ -90,7 +90,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 	}
 
 	@Override
-	public final synchronized void run() {
+	public final void run() {
 		setMDCContext();
 		log.debug("Running Processor: {}", processorName);
 		T processor = getProcessorRepository().findByProcessorName(processorName);
@@ -114,7 +114,8 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 		if (processor.isActive()) {
 			// Do collection run
 			processor.setLastSuccess(execute(processor));
-			log.debug("Saving the last executed status as: {} for {} processor!", processor.isLastSuccess(), processorName);
+			log.debug("Saving the last executed status as: {} for {} processor!", processor.isLastSuccess(),
+					processorName);
 			// Update lastUpdate timestamp in Processor
 			processor.setUpdatedTime(System.currentTimeMillis());
 			getProcessorRepository().save(processor);
