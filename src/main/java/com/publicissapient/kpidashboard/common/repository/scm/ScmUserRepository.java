@@ -18,6 +18,7 @@
 package com.publicissapient.kpidashboard.common.repository.scm;
 
 import com.publicissapient.kpidashboard.common.model.scm.User;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -62,6 +63,10 @@ public interface ScmUserRepository extends MongoRepository<User, String> {
      */
     Optional<User> findByRepositoryNameAndUsername(String repositoryName, String username);
 
+    Optional<User> findByProcessorItemIdAndUsername(ObjectId processorItemId, String username);
+
+    Optional<User> findByProcessorItemIdAndEmail(ObjectId processorItemId, String email);
+
     /**
      * Finds a user by repository name and email.
      *
@@ -70,6 +75,8 @@ public interface ScmUserRepository extends MongoRepository<User, String> {
      * @return Optional containing the user if found
      */
     Optional<User> findByRepositoryNameAndEmail(String repositoryName, String email);
+
+    void deleteByProcessorItemIdIn(List<ObjectId> processorItemIds);
 
     /**
      * Finds users by repository name.

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,8 +27,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "scm_users")
-@CompoundIndex(def = "{'repositoryName': 1, 'username': 1}", unique = true)
-@CompoundIndex(def = "{'repositoryName': 1, 'email': 1}")
+@CompoundIndex(def = "{'processorItemId': 1, 'username': 1}", unique = true)
+@CompoundIndex(def = "{'processorItemId': 1, 'email': 1}")
 public class User extends BasicModel {
 
 
@@ -42,6 +43,9 @@ public class User extends BasicModel {
      */
     @Indexed
     private String username;
+
+    @Indexed
+    private ObjectId processorItemId;
 
     /**
      * Email address of the user (indexed for fast lookups)
@@ -144,6 +148,7 @@ public class User extends BasicModel {
      * Timestamp when the user was last seen (last commit or activity)
      */
     private LocalDateTime lastSeenAt;
+
 
     /**
      * Gets the display name, falling back to username if display name is not available.
