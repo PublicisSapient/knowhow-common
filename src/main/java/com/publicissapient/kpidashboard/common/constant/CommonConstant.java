@@ -129,7 +129,7 @@ public final class CommonConstant {
 	public static final String MONTH = "MONTHS";
 	public static final String DAYS = "DAYS";
 	public static final String DAY = "day";
-	public static final String DATE = "date";
+	public static final String date = "date";
 
 	public static final String HIERARCHY_LEVEL_ID_PROJECT = "project";
 	public static final String HIERARCHY_LEVEL_NAME_PROJECT = "Project";
