@@ -70,37 +70,12 @@ public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom 
 	}
 
 	private List<BasicDBObject> buildAggregationPipeline(Long startDate, Long endDate, BasicDBList filterList) {
-		return Arrays.asList(buildMatchStage(startDate, endDate, filterList), buildProjectStage(), buildGroupStage(),
-				buildFinalProjectStage(), buildSortStage());
+		return List.of(buildMatchStage(startDate, endDate, filterList));
 	}
 
 	private BasicDBObject buildMatchStage(Long startDate, Long endDate, BasicDBList filterList) {
 		return new BasicDBObject(MATCH, new BasicDBObject(OR, filterList).append(SCM_COMMIT_TIMESTAMP,
 				new BasicDBObject(GTE, startDate).append(LTE, endDate)));
-	}
-
-	private BasicDBObject buildProjectStage() {
-		return new BasicDBObject(IDENT_PROJECT,
-				new BasicDBObject(SCM_COMMIT_TIMESTAMP,
-						new BasicDBObject(ADD, new Object[] { new Date(0), IDENT_SCM_COMMIT_TIMESTAMP }))
-						.append(PROCESSOR_ITEM_ID, 1));
-	}
-
-	private BasicDBObject buildGroupStage() {
-		return new BasicDBObject(GROUP,
-				new BasicDBObject(ID, new BasicDBObject(DATE,
-						new BasicDBObject(DATE_TO_STRING,
-								new BasicDBObject(FORMAT, DATE_FORMAT).append(DATE, IDENT_SCM_COMMIT_TIMESTAMP)))
-						.append(PROCESSOR_ITEM_ID, "$processorItemId")).append(COUNT, new BasicDBObject(SUM, 1)));
-	}
-
-	private BasicDBObject buildFinalProjectStage() {
-		return new BasicDBObject(IDENT_PROJECT, new BasicDBObject(ID, 0).append(DATE, "$_id.date")
-				.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1));
-	}
-
-	private BasicDBObject buildSortStage() {
-		return new BasicDBObject(SORT, new BasicDBObject(DATE, 1));
 	}
 
 	private List<ScmCommits> executeAggregation(List<BasicDBObject> pipeline) {

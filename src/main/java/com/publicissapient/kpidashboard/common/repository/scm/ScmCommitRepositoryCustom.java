@@ -21,7 +21,6 @@ package com.publicissapient.kpidashboard.common.repository.scm;
 import java.util.List;
 
 import com.publicissapient.kpidashboard.common.model.scm.ScmCommits;
-import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBList;
 
