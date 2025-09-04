@@ -40,25 +40,12 @@ import com.publicissapient.kpidashboard.common.model.scm.ScmCommits;
 @AllArgsConstructor
 public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom {
 
-	private static final String IDENT_SCM_COMMIT_TIMESTAMP = "$commitTimestamp";
 	private static final String SCM_COMMIT_TIMESTAMP = "commitTimestamp";
-	private static final String COUNT = "count";
-	private static final String IDENT_PROJECT = "$project";
-	private static final String PROCESSOR_ITEM_ID = "processorItemId";
-	private static final String ID = "_id";
-	private static final String DATE = "date";
 
 	private static final String MATCH = "$match";
 	private static final String OR = "$or";
 	private static final String GTE = "$gte";
 	private static final String LTE = "$lte";
-	private static final String GROUP = "$group";
-	private static final String SUM = "$sum";
-	private static final String SORT = "$sort";
-	private static final String DATE_TO_STRING = "$dateToString";
-	private static final String FORMAT = "format";
-	private static final String DATE_FORMAT = "%Y-%m-%d";
-	private static final String ADD = "$add";
 	private static final String COLLECTION_NAME = "scm_commit_details";
 
 	private MongoOperations operations;
