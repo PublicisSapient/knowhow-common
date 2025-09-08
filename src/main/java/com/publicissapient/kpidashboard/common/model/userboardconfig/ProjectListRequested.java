@@ -19,7 +19,9 @@ package com.publicissapient.kpidashboard.common.model.userboardconfig;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * List of project requested for userBoardConfig
@@ -27,6 +29,8 @@ import lombok.Data;
  * @author shunaray
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectListRequested {
 	private List<String> basicProjectConfigIds;
 }
