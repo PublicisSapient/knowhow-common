@@ -292,7 +292,6 @@ public class ScmCommits extends BasicModel {
         int total = 0;
         if (addedLines != null) total += addedLines;
         if (removedLines != null) total += removedLines;
-        if (changedLines != null) total += changedLines;
         return total;
     }
 
