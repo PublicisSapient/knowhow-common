@@ -33,5 +33,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProcessorExecutionBasicConfig {
 	private List<String> projectBasicConfigIds;
+//	field for scm processor tool label
+	private String scmProcessorName;
 	private ExecutionLogContext logContext;
 }
