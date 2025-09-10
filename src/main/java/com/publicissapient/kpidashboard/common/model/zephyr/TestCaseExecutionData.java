@@ -15,25 +15,22 @@
  * limitations under the License.
  *
  ******************************************************************************/
-
-package com.publicissapient.kpidashboard.common.model;
-
-import java.util.List;
-
-import com.publicissapient.kpidashboard.common.context.ExecutionLogContext;
+package com.publicissapient.kpidashboard.common.model.zephyr;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
-public class ProcessorExecutionBasicConfig {
-	private List<String> projectBasicConfigIds;
-//	field for scm processor tool label
-	private String scmProcessorName;
-	private ExecutionLogContext logContext;
+public class TestCaseExecutionData {
+
+	private Integer executionId;
+	private String key;
+	private Integer executionTime;
+	private Integer estimatedTime;
+	private String actualEndDate;
+	private String comment;
+	private Integer testCycleId;
+	private Integer testCaseId;
+	private String executedById;
+	private String assignedToId;
+	private boolean automated;
 }

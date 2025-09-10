@@ -59,4 +59,8 @@ public class ZephyrTestCaseDTO {
 	private ZephyrTestCaseScript testScript; // unused
 	private Set<String> issueLinks;
 	private List<String> labels;
+
+	private List<TestCaseExecutionData> testCaseExecutionData;
+
+
 }
