@@ -36,7 +36,7 @@ import java.util.Optional;
  * queries for finding users by various criteria and statistics.
  */
 @Repository
-public interface ScmUserRepository extends MongoRepository<User, String> {
+public interface ScmUserRepository extends MongoRepository<User, String>, ScmUserRepositoryCustom {
 
     /**
      * Finds a user by username.
