@@ -66,6 +66,8 @@ public final class ProcessorConstants {
 
 	public static final String RALLY = "Rally";
 
+	public static final String SCM = "SCM";
+
 	private ProcessorConstants() {
 		// This class should not be instantiable
 	}
