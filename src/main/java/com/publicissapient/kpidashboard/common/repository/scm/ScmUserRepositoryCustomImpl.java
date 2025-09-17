@@ -16,19 +16,22 @@
 
 package com.publicissapient.kpidashboard.common.repository.scm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.stereotype.Repository;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCursor;
 import com.publicissapient.kpidashboard.common.model.scm.User;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Repository
@@ -41,15 +44,19 @@ public class ScmUserRepositoryCustomImpl implements ScmUserRepositoryCustom {
 
 	@Override
 	public List<User> findScmUserList(BasicDBList filterList) {
+		if (filterList == null || filterList.isEmpty()) {
+			return Collections.emptyList();
+		}
+
 		List<BasicDBObject> pipeline = List.of(new BasicDBObject("$match", new BasicDBObject("$or", filterList)));
-        List<User> userList = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
 		try (MongoCursor<Document> cursor = operations.getCollection(SCM_USER_COLLECTION).aggregate(pipeline)
 				.iterator()) {
 			userList.addAll(mapScmUsers(cursor));
 		} catch (MongoCommandException ex) {
-            log.error("No Users found {}", ex.getErrorMessage());
-        }
-        return userList;
+			log.error("No Users found {}", ex.getErrorMessage());
+		}
+		return userList;
 	}
 
 	private List<User> mapScmUsers(MongoCursor<Document> cursor) {
