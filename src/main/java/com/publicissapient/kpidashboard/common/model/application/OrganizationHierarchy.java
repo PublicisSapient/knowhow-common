@@ -19,6 +19,7 @@ package com.publicissapient.kpidashboard.common.model.application;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -88,6 +89,8 @@ public class OrganizationHierarchy extends BasicModel implements Serializable {
 
 		if (!nodeId.equals(that.nodeId))
 			return false;
+		if (!externalId.equals(that.externalId))
+			return false;
 		if (!nodeName.equals(that.nodeName))
 			return false;
 		if (!hierarchyLevelId.equals(that.hierarchyLevelId))
@@ -100,7 +103,8 @@ public class OrganizationHierarchy extends BasicModel implements Serializable {
 		int result = nodeId.hashCode();
 		result = 31 * result + nodeName.hashCode();
 		result = 31 * result + hierarchyLevelId.hashCode();
-		result = 31 * result + parentId.hashCode();
+		result = 31 * result + (Objects.nonNull(parentId) ? parentId.hashCode() : 0);
+		result = 31 * result + (Objects.nonNull(externalId) ? externalId.hashCode() : 0);
 		return result;
 	}
 }
