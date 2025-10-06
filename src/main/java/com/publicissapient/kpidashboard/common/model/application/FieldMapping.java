@@ -386,6 +386,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraIterationCompletionStatusKPI119;
 	private List<String> jiraIterationCompletionStatusKPI131;
 	private List<String> jiraIterationCompletionStatusKPI138;
+	private List<String> includedStatusesToIdentifyCompletedIssuesKPI198;
 
 	private List<String> jiraIterationCompletionTypeCustomField;
 	private List<String> jiraIterationIssuetypeKPI122;
@@ -403,6 +404,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraIterationIssuetypeKPI120;
 	private List<String> jiraIterationIssuetypeKPI124;
 	private List<String> jiraIterationIssuetypeKPI39;
+	private List<String> includedIssueTypesFromTheCompletedIssuesKPI198;
 
 	private boolean uploadData;
 	private boolean uploadDataKPI42;
@@ -602,6 +604,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String jiraDefectSeverityByCustomFieldKPI194;
 
 	private List<BaseFieldMappingStructure.Options> includedSeveritySlasKPI195;
+
+	private String aiEfficiencyGainJiraCustomFieldKPI198;
+	private String aiUsageTypeJiraCustomFieldKPI198;
 
 	/**
 	 * Get jira issue type names string [ ].
