@@ -117,4 +117,5 @@ public class ProcessorToolConnection {
 	private String projectComponent;
 	private boolean brokenConnection;
 	private String connectionErrorMsg;
+	private String gitFullUrl;
 }

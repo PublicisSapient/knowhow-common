@@ -25,6 +25,7 @@ import org.bson.types.ObjectId;
 
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterConfig;
+import com.publicissapient.kpidashboard.common.model.application.BaseFieldMappingStructure;
 import com.publicissapient.kpidashboard.common.model.application.FieldMappingHistory;
 import com.publicissapient.kpidashboard.common.model.application.LabelCount;
 
@@ -57,6 +58,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<LabelCount> defectPriorityKPI82;
 	private List<String> defectPriorityKPI133;
 	private List<String> defectPriorityKPI34;
+	private List<String> excludedDefectPrioritiesKPI195;
 
 	private String[] jiraIssueTypeNames;
 	private String[] jiraIssueTypeNamesAVR;
@@ -92,6 +94,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> jiraDodKPI142;
 	private List<String> jiraDodKPI144;
 	private List<String> jiraDodKPI143;
+	private List<String> includedDefectClosureStatusesKPI195;
 
 	private String jiraDefectCreatedStatus;
 	private String jiraDefectCreatedStatusKPI14;
@@ -117,6 +120,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String jiraDefectRejectionStatusKPI191;
 	private List<String> jiraDefectRemovalStatusKPI191;
 	private List<String> resolutionTypeForRejectionKPI191;
+	private String excludedDefectRejectionStatusesKPI195;
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
@@ -231,6 +235,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> includeRCAForKPI133;
 	private List<String> includeRCAForKPI35;
 	private List<String> includeRCAForKPI34;
+	private List<String> includedDefectRootCausesKPI195;
 
 	private Boolean pickNewATMJIRADetails;
 
@@ -251,6 +256,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> resolutionTypeForRejectionKPI14;
 	private List<String> resolutionTypeForRejectionQAKPI111;
 	private List<String> resolutionTypeForRejectionKPI34;
+	private List<String> excludedDefectResolutionTypesKPI195;
 
 	private List<String> jiraQADefectDensityIssueType;
 	private List<String> jiraQAKPI111IssueType;
@@ -508,6 +514,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String thresholdValueKPI159;
 	private String thresholdValueKPI184;
 	private String thresholdValueKPI183;
+	private String thresholdValueKPI195;
 
 	/** kanban kpi threshold fields ends * */
 	private String jiraProductionIncidentIdentification;
@@ -562,6 +569,16 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String jiraDefectRejectionStatusKPI190;
 	private String defectReopenStatusKPI190;
 	private String thresholdValueKPI190;
+	private String jiraDefectSeverityKPI194;
+	private List<String> jiraDefectCountIssueTypeKPI194;
+	private List<String> jiraIssueTypeNamesKPI194;
+	private List<String> resolutionTypeForRejectionKPI194;
+	private List<String> jiraDefectRejectionStatusKPI194;
+	private String thresholdValueKPI194;
+	private String jiraDefectSeverityByCustomFieldKPI194;
+
+	private List<BaseFieldMappingStructure.Options> includedSeveritySlasKPI195;
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *

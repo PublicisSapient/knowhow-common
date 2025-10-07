@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.publicissapient.kpidashboard.common.repository.application.ProjectBasicConfigRepository;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,9 @@ public class RunProcessorController {
 	@Autowired(required = false)
 	private ProcessorJobExecutor<?> jobExecuter;
 
+    @Autowired
+	private ProjectBasicConfigRepository projectBasicConfigRepository;
+
 	@RequestMapping(value = "/processor/run", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map> runProcessorForProjects(
 			@RequestBody ProcessorExecutionBasicConfig processorExecutionBasicConfig) {
@@ -63,6 +67,10 @@ public class RunProcessorController {
 		log.info("Received request to run the processor: {} for projects {}", jobExecuter.getProcessor().getProcessorName(),
 				processorExecutionBasicConfig.getProjectBasicConfigIds());
 
+		if (processorExecutionBasicConfig.getScmProcessorName() != null) {
+			jobExecuter.setProcessorLabel(processorExecutionBasicConfig.getScmProcessorName());
+		}
+		projectBasicConfigRepository.findActiveProjects(false);
 		jobExecuter.setProjectsBasicConfigIds(processorExecutionBasicConfig.getProjectBasicConfigIds());
 		jobExecuter.setExecutionLogContext(ExecutionLogContext.getContext());
 		PROCESSOR_EXECUTORS.execute(jobExecuter);

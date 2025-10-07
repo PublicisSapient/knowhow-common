@@ -33,7 +33,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-/** The type Field mapping. Represents Jira field mapping values */
+/**
+ * The type Field mapping. Represents Jira field mapping values
+ */
 @SuppressWarnings("PMD.TooManyFields")
 @Getter
 @Setter
@@ -62,6 +64,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<LabelCount> defectPriorityKPI82;
 	private List<String> defectPriorityKPI133;
 	private List<String> defectPriorityKPI34;
+	private List<String> excludedDefectPrioritiesKPI195;
 	private String[] jiraIssueTypeNames;
 	private String[] jiraIssueTypeNamesAVR;
 	private List<String> jiraIssueEpicType;
@@ -102,6 +105,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraDodKPI142;
 	private List<String> jiraDodKPI144;
 	private List<String> jiraDodKPI143;
+	private List<String> includedDefectClosureStatusesKPI195;
 
 	private String jiraDefectCreatedStatus;
 	private String jiraDefectCreatedStatusKPI14;
@@ -125,6 +129,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String jiraDefectRejectionStatusQAKPI111;
 	private String jiraDefectRejectionStatusKPI34;
 	private String jiraDefectRejectionStatusKPI191;
+	private String excludedDefectRejectionStatusesKPI195;
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
@@ -241,6 +246,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> includeRCAForKPI133;
 	private List<String> includeRCAForKPI35;
 	private List<String> includeRCAForKPI34;
+	private List<String> includedDefectRootCausesKPI195;
 
 	// For Lloyds KPIs
 	private List<String> jiraDorToLiveIssueType;
@@ -261,6 +267,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> resolutionTypeForRejectionQAKPI111;
 	private List<String> resolutionTypeForRejectionKPI34;
 	private List<String> resolutionTypeForRejectionKPI191;
+	private List<String> excludedDefectResolutionTypesKPI195;
 
 	private List<String> jiraQADefectDensityIssueType;
 	private List<String> jiraQAKPI111IssueType;
@@ -496,8 +503,11 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI182;
 	private String thresholdValueKPI185;
 	private String thresholdValueKPI186;
+	private String thresholdValueKPI195;
 
-	/** kanban kpis threshold fields starts * */
+	/**
+	 * kanban kpis threshold fields starts *
+	 */
 	private String thresholdValueKPI51;
 
 	private String thresholdValueKPI55;
@@ -521,7 +531,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI184;
 	private String thresholdValueKPI183;
 
-	/** kanban kpi threshold fields ends * */
+	/**
+	 * kanban kpi threshold fields ends *
+	 */
 
 	// Production Incident Mapping
 	private String jiraProductionIncidentIdentification;
@@ -564,23 +576,33 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private boolean includeActiveSprintInBacklogKPI;
 
 	private List<String> defectRejectionLabelsKPI37;
-    //LateRefinement
-    private List<String> jiraStatusKPI187;
-    private List<String> jiraIssueTypeNamesKPI187;
+	// LateRefinement
+	private List<String> jiraStatusKPI187;
+	private List<String> jiraIssueTypeNamesKPI187;
 
-    //Future Refinement
-    private List<String> jiraIssueTypeNamesKPI188;
-    private String jiraRefinementCriteriaKPI188;
-    private String jiraRefinementByCustomFieldKPI188;
-    private String jiraRefinementMinLengthKPI188;
-    private List<String> jiraRefinementKeywordsKPI188;
+	// Future Refinement
+	private List<String> jiraIssueTypeNamesKPI188;
+	private String jiraRefinementCriteriaKPI188;
+	private String jiraRefinementByCustomFieldKPI188;
+	private String jiraRefinementMinLengthKPI188;
+	private List<String> jiraRefinementKeywordsKPI188;
 
-    private List<String> jiraLabelsKPI120;
+	private List<String> jiraLabelsKPI120;
 
 	private List<String> resolutionTypeForRejectionKPI190;
 	private String jiraDefectRejectionStatusKPI190;
 	private String defectReopenStatusKPI190;
 	private String thresholdValueKPI190;
+	private String jiraDefectSeverityKPI194;
+	private List<String> jiraDefectCountIssueTypeKPI194;
+	private List<String> jiraIssueTypeNamesKPI194;
+	private List<String> resolutionTypeForRejectionKPI194;
+	private List<String> jiraDefectRejectionStatusKPI194;
+	private String thresholdValueKPI194;
+	private String jiraDefectSeverityByCustomFieldKPI194;
+
+	private List<BaseFieldMappingStructure.Options> includedSeveritySlasKPI195;
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *
@@ -594,7 +616,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	 * Sets jira issue type names.
 	 *
 	 * @param jiraIssueTypeNames
-	 *          the jira issue type names
+	 *            the jira issue type names
 	 */
 	public void setJiraIssueTypeNames(String[] jiraIssueTypeNames) {
 		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
