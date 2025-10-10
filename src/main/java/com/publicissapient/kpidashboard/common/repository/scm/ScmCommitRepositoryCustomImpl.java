@@ -19,8 +19,7 @@
 package com.publicissapient.kpidashboard.common.repository.scm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -52,6 +51,10 @@ public class ScmCommitRepositoryCustomImpl implements ScmCommitRepositoryCustom 
 
 	@Override
 	public List<ScmCommits> findCommitList(Long startDate, Long endDate, BasicDBList filterList) {
+		if (filterList == null || filterList.isEmpty()) {
+			return Collections.emptyList();
+		}
+
 		List<BasicDBObject> pipeline = buildAggregationPipeline(startDate, endDate, filterList);
 		return executeAggregation(pipeline);
 	}
