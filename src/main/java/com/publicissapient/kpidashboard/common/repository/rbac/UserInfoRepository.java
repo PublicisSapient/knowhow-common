@@ -18,14 +18,14 @@
 
 package com.publicissapient.kpidashboard.common.repository.rbac;
 
-import java.util.List;
-
-import org.bson.types.ObjectId;
-import org.springframework.data.repository.CrudRepository;
-
 import com.publicissapient.kpidashboard.common.constant.AuthType;
 import com.publicissapient.kpidashboard.common.model.rbac.ProjectsAccess;
 import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 /** Repository for {@link UserInfo}. */
 public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
@@ -102,4 +102,11 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 
 	/** find all the users */
 	List<UserInfo> findAll();
+
+	/**
+	find all the users for itemIds
+	 * @param itemIds -> ProjectId
+	**/
+	@Query("{ 'projectsAccess.accessNodes.accessItems.itemId': { $in: ?0 } }")
+	List<UserInfo> findUsersByItemIds(List<String> itemIds);
 }
