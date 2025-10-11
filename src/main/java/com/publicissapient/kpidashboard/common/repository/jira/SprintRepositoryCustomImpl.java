@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -36,14 +35,12 @@ import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 
+import lombok.RequiredArgsConstructor;
+
 /** Repository for {@link SprintDetails} with custom methods implementation. */
 @Service
+@RequiredArgsConstructor
 public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
-
-	@Autowired
-	private MongoOperations operations;
-	@Autowired
-	private SprintRepository sprintRepository;
 
 	private static final String BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
 	private static final String SPRINTS = "sprints";
@@ -58,17 +55,41 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	private static final String TOTAL_ISSUES = "totalIssues";
 	private static final String SPRINT_DETAILS = "sprint_details";
 
+	private final MongoOperations operations;
+
 	@Override
 	public List<SprintDetails> findByBasicProjectConfigIdInAndStateInOrderByStartDateDesc(
 			Set<ObjectId> basicProjectConfigIds, List<String> sprintStatusList, long limit) {
-		MatchOperation matchStage = Aggregation
-				.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(STATE).in(sprintStatusList));
+		MatchOperation matchStage = Aggregation.match(
+				Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(STATE).in(sprintStatusList));
 
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, END_DATE);
 
 		GroupOperation groupStage = Aggregation.group(BASIC_PROJECT_CONFIG_ID).push("$$ROOT").as(SPRINTS);
 
 		ProjectionOperation sliceStage = Aggregation.project().and(SPRINTS).slice((int) limit).as(SPRINTS);
+
+		UnwindOperation unwindStage = Aggregation.unwind(SPRINTS);
+
+		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
+		ProjectionOperation projectStage = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
+				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE);
+
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage,
+				replaceRootStage, projectStage);
+
+		return operations.aggregate(aggregation, SPRINT_DETAILS, SprintDetails.class).getMappedResults();
+	}
+
+	@Override
+	public List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(List<ObjectId> basicProjectConfigIds, int limit) {
+		MatchOperation matchStage = Aggregation.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds));
+
+		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, COMPLETE_DATE);
+
+		GroupOperation groupStage = Aggregation.group(BASIC_PROJECT_CONFIG_ID).push("$$ROOT").as(SPRINTS);
+
+		ProjectionOperation sliceStage = Aggregation.project().and(SPRINTS).slice(limit).as(SPRINTS);
 
 		UnwindOperation unwindStage = Aggregation.unwind(SPRINTS);
 
