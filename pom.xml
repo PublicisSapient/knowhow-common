@@ -491,7 +491,7 @@
               <include>src/main/java/**/*.java</include>
               <include>src/test/java/**/*.java</include>
             </includes>
-            <googleJavaFormat />
+            <googleJavaFormat/>
             <eclipse>
               <file>${project.basedir}/eclipse-formatter-config.xml</file>
             </eclipse>
@@ -502,7 +502,7 @@
             <importOrder>
               <order>java|javax,org,com</order>
             </importOrder>
-            <removeUnusedImports />
+            <removeUnusedImports/>
           </java>
           <pom>
             <includes>
@@ -544,9 +544,9 @@
         <executions>
           <execution>
             <id>spotless-apply</id>
-           <!-- <goals>
+            <goals>
               <goal>apply</goal>
-            </goals>-->
+            </goals>
             <phase>validate</phase>
           </execution>
         </executions>

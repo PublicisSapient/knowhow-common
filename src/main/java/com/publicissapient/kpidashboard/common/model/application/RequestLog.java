@@ -53,7 +53,6 @@ public class RequestLog extends BasicModel {
 
 	@Override
 	public String toString() {
-		return "REST Request - " + "[" + this.method + "] [PARAMETERS:" + parameter + "] [BODY:" + requestBody +
-				"] [REMOTE:" + client + "] [STATUS:" + responseCode + "]";
+		return "REST Request - " + "[" + this.method + "] [PARAMETERS:" + parameter + "] [BODY:" + requestBody + "] [REMOTE:" + client + "] [STATUS:" + responseCode + "]";
 	}
 }

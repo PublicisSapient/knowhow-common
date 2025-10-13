@@ -53,8 +53,6 @@ public class CapacityKpiData extends BasicModel {
 
 	@Override
 	public String toString() {
-		return "CapacityKpiData{" + "sprintID='" + sprintID + '\'' + ", projectName='" + projectName + '\'' +
-				", projectId='" + projectId + '\'' + ", capacityPerSprint=" + capacityPerSprint + ", basicProjectConfigId=" +
-				basicProjectConfigId + '}';
+		return "CapacityKpiData{" + "sprintID='" + sprintID + '\'' + ", projectName='" + projectName + '\'' + ", projectId='" + projectId + '\'' + ", capacityPerSprint=" + capacityPerSprint + ", basicProjectConfigId=" + basicProjectConfigId + '}';
 	}
 }

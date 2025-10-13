@@ -66,8 +66,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 						processorExecutionTracelog.getBasicProjectConfigId());
 		existingTraceLogOptional.ifPresent(existingProcessorExecutionTraceLog -> {
 			processorExecutionTracelog.setId(existingProcessorExecutionTraceLog.getId());
-			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType()) &&
-					MapUtils.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
+			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType()) && MapUtils
+					.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
 				processorExecutionTracelog.setLastSavedEntryUpdatedDateByType(
 						existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType());
 			}
@@ -94,8 +94,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			List<ProcessorExecutionTraceLog> traceLogsByProject = processorExecutionTraceLogRepository
 					.findByBasicProjectConfigId(basicProjectConfigId);
 			resultTraceLogs.addAll(traceLogsByProject);
-		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA) &&
-				StringUtils.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
+		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA) && StringUtils
+				.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
 			Optional<ProcessorExecutionTraceLog> jiraProgressTraceLog = processorExecutionTraceLogRepository
 					.findByProcessorNameAndBasicProjectConfigIdAndProgressStatsTrue(processorName, basicProjectConfigId);
 			return jiraProgressTraceLog.map(Collections::singletonList).orElseGet(Collections::emptyList);

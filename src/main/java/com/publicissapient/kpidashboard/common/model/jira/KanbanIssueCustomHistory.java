@@ -87,10 +87,7 @@ public class KanbanIssueCustomHistory extends BasicModel {
 
 	@Override
 	public String toString() {
-		return "FeatureCustomHistory [projectID=" + projectID + ", storyID=" + storyID + ", url=" + url + ",storyType=" +
-				storyType + ", defectStoryID=" + defectStoryID + ", estimate=" + estimate + ", bufferedEstimateTime=" +
-				bufferedEstimateTime + ", devicePlatform=" + devicePlatform + ", projectKey=" + projectKey +
-				", projectComponentId=" + projectComponentId + "]";
+		return "FeatureCustomHistory [projectID=" + projectID + ", storyID=" + storyID + ", url=" + url + ",storyType=" + storyType + ", defectStoryID=" + defectStoryID + ", estimate=" + estimate + ", bufferedEstimateTime=" + bufferedEstimateTime + ", devicePlatform=" + devicePlatform + ", projectKey=" + projectKey + ", projectComponentId=" + projectComponentId + "]";
 	}
 
 	@Override

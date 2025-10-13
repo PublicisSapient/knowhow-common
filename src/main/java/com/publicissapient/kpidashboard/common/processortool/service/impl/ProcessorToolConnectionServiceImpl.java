@@ -29,24 +29,24 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.common.config.NotificationConfig;
-import com.publicissapient.kpidashboard.common.constant.NotificationEnum;
-import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
-import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
-import com.publicissapient.kpidashboard.common.service.NotificationService;
-import com.publicissapient.kpidashboard.common.util.DateUtil;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
+import com.publicissapient.kpidashboard.common.config.NotificationConfig;
+import com.publicissapient.kpidashboard.common.constant.NotificationEnum;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
 import com.publicissapient.kpidashboard.common.model.processortool.ProcessorToolConnection;
+import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
 import com.publicissapient.kpidashboard.common.processortool.service.ProcessorToolConnectionService;
 import com.publicissapient.kpidashboard.common.repository.application.ProjectToolConfigRepository;
 import com.publicissapient.kpidashboard.common.repository.connection.ConnectionRepository;
+import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
+import com.publicissapient.kpidashboard.common.service.NotificationService;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -202,7 +202,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	 *          connection
 	 */
 	public void validateConnectionFlag(ProcessorToolConnection connection) {
-		log.info("Validating the connection for {}",connection.getConnectionName());
+		log.info("Validating the connection for {}", connection.getConnectionName());
 		if (connection.isBrokenConnection()) {
 			updateBreakingConnection(connection.getId(), connection.getConnectionErrorMsg());
 		}
@@ -227,7 +227,8 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 	 */
 	@Override
 	public void updateBreakingConnection(ObjectId connection, String conErrorMsg) {
-		if (connection == null) return;
+		if (connection == null)
+			return;
 
 		Optional<Connection> existingConnOpt = connectionRepository.findById(connection);
 		if (existingConnOpt.isPresent()) {
@@ -243,7 +244,6 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 			connectionRepository.save(existingConnection);
 		}
 	}
-
 
 	private void resetConnectionState(Connection connection) {
 		connection.setBrokenConnection(false);
@@ -274,15 +274,17 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		}
 
 		int frequencyDays = Integer.parseInt(notificationConfig.getEmailNotificationFrequency());
-		if (maxCount <= 0) return false;
+		if (maxCount <= 0)
+			return false;
 
 		int count = connection.getNotificationCount();
-		log.info("NotificationCount:{}",count);
-		if (count >= maxCount) return false;
+		log.info("NotificationCount:{}", count);
+		if (count >= maxCount)
+			return false;
 
-		String notifiedOn = Optional.of(connection)
-									.map(Connection::getNotifiedOn).orElse("");
-		if (StringUtils.isBlank(notifiedOn)) return true;
+		String notifiedOn = Optional.of(connection).map(Connection::getNotifiedOn).orElse("");
+		if (StringUtils.isBlank(notifiedOn))
+			return true;
 
 		try {
 			LocalDateTime lastNotified = LocalDateTime.parse(DateUtil.localDateTimeToUTC(notifiedOn));
@@ -309,35 +311,27 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		String fixUrl = notificationConfig.getUiHost() + notificationConfig.getFixUrl();
 
 		if (notifyUserOnError && StringUtils.isNotBlank(email) && StringUtils.isNotBlank(notificationSubject)) {
-			Map<String, String> customData = createCustomData(
-					userInfo.getDisplayName(),
-					connection.getType(),
-					fixUrl,
-					notificationConfig.getHelpUrl()
-			);
+			Map<String, String> customData = createCustomData(userInfo.getDisplayName(), connection.getType(), fixUrl,
+					notificationConfig.getHelpUrl());
 
 			String templateKey = notificationConfig.getMailTemplate().getOrDefault(NOTIFICATION_KEY, "");
 
 			log.info("Sending broken connection notification to user: {}", email);
-			notificationService.sendNotificationEvent(
-					Collections.singletonList(email),
-					customData,
-					notificationSubject,
-					notificationConfig.isNotificationSwitch(),
-					templateKey
-			);
+			notificationService.sendNotificationEvent(Collections.singletonList(email), customData, notificationSubject,
+					notificationConfig.isNotificationSwitch(), templateKey);
 		} else {
-			log.info("Notification not sent. Conditions failed — email: {}, notifyUserOnError: {}, subject blank: {}",
-					 email, notifyUserOnError, StringUtils.isBlank(notificationSubject));
+			log.info("Notification not sent. Conditions failed — email: {}, notifyUserOnError: {}, subject blank: {}", email,
+					notifyUserOnError, StringUtils.isBlank(notificationSubject));
 		}
 	}
 
 	private Boolean isErrorAlertNotificationEnabled(UserInfo userInfo) {
-		return userInfo.getNotificationEmail() != null
-			   && Boolean.TRUE.equals(userInfo.getNotificationEmail().get("errorAlertNotification"));
+		return userInfo.getNotificationEmail() != null && Boolean.TRUE
+				.equals(userInfo.getNotificationEmail().get("errorAlertNotification"));
 	}
 
-	private Map<String, String> createCustomData(String userName, String toolName, String connectionFixUrl, String helpUrl) {
+	private Map<String, String> createCustomData(String userName, String toolName, String connectionFixUrl,
+			String helpUrl) {
 		Map<String, String> customData = new HashMap<>();
 		customData.put(NotificationEnum.USER_NAME.getValue(), userName);
 		customData.put(NotificationEnum.TOOL_NAME.getValue(), toolName);
@@ -345,6 +339,4 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		customData.put(NotificationEnum.HELP_URL.getValue(), helpUrl);
 		return customData;
 	}
-
 }
-
