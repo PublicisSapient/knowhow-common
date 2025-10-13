@@ -15,7 +15,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.2.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
   <groupId>com.publicissapient.kpidashboard</groupId>
   <artifactId>common</artifactId>
@@ -444,7 +444,6 @@
       <url>https://maven.pkg.github.com/PublicisSapient/knowhow-retro-notifications-lib</url>
     </repository>
   </repositories>
-
   <build>
     <plugins>
       <plugin>
@@ -542,15 +541,15 @@
             </format>
           </formats>
         </configuration>
-      <!--  <executions>
+        <executions>
           <execution>
             <id>spotless-apply</id>
-            <goals>
+           <!-- <goals>
               <goal>apply</goal>
-            </goals>
+            </goals>-->
             <phase>validate</phase>
           </execution>
-        </executions>-->
+        </executions>
       </plugin>
     </plugins>
   </build>
