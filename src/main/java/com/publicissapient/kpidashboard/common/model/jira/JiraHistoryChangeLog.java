@@ -21,6 +21,7 @@ package com.publicissapient.kpidashboard.common.model.jira;
 import java.time.LocalDateTime;
 
 import com.publicissapient.kpidashboard.common.util.DateUtil;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,10 +41,8 @@ public class JiraHistoryChangeLog {
 	private String changedTo;
 
 	public LocalDateTime getUpdatedOn() {
-		return DateUtil.localDateTimeToUTC( updatedOn);
+		return DateUtil.localDateTimeToUTC(updatedOn);
 	}
 
 	private LocalDateTime updatedOn;
-
-
 }

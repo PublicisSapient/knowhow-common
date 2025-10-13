@@ -49,8 +49,7 @@ public final class CommonConstant {
 
 	public static final String CACHE_CLEAR_ENDPOINT = "api/cache/clearCache";
 	public static final String CLEAR_ALL_CACHE_ENDPOINT = "api/cache/clearAllCache";
-	public static final String CACHE_CLEAR_PROJECT_SOURCE_ENDPOINT = "api/cache/project/" + PARAM1 + "/source/" + PARAM2 +
-			"/clear";
+	public static final String CACHE_CLEAR_PROJECT_SOURCE_ENDPOINT = "api/cache/project/" + PARAM1 + "/source/" + PARAM2 + "/clear";
 	public static final String REPROCESS = "Reprocess";
 	public static final String FILE_STATUS_UPLOADED = "Uploaded";
 

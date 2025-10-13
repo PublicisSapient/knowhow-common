@@ -68,11 +68,11 @@ public class AccountHierarchy extends BasicModel implements Serializable {
 			return false;
 		}
 		AccountHierarchy other = (AccountHierarchy) obj;
-		if (obj instanceof AccountHierarchy && this.nodeId.equals(other.nodeId) &&
-				(null == this.path || this.path.equals(other.path)) &&
-				(null == this.beginDate || this.beginDate.split("[.]")[0].equals(other.beginDate.split("[.]")[0])) &&
-				(null == this.endDate || this.endDate.split("[.]")[0].equals(other.endDate.split("[.]")[0])) &&
-				(null == this.releaseState || this.releaseState.equals(other.releaseState))) {
+		if (obj instanceof AccountHierarchy && this.nodeId.equals(other.nodeId) && (null == this.path || this.path
+				.equals(other.path)) && (null == this.beginDate || this.beginDate.split("[.]")[0]
+						.equals(other.beginDate.split("[.]")[0])) && (null == this.endDate || this.endDate.split("[.]")[0]
+								.equals(other.endDate.split("[.]")[0])) && (null == this.releaseState || this.releaseState
+										.equals(other.releaseState))) {
 			isEqual = true;
 		}
 		return isEqual;
