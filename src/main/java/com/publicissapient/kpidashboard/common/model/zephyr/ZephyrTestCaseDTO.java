@@ -61,6 +61,4 @@ public class ZephyrTestCaseDTO {
 	private List<String> labels;
 
 	private List<TestCaseExecutionData> testCaseExecutionData;
-
-
 }

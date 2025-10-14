@@ -7,10 +7,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
-import com.knowhow.retro.notifications.model.EmailEvent;
-import com.knowhow.retro.notifications.producer.EmailProducer;
-import com.knowhow.retro.notifications.utils.TemplateParserHelper;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +22,16 @@ import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import com.knowhow.retro.notifications.model.EmailEvent;
+import com.knowhow.retro.notifications.producer.EmailProducer;
+import com.knowhow.retro.notifications.utils.TemplateParserHelper;
 import com.publicissapient.kpidashboard.common.model.application.EmailServerDetail;
 import com.publicissapient.kpidashboard.common.model.application.GlobalConfig;
-
 import com.publicissapient.kpidashboard.common.repository.application.GlobalConfigRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -54,16 +53,14 @@ public class NotificationServiceImpl implements NotificationService {
 	public void sendNotificationEvent(List<String> emailAddresses, Map<String, String> customData, String notSubject,
 			boolean notificationSwitch, String templateKey) {
 		if (!notificationSwitch) {
-			log.info(
-					"Notification Switch is Off. If want to send notification set true for notification.switch in property");
+			log.info("Notification Switch is Off. If want to send notification set true for notification.switch in property");
 			return;
 		}
 		if (StringUtils.isNotBlank(notSubject)) {
 			EmailServerDetail emailServerDetail = getEmailServerDetail();
 			if (emailServerDetail != null) {
-				EmailEvent emailEvent = new EmailEvent(emailServerDetail.getFromEmail(), emailAddresses, null, null,
-						notSubject, null, customData, emailServerDetail.getEmailHost(),
-						emailServerDetail.getEmailPort());
+				EmailEvent emailEvent = new EmailEvent(emailServerDetail.getFromEmail(), emailAddresses, null, null, notSubject,
+						null, customData, emailServerDetail.getEmailHost(), emailServerDetail.getEmailPort());
 
 				String rabbitHost = environment.getProperty("spring.rabbitmq.host");
 				boolean isRabbitConfigured = StringUtils.isNotBlank(rabbitHost);
@@ -77,8 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
 						emailProvider.sendEmail(emailEvent);
 						log.info("Email successfully Pushed to RabbitMQ for the key : {}", templateKey);
 					} catch (Exception e) {
-						log.error("Email not sent for the key with RabbitMQ : {} due to {} ", templateKey,
-								e.getMessage());
+						log.error("Email not sent for the key with RabbitMQ : {} due to {} ", templateKey, e.getMessage());
 						sentFromJavaMail(emailEvent, templateKey);
 					}
 				} else {
@@ -88,10 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
 				log.error("Notification Event not sent : notification emailServer Details not found in db");
 			}
 		} else {
-			log.error("Notification Event not sent : notification subject for {} not found in properties file",
-					notSubject);
+			log.error("Notification Event not sent : notification subject for {} not found in properties file", notSubject);
 		}
-
 	}
 
 	public void sentFromJavaMail(EmailEvent emailEvent, String templateKey) {
@@ -107,7 +101,6 @@ public class NotificationServiceImpl implements NotificationService {
 		} catch (TemplateProcessingException tpe) {
 			throw new RecoverableDataAccessException("Template not parsed for the key :" + templateKey);
 		}
-
 	}
 
 	private void sentMailViaJavaMail(String templateKey, EmailEvent emailEvent, JavaMailSenderImpl javaMailSender,

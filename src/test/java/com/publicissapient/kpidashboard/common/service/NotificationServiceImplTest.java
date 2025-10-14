@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knowhow.retro.notifications.producer.EmailProducer;
-import com.knowhow.retro.notifications.utils.TemplateParserHelper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +41,8 @@ import org.springframework.mail.MailSendException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import com.knowhow.retro.notifications.producer.EmailProducer;
+import com.knowhow.retro.notifications.utils.TemplateParserHelper;
 import com.publicissapient.kpidashboard.common.model.application.EmailServerDetail;
 import com.publicissapient.kpidashboard.common.model.application.GlobalConfig;
 import com.publicissapient.kpidashboard.common.repository.application.GlobalConfigRepository;
@@ -63,7 +63,7 @@ class NotificationServiceImplTest {
 	private GlobalConfig globalConfig;
 	@Mock
 	private Environment environment;
-   	@Mock
+	@Mock
 	private ObjectProvider<EmailProducer> emailProducer;
 	private List<GlobalConfig> globalConfigs = new ArrayList<>();
 
@@ -100,8 +100,8 @@ class NotificationServiceImplTest {
 		String notSubject = "subject";
 		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
 		when(templateEngine.process(anyString(), any())).thenReturn("abc");
-		Assert.assertThrows(MailSendException.class, () -> notificationService.sendNotificationEvent(emailList,
-				customData, notSubject, true, "Forgot_Password_Template"));
+		Assert.assertThrows(MailSendException.class, () -> notificationService.sendNotificationEvent(emailList, customData,
+				notSubject, true, "Forgot_Password_Template"));
 	}
 
 	@Test

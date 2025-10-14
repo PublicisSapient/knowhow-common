@@ -34,10 +34,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.publicissapient.kpidashboard.common.config.NotificationConfig;
-import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
-import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
-import com.publicissapient.kpidashboard.common.service.NotificationService;
 import org.bson.types.ObjectId;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
@@ -53,11 +49,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.publicissapient.kpidashboard.common.config.NotificationConfig;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
 import com.publicissapient.kpidashboard.common.model.processortool.ProcessorToolConnection;
+import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
 import com.publicissapient.kpidashboard.common.repository.application.ProjectToolConfigRepository;
 import com.publicissapient.kpidashboard.common.repository.connection.ConnectionRepository;
+import com.publicissapient.kpidashboard.common.repository.rbac.UserInfoRepository;
+import com.publicissapient.kpidashboard.common.service.NotificationService;
 
 /**
  * @author narsingh9
@@ -191,7 +191,8 @@ public class ProcessorToolConnectionServiceImplTest {
 
 		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
 		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
-		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection");
+		when(notificationConfig.getEmailNotificationSubject())
+				.thenReturn("Action Required: Restore Your {{toolName}} Connection");
 		when(notificationConfig.getMailTemplate()).thenReturn(Map.of("Broken_Connection", "template-key"));
 		when(notificationConfig.isNotificationSwitch()).thenReturn(true);
 
@@ -199,10 +200,8 @@ public class ProcessorToolConnectionServiceImplTest {
 		userInfo.setEmailAddress("user@example.com");
 		userInfo.setDisplayName("User");
 		Map<String, Boolean> alertNotifications = new HashMap<>();
-		alertNotifications.put("errorAlertNotification",true);
+		alertNotifications.put("errorAlertNotification", true);
 		userInfo.setNotificationEmail(alertNotifications);
-
-
 
 		when(userInfoRepository.findByUsername("user123")).thenReturn(userInfo);
 
@@ -212,13 +211,8 @@ public class ProcessorToolConnectionServiceImplTest {
 		Assertions.assertEquals("Error!", connection.getConnectionErrorMsg());
 		Assertions.assertNotNull(connection.getNotifiedOn());
 		Assertions.assertEquals(1, connection.getNotificationCount());
-		verify(notificationService).sendNotificationEvent(
-				eq(List.of("user@example.com")),
-				anyMap(),
-				eq("Action Required: Restore Your {{toolName}} Connection"),
-				eq(true),
-				eq("template-key")
-		);
+		verify(notificationService).sendNotificationEvent(eq(List.of("user@example.com")), anyMap(),
+				eq("Action Required: Restore Your {{toolName}} Connection"), eq(true), eq("template-key"));
 	}
 
 	@Test
@@ -256,15 +250,15 @@ public class ProcessorToolConnectionServiceImplTest {
 		when(connectionRepository.findById(connectionId)).thenReturn(Optional.of(connection));
 		when(notificationConfig.getMaximumEmailNotificationCount()).thenReturn("5");
 		when(notificationConfig.getEmailNotificationFrequency()).thenReturn("1");
-		when(notificationConfig.getEmailNotificationSubject()).thenReturn("Action Required: Restore Your {{toolName}} Connection"); // subject is blank
+		when(notificationConfig.getEmailNotificationSubject())
+				.thenReturn("Action Required: Restore Your {{toolName}} Connection"); // subject is blank
 
 		UserInfo userInfo = new UserInfo();
 		userInfo.setEmailAddress("user@example.com");
 		Map<String, Boolean> alertNotifications = new HashMap<>();
-		alertNotifications.put("errorAlertNotification",false);
+		alertNotifications.put("errorAlertNotification", false);
 		userInfo.setNotificationEmail(alertNotifications);
 		when(userInfoRepository.findByUsername("user123")).thenReturn(userInfo);
-
 
 		processorToolConnectionServiceImpl.updateBreakingConnection(connectionId, "Some error");
 
