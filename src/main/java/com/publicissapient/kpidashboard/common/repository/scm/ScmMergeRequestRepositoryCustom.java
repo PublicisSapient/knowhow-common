@@ -32,15 +32,14 @@ public interface ScmMergeRequestRepositoryCustom {
 	 * range.
 	 *
 	 * @param startDate
-	 *            The start date (inclusive) for filtering merge requests, in
-	 *            milliseconds since epoch.
+	 *          The start date (inclusive) for filtering merge requests, in
+	 *          milliseconds since epoch.
 	 * @param endDate
-	 *            The end date (inclusive) for filtering merge requests, in
-	 *            milliseconds since epoch.
+	 *          The end date (inclusive) for filtering merge requests, in
+	 *          milliseconds since epoch.
 	 * @param filterList
-	 *            Additional filters to apply to the query.
+	 *          Additional filters to apply to the query.
 	 * @return A list of {@link ScmMergeRequests} matching the specified criteria.
 	 */
 	List<ScmMergeRequests> findMergeList(Long startDate, Long endDate, BasicDBList filterList);
-
 }

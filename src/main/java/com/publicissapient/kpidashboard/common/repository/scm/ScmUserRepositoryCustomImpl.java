@@ -50,8 +50,7 @@ public class ScmUserRepositoryCustomImpl implements ScmUserRepositoryCustom {
 
 		List<BasicDBObject> pipeline = List.of(new BasicDBObject("$match", new BasicDBObject("$or", filterList)));
 		List<User> userList = new ArrayList<>();
-		try (MongoCursor<Document> cursor = operations.getCollection(SCM_USER_COLLECTION).aggregate(pipeline)
-				.iterator()) {
+		try (MongoCursor<Document> cursor = operations.getCollection(SCM_USER_COLLECTION).aggregate(pipeline).iterator()) {
 			userList.addAll(mapScmUsers(cursor));
 		} catch (MongoCommandException ex) {
 			log.error("No Users found {}", ex.getErrorMessage());

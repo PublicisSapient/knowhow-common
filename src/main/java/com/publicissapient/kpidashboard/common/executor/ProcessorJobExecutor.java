@@ -51,7 +51,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 	private final String processorName;
 	private List<String> projectsBasicConfigIds;
 	private ExecutionLogContext executionLogContext;
-	//	field for scm processor tool label
+	// field for scm processor tool label
 	private String processorLabel;
 
 	@Autowired
@@ -81,7 +81,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 		this.projectsBasicConfigIds = projectsBasicConfigIds;
 	}
 
-	public  String getProcessorLabel() {
+	public String getProcessorLabel() {
 		return processorLabel;
 	}
 
@@ -114,8 +114,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 		if (processor.isActive()) {
 			// Do collection run
 			processor.setLastSuccess(execute(processor));
-			log.debug("Saving the last executed status as: {} for {} processor!", processor.isLastSuccess(),
-					processorName);
+			log.debug("Saving the last executed status as: {} for {} processor!", processor.isLastSuccess(), processorName);
 			// Update lastUpdate timestamp in Processor
 			processor.setUpdatedTime(System.currentTimeMillis());
 			getProcessorRepository().save(processor);
@@ -141,7 +140,7 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 
 	public abstract T getProcessor();
 
-    public abstract ProcessorRepository<T> getProcessorRepository();
+	public abstract ProcessorRepository<T> getProcessorRepository();
 
 	public abstract String getCron();
 

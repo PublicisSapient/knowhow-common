@@ -21,15 +21,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.scm.ScmMergeRequests;
-import lombok.AllArgsConstructor;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.stereotype.Repository;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
-import org.springframework.stereotype.Repository;
+import com.publicissapient.kpidashboard.common.model.scm.ScmMergeRequests;
+
+import lombok.AllArgsConstructor;
 
 @Repository
 @AllArgsConstructor
@@ -68,5 +69,4 @@ public class ScmMergeRequestRepositoryCustomImpl implements ScmMergeRequestRepos
 		}
 		return mergeRequests;
 	}
-
 }

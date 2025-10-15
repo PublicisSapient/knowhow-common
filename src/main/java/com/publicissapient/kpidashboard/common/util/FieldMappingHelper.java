@@ -62,19 +62,19 @@ public final class FieldMappingHelper {
 
 	/**
 	 * @param fieldMapping
-	 *            fieldMapping
+	 *          fieldMapping
 	 * @param fieldName
-	 *            fieldName
+	 *          fieldName
 	 * @return list of history logs
 	 * @throws NoSuchFieldException
-	 *             no field exception
+	 *           no field exception
 	 * @throws IllegalAccessException
-	 *             accessibility
+	 *           accessibility
 	 */
 	public static List<ConfigurationHistoryChangeLog> getAccessibleFieldHistory(FieldMapping fieldMapping,
 			String fieldName) throws NoSuchFieldException, IllegalAccessException {
-		return (List<ConfigurationHistoryChangeLog>) getFieldMappingField(fieldMapping,
-				FieldMapping.class.getSuperclass(), HISTORY + fieldName);
+		return (List<ConfigurationHistoryChangeLog>) getFieldMappingField(fieldMapping, FieldMapping.class.getSuperclass(),
+				HISTORY + fieldName);
 	}
 
 	/*
@@ -85,9 +85,8 @@ public final class FieldMappingHelper {
 		List<ConfigurationHistoryChangeLog> accessibleFieldHistory = getAccessibleFieldHistory(fieldMapping, field);
 		if (nodeSpecificField && StringUtils.isNotEmpty(nodeId) && CollectionUtils.isNotEmpty(accessibleFieldHistory)) {
 			return accessibleFieldHistory.stream()
-					.filter(configurationHistoryChangeLog -> StringUtils
-							.isNotEmpty(configurationHistoryChangeLog.getReleaseNodeId())
-							&& configurationHistoryChangeLog.getReleaseNodeId().equalsIgnoreCase(nodeId))
+					.filter(configurationHistoryChangeLog -> StringUtils.isNotEmpty(configurationHistoryChangeLog
+							.getReleaseNodeId()) && configurationHistoryChangeLog.getReleaseNodeId().equalsIgnoreCase(nodeId))
 					.toList();
 		}
 		return accessibleFieldHistory;
@@ -97,8 +96,7 @@ public final class FieldMappingHelper {
 	 * to get the field from fieldMapping
 	 */
 	public static Object getFieldMappingData(FieldMapping fieldMapping, Class<FieldMapping> fieldMappingClass,
-			String field, String nodeId, boolean nodeSpecificField)
-			throws NoSuchFieldException, IllegalAccessException {
+			String field, String nodeId, boolean nodeSpecificField) throws NoSuchFieldException, IllegalAccessException {
 		Object fieldMappingField = getFieldMappingField(fieldMapping, fieldMappingClass, field);
 		if (nodeSpecificField && StringUtils.isNotEmpty(nodeId)) {
 			if (ObjectUtils.isNotEmpty(fieldMappingField)) {
@@ -116,20 +114,20 @@ public final class FieldMappingHelper {
 	 * compares field values for saved and unsaved data.
 	 *
 	 * @param value
-	 *            unsaved value
+	 *          unsaved value
 	 * @param value1
-	 *            existing value
+	 *          existing value
 	 * @return is value updated
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static boolean isValueUpdated(Object value, Object value1) {
 		if (ObjectUtils.isEmpty(value) && ObjectUtils.isEmpty(value1)) {
 			return false;
 
 		} else {
 			if (value instanceof List) {
-				return !(value1 instanceof List && (((List) value).size() == ((List) value1).size())
-						&& ((List) value).containsAll((List) value1));
+				return !(value1 instanceof List && (((List) value).size() == ((List) value1).size()) && ((List) value)
+						.containsAll((List) value1));
 
 			} else if (value instanceof String[]) {
 				return !(value1 instanceof String[] && Arrays.equals((String[]) value, (String[]) value1));
@@ -184,8 +182,7 @@ public final class FieldMappingHelper {
 		return null;
 	}
 
-	public static void setFieldValue(FieldMapping object, String fieldName, Object value)
-			throws IllegalAccessException {
+	public static void setFieldValue(FieldMapping object, String fieldName, Object value) throws IllegalAccessException {
 		try {
 			Field field = FieldMapping.class.getDeclaredField(fieldName);
 			setAccessible(field);
@@ -198,7 +195,8 @@ public final class FieldMappingHelper {
 
 	private static Object convertToSameType(Field field, Object value) {
 
-		if (value == null) return null;
+		if (value == null)
+			return null;
 		Class<?> fieldType = field.getType();
 
 		// Convert List to String[]
@@ -252,21 +250,21 @@ public final class FieldMappingHelper {
 	 * the history of all the nested fields should appear on the first identifier.
 	 *
 	 * @param fieldMappingResponseList
-	 *            fieldMappingResponseList
+	 *          fieldMappingResponseList
 	 * @param fieldMappingResponse
-	 *            fieldMappingResponse
+	 *          fieldMappingResponse
 	 * @param mappingStructure
-	 *            mappingStructure
+	 *          mappingStructure
 	 * @param fieldMapping
-	 *            fieldMapping
+	 *          fieldMapping
 	 * @throws NoSuchFieldException
-	 *             NoSuchFieldException
+	 *           NoSuchFieldException
 	 * @throws IllegalAccessException
-	 *             IllegalAccessException
+	 *           IllegalAccessException
 	 */
 	public static void generateHistoryForNestedFields(List<FieldMappingResponse> fieldMappingResponseList,
-			FieldMappingResponse fieldMappingResponse, FieldMappingStructure mappingStructure,
-			FieldMapping fieldMapping) throws NoSuchFieldException, IllegalAccessException {
+			FieldMappingResponse fieldMappingResponse, FieldMappingStructure mappingStructure, FieldMapping fieldMapping)
+			throws NoSuchFieldException, IllegalAccessException {
 		if (CollectionUtils.isNotEmpty(mappingStructure.getNestedFields())) {
 
 			StringBuilder originalValue = new StringBuilder(fieldMappingResponse.getOriginalValue() + "-");
@@ -274,9 +272,8 @@ public final class FieldMappingHelper {
 			// those fields are present in the fieldmapping response
 			for (BaseFieldMappingStructure nestedField : mappingStructure.getNestedFields()) {
 				Optional<FieldMappingResponse> mappingResponse = fieldMappingResponseList.stream()
-						.filter(response -> response.getFieldName().equalsIgnoreCase(nestedField.getFieldName())
-								&& nestedField.getFilterGroup()
-										.contains(fieldMappingResponse.getOriginalValue().toString()))
+						.filter(response -> response.getFieldName().equalsIgnoreCase(nestedField.getFieldName()) && nestedField
+								.getFilterGroup().contains(fieldMappingResponse.getOriginalValue().toString()))
 						.findFirst();
 				mappingResponse.ifPresent(response -> originalValue.append(response.getOriginalValue()).append(":"));
 			}
@@ -332,9 +329,8 @@ public final class FieldMappingHelper {
 			Integer previousValue = 0;
 			if (CollectionUtils.isNotEmpty(getNodeSpecificFieldHistory)) {
 				List<ConfigurationHistoryChangeLog> changeLogs = getNodeSpecificFieldHistory.stream()
-						.filter(configurationHistoryChangeLog -> StringUtils
-								.isNotEmpty(configurationHistoryChangeLog.getReleaseNodeId())
-								&& configurationHistoryChangeLog.getReleaseNodeId().equalsIgnoreCase(nodeId))
+						.filter(configurationHistoryChangeLog -> StringUtils.isNotEmpty(configurationHistoryChangeLog
+								.getReleaseNodeId()) && configurationHistoryChangeLog.getReleaseNodeId().equalsIgnoreCase(nodeId))
 						.toList();
 				if (CollectionUtils.isNotEmpty(changeLogs)) {
 					ConfigurationHistoryChangeLog configurationHistoryChangeLog = changeLogs.get(changeLogs.size() - 1);
@@ -352,8 +348,9 @@ public final class FieldMappingHelper {
 			Map<String, FieldMappingResponse> responseHashMap) {
 		for (FieldMappingResponse response : originalFieldMappingResponseList) {
 			responseHashMap.computeIfPresent(response.getFieldName(),
-					(k, existingResponse) -> (existingResponse.getPreviousValue() == null
-							&& response.getPreviousValue() != null) ? response : existingResponse);
+					(k, existingResponse) -> (existingResponse.getPreviousValue() == null && response.getPreviousValue() != null)
+							? response
+							: existingResponse);
 			responseHashMap.putIfAbsent(response.getFieldName(), response);
 		}
 	}
@@ -373,6 +370,7 @@ public final class FieldMappingHelper {
 
 	/**
 	 * used in processors
+	 *
 	 * @param dbFieldMapping
 	 * @param source
 	 */

@@ -89,10 +89,9 @@ public class ReleaseVersion {
 			return false;
 		}
 		ReleaseVersion version = (ReleaseVersion) obj;
-		return (releaseName == version.releaseName ||
-				(releaseName != null && releaseName.equals(version.getReleaseName()))) &&
-				(releaseDate == version.getReleaseDate() ||
-						(releaseDate != null && releaseDate.equals(version.getReleaseDate())));
+		return (releaseName == version.releaseName || (releaseName != null && releaseName
+				.equals(version.getReleaseName()))) && (releaseDate == version
+						.getReleaseDate() || (releaseDate != null && releaseDate.equals(version.getReleaseDate())));
 	}
 
 	@Override

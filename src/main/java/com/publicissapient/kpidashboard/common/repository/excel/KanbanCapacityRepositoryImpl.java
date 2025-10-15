@@ -52,9 +52,9 @@ public class KanbanCapacityRepositoryImpl implements KanbanCapacityRepoCustom {
 		// map of common filters Project and Sprint
 		for (Map.Entry<String, Object> entry : mapOfFilters.entrySet()) {
 			String key = entry.getKey();
-			if (ObjectUtils.isNotEmpty(entry.getValue()) &&
-					!key.equalsIgnoreCase("additionalFilterCapacityList.nodeCapacityList.additionalFilterId") &&
-					!key.equalsIgnoreCase("additionalFilterCapacityList.filterId")) {
+			if (ObjectUtils.isNotEmpty(entry.getValue()) && !key
+					.equalsIgnoreCase("additionalFilterCapacityList.nodeCapacityList.additionalFilterId") && !key
+							.equalsIgnoreCase("additionalFilterCapacityList.filterId")) {
 				if (entry.getValue() instanceof List<?>) {
 					List<ObjectId> value = (List<ObjectId>) entry.getValue();
 					criteria = criteria.and(key).in(value);

@@ -9,8 +9,9 @@ import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
-import com.publicissapient.kpidashboard.common.model.application.HierarchyLevel;
 import org.junit.jupiter.api.Test;
+
+import com.publicissapient.kpidashboard.common.model.application.HierarchyLevel;
 
 public class HierarchyValueDTOTest {
 	/** Method under test: {@link HierarchyValueDTO#equals(Object)} */

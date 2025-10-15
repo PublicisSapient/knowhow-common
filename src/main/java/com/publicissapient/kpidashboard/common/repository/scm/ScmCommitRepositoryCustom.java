@@ -20,9 +20,8 @@ package com.publicissapient.kpidashboard.common.repository.scm;
 
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.scm.ScmCommits;
-
 import com.mongodb.BasicDBList;
+import com.publicissapient.kpidashboard.common.model.scm.ScmCommits;
 
 /**
  * Custom repository interface for `ScmCommitRepository` to support complex
@@ -35,14 +34,14 @@ public interface ScmCommitRepositoryCustom {
 	 * criteria.
 	 *
 	 * @param startDate
-	 *            the start of the commit timestamp range(inclusive) in epoch
-	 *            milliseconds
+	 *          the start of the commit timestamp range(inclusive) in epoch
+	 *          milliseconds
 	 * @param endDate
-	 *            the end of the commit timestamp range(inclusive), in epoch
-	 *            milliseconds
+	 *          the end of the commit timestamp range(inclusive), in epoch
+	 *          milliseconds
 	 * @param filterList
-	 *            a `BasicDBList` containing filter criteria, such as processor item
-	 *            IDs or other fields
+	 *          a `BasicDBList` containing filter criteria, such as processor item
+	 *          IDs or other fields
 	 * @return a list of `ScmCommits` matching the specified date range and filters
 	 */
 	List<ScmCommits> findCommitList(Long startDate, Long endDate, BasicDBList filterList);
