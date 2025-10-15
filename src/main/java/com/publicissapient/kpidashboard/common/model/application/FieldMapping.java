@@ -33,9 +33,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * The type Field mapping. Represents Jira field mapping values
- */
+/** The type Field mapping. Represents Jira field mapping values */
 @SuppressWarnings("PMD.TooManyFields")
 @Getter
 @Setter
@@ -507,9 +505,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI186;
 	private String thresholdValueKPI195;
 
-	/**
-	 * kanban kpis threshold fields starts *
-	 */
+	/** kanban kpis threshold fields starts * */
 	private String thresholdValueKPI51;
 
 	private String thresholdValueKPI55;
@@ -533,9 +529,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI184;
 	private String thresholdValueKPI183;
 
-	/**
-	 * kanban kpi threshold fields ends *
-	 */
+	/** kanban kpi threshold fields ends * */
 
 	// Production Incident Mapping
 	private String jiraProductionIncidentIdentification;
@@ -621,7 +615,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	 * Sets jira issue type names.
 	 *
 	 * @param jiraIssueTypeNames
-	 *            the jira issue type names
+	 *          the jira issue type names
 	 */
 	public void setJiraIssueTypeNames(String[] jiraIssueTypeNames) {
 		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();

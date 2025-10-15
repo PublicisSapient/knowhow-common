@@ -89,6 +89,7 @@ public interface AccessRequestsRepository extends MongoRepository<AccessRequest,
 	 */
 	AccessRequest findById(String id);
 
-    void deleteById(List<ObjectId> obsoleteAccessRequests);
+	void deleteById(List<ObjectId> obsoleteAccessRequests);
+
 	void deleteByUsername(String userName);
 }

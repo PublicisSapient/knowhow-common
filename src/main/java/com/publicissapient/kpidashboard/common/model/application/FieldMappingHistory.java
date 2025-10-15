@@ -539,17 +539,17 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historydefectRejectionLabelsKPI37;
 
-    //LateRefinement
-    private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
-    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
+	// LateRefinement
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
 
-    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
 
-    private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI120;
+	private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI120;
 
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI190;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI190;
