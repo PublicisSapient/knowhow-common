@@ -246,4 +246,7 @@ public interface JiraIssueRepository
 	 */
 	@Query("{'sprintID': ?0}")
 	List<JiraIssue> findBySprintID(String sprintId);
+
+	List<JiraIssue> findByNumberInAndBasicProjectConfigIdIn(Set<String> jiraIssueNumber,
+															Set<String> basicProjectConfigIds);
 }
