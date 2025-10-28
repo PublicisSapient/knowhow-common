@@ -17,6 +17,7 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,8 +67,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 						processorExecutionTracelog.getBasicProjectConfigId());
 		existingTraceLogOptional.ifPresent(existingProcessorExecutionTraceLog -> {
 			processorExecutionTracelog.setId(existingProcessorExecutionTraceLog.getId());
-			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType()) && MapUtils
-					.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
+			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType())
+					&& MapUtils.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
 				processorExecutionTracelog.setLastSavedEntryUpdatedDateByType(
 						existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType());
 			}
@@ -94,14 +95,16 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			List<ProcessorExecutionTraceLog> traceLogsByProject = processorExecutionTraceLogRepository
 					.findByBasicProjectConfigId(basicProjectConfigId);
 			resultTraceLogs.addAll(traceLogsByProject);
-		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA) && StringUtils
-				.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
+		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA)
+				&& StringUtils.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
 			Optional<ProcessorExecutionTraceLog> jiraProgressTraceLog = processorExecutionTraceLogRepository
-					.findByProcessorNameAndBasicProjectConfigIdAndProgressStatsTrue(processorName, basicProjectConfigId);
+					.findByProcessorNameAndBasicProjectConfigIdAndProgressStatsTrue(processorName,
+							basicProjectConfigId);
 			return jiraProgressTraceLog.map(Collections::singletonList).orElseGet(Collections::emptyList);
 		} else {
 			List<ProcessorExecutionTraceLog> traceLogsByProcessorAndProject = processorExecutionTraceLogRepository
-					.findByProcessorNameAndBasicProjectConfigIdIn(processorName, Collections.singletonList(basicProjectConfigId));
+					.findByProcessorNameAndBasicProjectConfigIdIn(processorName,
+							Collections.singletonList(basicProjectConfigId));
 			resultTraceLogs.addAll(traceLogsByProcessorAndProject);
 		}
 
@@ -114,9 +117,9 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	 * Get ProcessorExecutionTraceLogDTOs
 	 *
 	 * @param processorName
-	 *          processorName
+	 *            processorName
 	 * @param basicProjectConfigId
-	 *          basicProjectConfigId
+	 *            basicProjectConfigId
 	 * @return List of ProcessorExecutionTraceLogDTO
 	 */
 	@Override
@@ -125,11 +128,38 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 		return traceLogs.stream().map(this::convertToProcessorExecutionTraceLogDTO).toList();
 	}
 
+	public ProcessorExecutionTraceLog createNewProcessorJobExecution(String jobName) {
+		Instant startingTime = Instant.now();
+		ProcessorExecutionTraceLog processorExecutionTraceLog = new ProcessorExecutionTraceLog();
+		processorExecutionTraceLog.setProcessorName(jobName);
+		processorExecutionTraceLog.setExecutionOngoing(true);
+		processorExecutionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
+		processorExecutionTraceLog.setExecutionSuccess(true);
+		return this.processorExecutionTraceLogRepository.save(processorExecutionTraceLog);
+	}
+
+	public void markJobExecutionAsEnded(String jobName, ObjectId executionId) {
+		Optional<ProcessorExecutionTraceLog> processorExecutionTraceLogOptional =
+				this.processorExecutionTraceLogRepository.findById(executionId);
+		if(processorExecutionTraceLogOptional.isPresent()) {
+			ProcessorExecutionTraceLog executionTraceLog = processorExecutionTraceLogOptional.get();
+			executionTraceLog.setExecutionOngoing(false);
+			executionTraceLog.setExecutionEndedAt(Instant.now().toEpochMilli());
+			this.processorExecutionTraceLogRepository.save(executionTraceLog);
+		} else {
+			log.error("Could not mark the job execution as ended for job {}", jobName);
+		}
+	}
+
+	public Optional<ProcessorExecutionTraceLog> findLastExecutionTraceLogByProcessorName(String processorName) {
+		return this.processorExecutionTraceLogRepository.findLastExecutionTraceLogByProcessorName(processorName);
+	}
+
 	/**
 	 * Convert ProcessorExecutionTraceLog to ProcessorExecutionTraceLogDTO
 	 *
 	 * @param traceLog
-	 *          ProcessorExecutionTraceLog
+	 *            ProcessorExecutionTraceLog
 	 * @return ProcessorExecutionTraceLogDTO
 	 */
 	private ProcessorExecutionTraceLogDTO convertToProcessorExecutionTraceLogDTO(ProcessorExecutionTraceLog traceLog) {
