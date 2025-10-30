@@ -39,4 +39,7 @@ public interface SprintRepositoryCustom {
 	 */
 	List<SprintDetails> findByBasicProjectConfigIdInAndStateInOrderByStartDateDesc(Set<ObjectId> basicProjectConfigIds,
 			List<String> sprintStatusList, long limit);
+
+	List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(
+			List<ObjectId> basicProjectConfigIds, int limit);
 }

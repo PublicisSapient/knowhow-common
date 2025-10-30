@@ -356,6 +356,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationCompletionStatusKPI131;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationCompletionStatusKPI138;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationCompletionStatusKPI176;
+	private List<ConfigurationHistoryChangeLog> historyincludedStatusesToIdentifyCompletedIssuesKPI198;
 
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationCompletionTypeCustomField;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationIssuetypeKPI122;
@@ -373,6 +374,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationIssuetypeKPI120;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationIssuetypeKPI124;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationIssuetypeKPI39;
+	private List<ConfigurationHistoryChangeLog> historyincludedIssueTypesFromTheCompletedIssuesKPI198;
 
 	private List<ConfigurationHistoryChangeLog> historyuploadData;
 	private List<ConfigurationHistoryChangeLog> historyuploadDataKPI42;
@@ -537,17 +539,17 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historydefectRejectionLabelsKPI37;
 
-    //LateRefinement
-    private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
-    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
+	// LateRefinement
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusKPI187;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI187;
 
-    private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
-    private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementCriteriaKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementByCustomFieldKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementMinLengthKPI188;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementKeywordsKPI188;
 
-    private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI120;
+	private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI120;
 
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI190;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI190;
@@ -562,4 +564,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectSeverityByCustomFieldKPI194;
 
 	private List<ConfigurationHistoryChangeLog> historyincludedSeveritySlasKPI195;
+
+	private List<ConfigurationHistoryChangeLog> historyaiUsageTypeJiraCustomFieldKPI198;
+	private List<ConfigurationHistoryChangeLog> historyaiEfficiencyGainJiraCustomFieldKPI198;
 }
