@@ -57,6 +57,6 @@ public interface ProcessorExecutionTraceLogRepository extends MongoRepository<Pr
 	List<ProcessorExecutionTraceLog> findByProcessorNameAndBasicProjectConfigIdAndProgressStatsFalse(String processorName,
 			String basicProjectConfigId);
 
-	@Query(value = "{'processorName': ?0}", sort = "{ 'executionEndedAt': -1}")
+	@Query(value = "{'processorName': ?0}", sort = "{ 'executionStartedAt': -1}")
 	List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName, PageRequest pageRequest);
 }

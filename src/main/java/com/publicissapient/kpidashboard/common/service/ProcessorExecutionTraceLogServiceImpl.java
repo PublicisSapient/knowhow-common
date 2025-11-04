@@ -142,8 +142,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 		return this.processorExecutionTraceLogRepository.findById(objectId);
 	}
 
-	public List<ProcessorExecutionTraceLog> findLastExecutionTraceLogByProcessorName(String processorName,
-			int numberOfExecutions) {
+	public List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName,
+																					  int numberOfExecutions) {
 		return this.processorExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorName(processorName,
 				PageRequest.ofSize(numberOfExecutions));
 	}
