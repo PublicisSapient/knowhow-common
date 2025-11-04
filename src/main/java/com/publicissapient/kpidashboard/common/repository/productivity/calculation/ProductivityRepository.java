@@ -20,8 +20,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.publicissapient.kpidashboard.common.model.productivity.calculation.ProductivityCalculation;
+import com.publicissapient.kpidashboard.common.model.productivity.calculation.Productivity;
 
 @Repository
-public interface ProductivityCalculationRepository extends MongoRepository<ProductivityCalculation, ObjectId> {
+public interface ProductivityRepository extends MongoRepository<Productivity, ObjectId> {
 }

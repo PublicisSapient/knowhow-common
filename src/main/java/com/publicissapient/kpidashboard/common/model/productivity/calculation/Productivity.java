@@ -28,8 +28,8 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Document(collection = "productivity_calculations")
-public class ProductivityCalculation extends BasicModel {
+@Document(collection = "productivity")
+public class Productivity extends BasicModel {
 	private int hierarchyLevel;
 
 	private String hierarchyEntityName;
