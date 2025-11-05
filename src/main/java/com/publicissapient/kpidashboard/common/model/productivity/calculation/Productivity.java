@@ -34,7 +34,7 @@ public class Productivity extends BasicModel {
 
 	private String hierarchyEntityName;
 	private String hierarchyEntityNodeId;
-	private String hierarchyLabel;
+	private String hierarchyLevelId;
 
 	private Instant calculationDate;
 
