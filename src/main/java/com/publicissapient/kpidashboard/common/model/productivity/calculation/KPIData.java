@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 @Builder
 public class KPIData {
-	private String id;
+	private String kpiId;
 	private String name;
 	private String category;
 
