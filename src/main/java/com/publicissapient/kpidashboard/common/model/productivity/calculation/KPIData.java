@@ -21,10 +21,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProductivityMetrics {
-	private double overall;
-	private double speed;
-	private double quality;
-	private double efficiency;
-	private double productivity;
+public class KPIData {
+	private String id;
+	private String name;
+	private String category;
+
+	private Double calculationValue;
+	private Double variationPercentage;
 }

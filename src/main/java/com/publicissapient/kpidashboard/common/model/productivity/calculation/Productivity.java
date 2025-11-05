@@ -38,7 +38,7 @@ public class Productivity extends BasicModel {
 
 	private Instant calculationDate;
 
-	private ProductivityMetrics productivityMetrics;
+	private CategoryScores categoryScores;
 
-	private List<ProductivityKPIData> kpis;
+	private List<KPIData> kpis;
 }
