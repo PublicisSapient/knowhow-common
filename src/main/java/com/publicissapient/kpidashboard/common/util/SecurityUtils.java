@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * </ul>
  */
 @Slf4j
-public final class SecuritySanitizationUtil {
+public final class SecurityUtils {
 
 	// -------------------- Secure String Utilities --------------------
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -28,7 +28,7 @@ public final class SecuritySanitizationUtil {
 	private static final String EMPTY = "";
 
 	// -------------------- Private Constructor --------------------
-	private SecuritySanitizationUtil() {
+	private SecurityUtils() {
 		// Utility class — prevent instantiation
 	}
 
@@ -72,10 +72,10 @@ public final class SecuritySanitizationUtil {
 	 * @return sanitized ID or empty string if invalid
 	 */
 	public static String getSanitizedProjectConfigId(ProcessorExecutionBasicConfig config) {
-		String sanitizedId = Optional.ofNullable(config)
-				.flatMap(cfg -> Optional.ofNullable(cfg.getProjectBasicConfigIds()).filter(list -> !list.isEmpty())
-						.map(list -> list.get(0)))
-				.filter(id -> !id.trim().isEmpty()).map(SecuritySanitizationUtil::sanitize).orElse(EMPTY);
+		String sanitizedId = Optional
+				.ofNullable(config).flatMap(cfg -> Optional.ofNullable(cfg.getProjectBasicConfigIds())
+						.filter(list -> !list.isEmpty()).map(list -> list.get(0)))
+				.filter(id -> !id.trim().isEmpty()).map(SecurityUtils::sanitize).orElse(EMPTY);
 
 		if (sanitizedId.isEmpty()) {
 			log.warn("Failed to extract valid Project Basic Config ID from ProcessorExecutionBasicConfig: {}", config);
