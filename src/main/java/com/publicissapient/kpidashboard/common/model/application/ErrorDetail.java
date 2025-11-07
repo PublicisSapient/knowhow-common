@@ -17,19 +17,18 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ErrorDetail {
 	private int status;
 	private String url;
 	private String impact;
 	private String error;
-
-	public ErrorDetail(int status, String url, String error, String impact) {
-		this.status = status;
-		this.url = url;
-		this.impact = impact;
-		this.error = error;
-	}
 }
