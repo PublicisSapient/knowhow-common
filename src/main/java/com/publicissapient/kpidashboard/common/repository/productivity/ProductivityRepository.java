@@ -14,7 +14,7 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.productivity.calculation;
+package com.publicissapient.kpidashboard.common.repository.productivity;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
