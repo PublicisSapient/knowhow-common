@@ -29,6 +29,20 @@ import com.publicissapient.kpidashboard.common.model.productivity.calculation.Pr
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Custom repository implementation for productivity data operations in MongoDB.
+ *
+ * <p>
+ * This repository provides specialized query operations for retrieving
+ * productivity calculations that are not available through standard Spring Data
+ * MongoDB repository methods. It focuses on complex aggregation queries that
+ * require custom MongoDB pipeline operations.
+ * </p>
+ *
+ * @author vladinu
+ * @see ProductivityCustomRepository
+ * @see Productivity
+ */
 @Repository
 @RequiredArgsConstructor
 public class ProductivityCustomRepositoryImpl implements ProductivityCustomRepository {
@@ -36,6 +50,23 @@ public class ProductivityCustomRepositoryImpl implements ProductivityCustomRepos
 
 	private final MongoTemplate mongoTemplate;
 
+	/**
+	 * Retrieves the latest productivity calculation for each specified hierarchy
+	 * entity.
+	 *
+	 * <p>
+	 * This method uses MongoDB aggregation pipeline to efficiently find the most
+	 * recent productivity calculation for each hierarchy entity node. The
+	 * aggregation performs the following operations:
+	 * </p>
+	 *
+	 * @param hierarchyNodeIds
+	 *            Set of hierarchy entity node IDs for which to retrieve the latest
+	 *            productivity calculations. Must not be null or empty. The productivities are only stored at the
+	 *            organization level 'project'
+	 * @return List of Productivity objects representing the latest calculation for
+	 *         each requested hierarchy entity.
+	 */
 	@Override
 	public List<Productivity> getLatestProductivityByCalculationDateForProjects(Set<String> hierarchyNodeIds) {
 		Aggregation aggregation = Aggregation.newAggregation(
