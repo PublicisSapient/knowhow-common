@@ -110,7 +110,7 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	 * @param itemIds
 	 *          -> ProjectId
 	 * @param createdBy
-	 * 			-> createdBy
+	 *          -> createdBy
 	 */
 	@Query("{ $or: [ { 'projectsAccess.accessNodes.accessItems.itemId': { $in: ?0 } }, { 'createdBy': ?1 } ] }")
 	List<UserInfo> findUsersByItemIdsOrCreatedBy(List<String> itemIds, String createdBy);

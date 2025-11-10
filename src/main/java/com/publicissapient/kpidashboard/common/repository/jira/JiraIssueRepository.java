@@ -248,5 +248,5 @@ public interface JiraIssueRepository
 	List<JiraIssue> findBySprintID(String sprintId);
 
 	List<JiraIssue> findByNumberInAndBasicProjectConfigIdIn(Set<String> jiraIssueNumber,
-															Set<String> basicProjectConfigIds);
+			Set<String> basicProjectConfigIds);
 }
