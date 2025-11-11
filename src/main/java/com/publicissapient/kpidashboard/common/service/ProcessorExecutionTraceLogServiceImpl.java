@@ -17,6 +17,7 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,7 +29,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -37,6 +38,7 @@ import com.publicissapient.kpidashboard.common.model.application.dto.ProcessorEx
 import com.publicissapient.kpidashboard.common.model.application.dto.SprintRefreshLogDTO;
 import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,13 +46,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecutionTraceLogService {
 
-	@Autowired
-	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+	private final ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
 
-	@Autowired
-	private AzureSprintReportLogService azureSprintReportLogService;
+	private final AzureSprintReportLogService azureSprintReportLogService;
 
 	@Override
 	public void save(ProcessorExecutionTraceLog processorExecutionTracelog) {
@@ -123,6 +124,30 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	public List<ProcessorExecutionTraceLogDTO> getTraceLogDTOs(String processorName, String basicProjectConfigId) {
 		List<ProcessorExecutionTraceLog> traceLogs = getTraceLogs(processorName, basicProjectConfigId);
 		return traceLogs.stream().map(this::convertToProcessorExecutionTraceLogDTO).toList();
+	}
+
+	public ProcessorExecutionTraceLog createNewProcessorJobExecution(String jobName) {
+		Instant startingTime = Instant.now();
+		ProcessorExecutionTraceLog processorExecutionTraceLog = new ProcessorExecutionTraceLog();
+		processorExecutionTraceLog.setProcessorName(jobName);
+		processorExecutionTraceLog.setExecutionOngoing(true);
+		processorExecutionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
+		processorExecutionTraceLog.setExecutionSuccess(true);
+		return this.processorExecutionTraceLogRepository.save(processorExecutionTraceLog);
+	}
+
+	public Optional<ProcessorExecutionTraceLog> findById(ObjectId objectId) {
+		return this.processorExecutionTraceLogRepository.findById(objectId);
+	}
+
+	public List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName,
+			int numberOfExecutions) {
+		return this.processorExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorName(processorName,
+				PageRequest.ofSize(numberOfExecutions));
+	}
+
+	public void saveAiDataProcessorExecutions(ProcessorExecutionTraceLog processorExecutionTracelog) {
+		this.processorExecutionTraceLogRepository.save(processorExecutionTracelog);
 	}
 
 	/**

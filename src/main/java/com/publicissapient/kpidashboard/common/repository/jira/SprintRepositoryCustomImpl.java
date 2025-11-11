@@ -60,8 +60,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	@Override
 	public List<SprintDetails> findByBasicProjectConfigIdInAndStateInOrderByStartDateDesc(
 			Set<ObjectId> basicProjectConfigIds, List<String> sprintStatusList, long limit) {
-		MatchOperation matchStage = Aggregation.match(
-				Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(STATE).in(sprintStatusList));
+		MatchOperation matchStage = Aggregation
+				.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(STATE).in(sprintStatusList));
 
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, END_DATE);
 
@@ -82,7 +82,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	}
 
 	@Override
-	public List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(List<ObjectId> basicProjectConfigIds, int limit) {
+	public List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(List<ObjectId> basicProjectConfigIds,
+			int limit) {
 		MatchOperation matchStage = Aggregation.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds));
 
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, COMPLETE_DATE);
