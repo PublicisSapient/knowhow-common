@@ -128,9 +128,8 @@ public class ProjectToolConfig extends BasicModel implements Cloneable {
     public static class ScmToolConfig {
         private String gitFullUrl;
         private ObjectId connectionId;
-        private String branch;
+        private List<String> branches;
         private String repositoryName;
-        private String toolName;
     }
 
 	@Override
