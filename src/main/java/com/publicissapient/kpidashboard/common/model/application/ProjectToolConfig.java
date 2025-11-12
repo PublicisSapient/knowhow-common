@@ -18,20 +18,18 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
-import java.util.List;
-
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 /**
  * @author anisingh4
@@ -123,6 +121,16 @@ public class ProjectToolConfig extends BasicModel implements Cloneable {
 	private String azureRefreshActiveSprintReportUpdatedBy;
 	private long azureRefreshActiveSprintReportUpdatedOn;
 	private String jiraConfigurationType;
+    private List<ScmToolConfig> scmToolConfig;
+
+    @Setter
+    @Getter
+    public static class ScmToolConfig {
+        private String gitFullUrl;
+        private ObjectId connectionId;
+        private List<String> branches;
+        private String repositoryName;
+    }
 
 	@Override
 	public ProjectToolConfig clone() throws CloneNotSupportedException {
