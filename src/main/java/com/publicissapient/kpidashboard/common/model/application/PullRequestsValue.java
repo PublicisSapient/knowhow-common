@@ -43,7 +43,7 @@ import java.util.Map;
 public class PullRequestsValue implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private String id;
+    private String label;
     private String size;
     private String prUrl;
     private transient Map<String, Object> hoverValue;

@@ -89,7 +89,7 @@ public class DataCount implements Serializable {
 	private String graphType; // for non-clustered bar and line graph
 
 	private List<DataValue> dataValue; // for multiple line graph
-	private List<PullRequestsValue> prValues;
+	private List<PullRequestsValue> bubblePoints;
 	private transient Object size; // horizontal stacked bar graph
 
 	/**
