@@ -46,8 +46,8 @@ public enum FeatureEnum implements Feature {
 	@Label("Rally")
 	RALLY,
 
-    @Label("Analysis")
-    ANALYSIS;
+	@Label("Analysis")
+	ANALYSIS;
 
 	public boolean isActive() {
 		return FeatureContext.getFeatureManager().isActive(this);
