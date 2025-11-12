@@ -59,7 +59,6 @@ import lombok.RequiredArgsConstructor;
 public class ProductivityCustomRepositoryImpl implements ProductivityCustomRepository {
 	private static final String COLLECTION_NAME_PRODUCTIVITY = "productivity";
 	private static final String HIERARCHY_ENTITY_NODE_ID_FIELD_NAME = "hierarchyEntityNodeId";
-
 	private static final String ENTRIES = "entries";
 
 	private final MongoTemplate mongoTemplate;
