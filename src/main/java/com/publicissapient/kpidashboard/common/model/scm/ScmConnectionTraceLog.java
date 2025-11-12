@@ -14,14 +14,25 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.productivity.calculation;
+package com.publicissapient.kpidashboard.common.model.scm;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.publicissapient.kpidashboard.common.model.productivity.calculation.Productivity;
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
-@Repository
-public interface ProductivityRepository extends MongoRepository<Productivity, ObjectId> {
+import lombok.*;
+
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "scm_connection_trace_log")
+public class ScmConnectionTraceLog extends BasicModel {
+
+	private String connectionId;
+	private boolean fetchSuccessful;
+	private boolean errorInFetch;
+    private boolean isOnGoing;
+	private long lastSyncTimeTimeStamp;
 }

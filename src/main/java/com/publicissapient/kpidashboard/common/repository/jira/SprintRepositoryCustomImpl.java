@@ -54,6 +54,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	private static final String COMPLETE_DATE = "completeDate";
 	private static final String TOTAL_ISSUES = "totalIssues";
 	private static final String SPRINT_DETAILS = "sprint_details";
+	public static final String ADDED_ISSUES = "addedIssues";
+	public static final String PUNTED_ISSUES = "puntedIssues";
 
 	private final MongoOperations operations;
 
@@ -96,7 +98,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
 		ProjectionOperation projectStage = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
-				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE);
+				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE, ADDED_ISSUES,
+				PUNTED_ISSUES);
 
 		Aggregation aggregation = Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage,
 				replaceRootStage, projectStage);

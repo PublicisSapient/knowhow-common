@@ -14,21 +14,14 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.model.productivity.calculation;
+package com.publicissapient.kpidashboard.common.repository.scm;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.publicissapient.kpidashboard.common.model.scm.ScmConnectionTraceLog;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class CategoryScores {
-	private double overall;
-	private double speed;
-	private double quality;
-	private double efficiency;
-	private double productivity;
+import java.util.Optional;
+
+public interface ScmConnectionTraceLogRepository extends MongoRepository<ScmConnectionTraceLog, ObjectId> {
+	Optional<ScmConnectionTraceLog> findByConnectionId(String connectionId);
 }

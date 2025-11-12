@@ -14,21 +14,13 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.model.productivity.calculation;
+package com.publicissapient.kpidashboard.common.repository.productivity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
+import java.util.Set;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class CategoryScores {
-	private double overall;
-	private double speed;
-	private double quality;
-	private double efficiency;
-	private double productivity;
+import com.publicissapient.kpidashboard.common.model.productivity.calculation.Productivity;
+
+public interface ProductivityCustomRepository {
+	List<Productivity> getLatestProductivityByCalculationDateForProjects(Set<String> hierarchyNodeIds);
 }
