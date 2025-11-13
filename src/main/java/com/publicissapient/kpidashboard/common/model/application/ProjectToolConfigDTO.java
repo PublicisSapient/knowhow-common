@@ -18,18 +18,16 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
-import java.util.List;
-
-import org.bson.types.ObjectId;
-
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+
+import java.util.List;
 
 /**
  * @author dilipKr
@@ -120,4 +118,14 @@ public class ProjectToolConfigDTO {
 	private String scanningBranch;
 	private Boolean azureRefreshActiveSprintReport = false;
 	private String jiraConfigurationType;
+    private List<ScmToolConfig> scmToolConfigList;
+
+    @Setter
+    @Getter
+    private static class ScmToolConfig {
+        private String repositoryUrl;
+        private String connectionId;
+        private List<String> branches;
+        private String repositoryName;
+    }
 }
