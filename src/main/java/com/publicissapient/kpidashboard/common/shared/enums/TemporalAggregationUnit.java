@@ -16,6 +16,8 @@
 
 package com.publicissapient.kpidashboard.common.shared.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,5 +29,6 @@ public enum TemporalAggregationUnit {
     QUARTER("quarter"),
     YEAR("year");
 
+    @JsonValue
     private final String unit;
 }
