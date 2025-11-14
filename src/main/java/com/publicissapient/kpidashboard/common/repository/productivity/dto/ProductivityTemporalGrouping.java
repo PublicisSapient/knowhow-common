@@ -14,18 +14,21 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.productivity;
+package com.publicissapient.kpidashboard.common.repository.productivity.dto;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
 import com.publicissapient.kpidashboard.common.model.productivity.calculation.Productivity;
-import com.publicissapient.kpidashboard.common.repository.productivity.dto.ProductivityTemporalGrouping;
 import com.publicissapient.kpidashboard.common.shared.enums.TemporalAggregationUnit;
 
-public interface ProductivityCustomRepository {
-	List<Productivity> getLatestProductivityByCalculationDateForProjects(Set<String> hierarchyNodeIds);
+import lombok.Data;
 
-	List<ProductivityTemporalGrouping> getProductivitiesGroupedByTemporalUnit(Set<String> hierarchyNodeIds,
-			TemporalAggregationUnit temporalAggregationUnit, int limit);
+@Data
+public class ProductivityTemporalGrouping {
+	private Instant periodStart;
+
+	private TemporalAggregationUnit temporalAggregationUnit;
+
+	private List<Productivity> productivities;
 }
