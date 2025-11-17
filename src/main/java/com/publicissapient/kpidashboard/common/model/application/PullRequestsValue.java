@@ -17,6 +17,10 @@
  ******************************************************************************/
 package com.publicissapient.kpidashboard.common.model.application;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,12 +29,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-
 /**
- *
  * @author aksshriv1
  */
 @Data
@@ -41,10 +40,10 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString
 public class PullRequestsValue implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private String label;
-    private String size;
-    private String prUrl;
-    private transient Map<String, Object> hoverValue;
+	@Serial
+	private static final long serialVersionUID = 1L;
+	private String label;
+	private String size;
+	private String prUrl;
+	private transient Map<String, Object> hoverValue;
 }

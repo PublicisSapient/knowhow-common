@@ -24,11 +24,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum TemporalAggregationUnit {
-    WEEK("week"),
-    MONTH("month"),
-    QUARTER("quarter"),
-    YEAR("year");
+	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
 
-    @JsonValue
-    private final String unit;
+	@JsonValue
+	private final String unit;
 }
