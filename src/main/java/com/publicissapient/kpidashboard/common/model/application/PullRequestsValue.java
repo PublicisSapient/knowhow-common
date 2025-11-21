@@ -34,11 +34,8 @@ import lombok.ToString;
  */
 @Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class PullRequestsValue implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
