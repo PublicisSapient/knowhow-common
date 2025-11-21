@@ -23,10 +23,11 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.publicissapient.kpidashboard.common.model.ProcessorExecutionBasicConfig;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Common utility class providing:
@@ -79,12 +80,9 @@ public final class SecurityUtils {
 	 */
 	public static String getSanitizedProjectConfigId(ProcessorExecutionBasicConfig config) {
 		String sanitizedId = Optional.ofNullable(config)
-				.flatMap(cfg -> Optional.ofNullable(cfg.getProjectBasicConfigIds())
-						.filter(list -> !list.isEmpty())
+				.flatMap(cfg -> Optional.ofNullable(cfg.getProjectBasicConfigIds()).filter(list -> !list.isEmpty())
 						.map(list -> list.get(0)))
-				.filter(id -> !id.trim().isEmpty())
-				.map(SecurityUtils::sanitize)
-				.orElse(StringUtils.EMPTY);
+				.filter(id -> !id.trim().isEmpty()).map(SecurityUtils::sanitize).orElse(StringUtils.EMPTY);
 
 		if (sanitizedId.isEmpty()) {
 			log.warn("Failed to extract valid Project Basic Config ID from ProcessorExecutionBasicConfig: {}", config);
@@ -96,16 +94,18 @@ public final class SecurityUtils {
 	 * Sanitizes a given input string by removing all characters except letters,
 	 * digits, hyphens ('-'), and underscores ('_').
 	 *
-	 * <p>This method is generic and can be used to clean user-provided or
-	 * configuration-related strings to ensure they are safe for further processing.</p>
+	 * <p>
+	 * This method is generic and can be used to clean user-provided or
+	 * configuration-related strings to ensure they are safe for further processing.
 	 *
-	 * @param input the input string to sanitize (nullable)
+	 * @param input
+	 *          the input string to sanitize (nullable)
 	 * @return a sanitized string containing only allowed characters, or
-	 *         {@link org.apache.commons.lang3.StringUtils#EMPTY} if the input is null or invalid
+	 *         {@link org.apache.commons.lang3.StringUtils#EMPTY} if the input is
+	 *         null or invalid
 	 */
 	public static String sanitize(String input) {
-		return Optional.ofNullable(input)
-				.map(str -> SAFE_PATTERN.matcher(str).replaceAll(StringUtils.EMPTY))
+		return Optional.ofNullable(input).map(str -> SAFE_PATTERN.matcher(str).replaceAll(StringUtils.EMPTY))
 				.orElse(StringUtils.EMPTY);
 	}
 }

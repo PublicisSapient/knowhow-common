@@ -16,10 +16,10 @@
 
 package com.publicissapient.kpidashboard.common.model.scm;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 /**
  * Domain model representing a Git branch.
