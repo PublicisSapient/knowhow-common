@@ -14,18 +14,14 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.repository.kpimaturity.organization;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.publicissapient.kpidashboard.common.model.kpimaturity.organization.KpiMaturity;
 
-@Getter
-@RequiredArgsConstructor
-public enum TemporalAggregationUnit {
-	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
-
-	@JsonValue
-	private final String unit;
+@Repository
+public interface KpiMaturityRepository extends MongoRepository<KpiMaturity, ObjectId> {
 }

@@ -14,18 +14,14 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.model.kpimaturity.organization;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Builder;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
-public enum TemporalAggregationUnit {
-	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
-
-	@JsonValue
-	private final String unit;
+@Data
+@Builder
+public class EfficiencyScore {
+	private double score;
+	private double percentage;
 }

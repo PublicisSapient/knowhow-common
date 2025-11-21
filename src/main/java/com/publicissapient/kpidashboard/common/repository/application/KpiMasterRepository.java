@@ -25,6 +25,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 import com.publicissapient.kpidashboard.common.model.application.KpiMaster;
+import com.publicissapient.kpidashboard.common.repository.projection.BasicKpiMasterProjection;
 
 /** Repository for {@link KpiMaster}. */
 public interface KpiMasterRepository extends CrudRepository<KpiMaster, ObjectId>, QuerydslPredicateExecutor<KpiMaster> {
@@ -71,4 +72,6 @@ public interface KpiMasterRepository extends CrudRepository<KpiMaster, ObjectId>
 	 * @return list of KpiMaster
 	 */
 	List<KpiMaster> findByKpiIdIn(List<String> kpiIds);
+
+	List<BasicKpiMasterProjection> findByKanbanAndCalculateMaturity(boolean kanban, boolean calculateMaturity);
 }

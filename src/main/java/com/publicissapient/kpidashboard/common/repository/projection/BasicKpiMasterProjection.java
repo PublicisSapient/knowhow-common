@@ -14,18 +14,16 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.repository.projection;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+public interface BasicKpiMasterProjection {
+	String getKpiId();
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+	String getKpiName();
 
-@Getter
-@RequiredArgsConstructor
-public enum TemporalAggregationUnit {
-	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
+	String getxAxisLabel();
 
-	@JsonValue
-	private final String unit;
+	String getKpiCategory();
+
+	String getKpiSource();
 }

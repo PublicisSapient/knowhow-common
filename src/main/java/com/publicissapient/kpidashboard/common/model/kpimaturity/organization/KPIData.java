@@ -14,18 +14,21 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.model.kpimaturity.organization;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class KPIData {
+	private double overallMaturity;
 
-@Getter
-@RequiredArgsConstructor
-public enum TemporalAggregationUnit {
-	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
-
-	@JsonValue
-	private final String unit;
+	private String kpiId;
+	private String name;
+	private String category;
 }

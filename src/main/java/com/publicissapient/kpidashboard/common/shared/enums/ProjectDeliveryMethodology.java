@@ -16,16 +16,13 @@
 
 package com.publicissapient.kpidashboard.common.shared.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TemporalAggregationUnit {
-	WEEK("week"), MONTH("month"), QUARTER("quarter"), YEAR("year");
+public enum ProjectDeliveryMethodology {
+	SCRUM("scrum"), KANBAN("kanban");
 
-	@JsonValue
-	private final String unit;
+	private final String deliveryMethodology;
 }
