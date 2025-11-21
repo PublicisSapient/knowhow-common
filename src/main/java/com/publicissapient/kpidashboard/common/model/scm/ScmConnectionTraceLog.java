@@ -33,6 +33,6 @@ public class ScmConnectionTraceLog extends BasicModel {
 	private String connectionId;
 	private boolean fetchSuccessful;
 	private boolean errorInFetch;
-    private boolean isOnGoing;
+	private boolean isOnGoing;
 	private long lastSyncTimeTimeStamp;
 }

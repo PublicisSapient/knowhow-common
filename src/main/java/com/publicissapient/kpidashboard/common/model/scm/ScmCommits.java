@@ -16,14 +16,10 @@
 
 package com.publicissapient.kpidashboard.common.model.scm;
 
-import com.publicissapient.kpidashboard.common.constant.CommitType;
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,9 +29,15 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.publicissapient.kpidashboard.common.constant.CommitType;
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @Builder
