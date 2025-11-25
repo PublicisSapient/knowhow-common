@@ -14,18 +14,13 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.repository.kpimaturity.organization;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.List;
+import java.util.Set;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.publicissapient.kpidashboard.common.model.kpimaturity.organization.KpiMaturity;
 
-@Getter
-@RequiredArgsConstructor
-public enum ProjectDeliveryMethodology {
-	SCRUM("scrum"), KANBAN("kanban");
-
-	@JsonValue
-	private final String deliveryMethodology;
+public interface KpiMaturityCustomRepository {
+	List<KpiMaturity> getLatestKpiMaturityByCalculationDateForProjects(Set<String> hierarchyNodeIds);
 }
