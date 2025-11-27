@@ -14,18 +14,21 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.shared.enums;
+package com.publicissapient.kpidashboard.common.repository.kpimaturity.organization.dto;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.time.Instant;
+import java.util.List;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.publicissapient.kpidashboard.common.model.kpimaturity.organization.KpiMaturity;
+import com.publicissapient.kpidashboard.common.shared.enums.TemporalAggregationUnit;
 
-@Getter
-@RequiredArgsConstructor
-public enum ProjectDeliveryMethodology {
-	SCRUM("scrum"), KANBAN("kanban");
+import lombok.Data;
 
-	@JsonValue
-	private final String deliveryMethodology;
+@Data
+public class KpiMaturityTemporalGrouping {
+    private Instant periodStart;
+
+    private TemporalAggregationUnit temporalAggregationUnit;
+
+    private List<KpiMaturity> kpiMaturities;
 }
