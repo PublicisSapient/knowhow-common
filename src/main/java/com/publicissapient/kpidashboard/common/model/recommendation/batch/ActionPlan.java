@@ -18,9 +18,7 @@ package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
 import lombok.Data;
 
-/**
- * Represents a specific action plan within a recommendation.
- */
+/** Represents a specific action plan within a recommendation. */
 @Data
 public class ActionPlan {
 

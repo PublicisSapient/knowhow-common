@@ -18,19 +18,17 @@ package com.publicissapient.kpidashboard.common.service.recommendation;
 
 import java.util.Map;
 
-import com.publicissapient.kpidashboard.common.model.recommendation.batch.Persona;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.PromptKeys;
 import com.publicissapient.kpidashboard.common.model.application.PromptDetails;
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.Persona;
 import com.publicissapient.kpidashboard.common.repository.application.PromptDetailsRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Service for prompts.
- */
+/** Service for prompts. */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -46,10 +44,10 @@ public class PromptService {
 	 * Retrieves prompt template from MongoDB by key.
 	 *
 	 * @param key
-	 *            Prompt key constant
+	 *          Prompt key constant
 	 * @return PromptDetails object
 	 * @throws IllegalArgumentException
-	 *             if prompt not found
+	 *           if prompt not found
 	 */
 	public PromptDetails getPromptDetails(String key) {
 		PromptDetails promptDetails = promptDetailsRepository.findByKey(key);
@@ -61,11 +59,11 @@ public class PromptService {
 
 	/**
 	 * Generates recommendation prompt with KPI data and persona.
-	 * 
+	 *
 	 * @param kpiDataByProject
-	 *            Map of KPI data by project
+	 *          Map of KPI data by project
 	 * @param persona
-	 *            User persona
+	 *          User persona
 	 * @return Generated prompt string
 	 */
 	public String getKpiRecommendationPrompt(Map<String, Object> kpiDataByProject, Persona persona) {
@@ -81,5 +79,4 @@ public class PromptService {
 			throw new RuntimeException("Failed to generate prompt", e);
 		}
 	}
-
 }

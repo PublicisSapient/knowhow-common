@@ -34,31 +34,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Document(collection = "prompt_details")
 public class PromptDetails extends BasicModel {
-    private String key;
-    private String context;
-    private String task;
-    private List<String> instructions;
-    private String input;
-    private String outputFormat;
-    private List<String> placeHolders;
+	private String key;
+	private String context;
+	private String task;
+	private List<String> instructions;
+	private String input;
+	private String outputFormat;
+	private List<String> placeHolders;
 
-    @Override
-    public String toString() {
-        return "{"
-                + "context='"
-                + context
-                + '\''
-                + ", task='"
-                + task
-                + '\''
-                + ", instructions="
-                + instructions
-                + ", input='"
-                + input
-                + '\''
-                + ", outputFormat='"
-                + outputFormat
-                + '\''
-                + '}';
-    }
+	@Override
+	public String toString() {
+		return "{" + "context='" + context + '\'' + ", task='" + task + '\'' + ", instructions=" + instructions + ", input='" + input + '\'' + ", outputFormat='" + outputFormat + '\'' + '}';
+	}
 }

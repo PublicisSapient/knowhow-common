@@ -14,23 +14,27 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.application;
+package com.publicissapient.kpidashboard.common.repository.recommendation;
 
+import java.util.List;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.publicissapient.kpidashboard.common.model.application.PromptDetails;
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationsActionPlan;
 
-/** Repository for PromptDetails documents. */
+/** Repository interface for RecommendationsActionPlan entity. */
 @Repository
-public interface PromptDetailsRepository extends MongoRepository<PromptDetails, String> {
+public interface RecommendationRepository extends MongoRepository<RecommendationsActionPlan, ObjectId> {
 
 	/**
-	 * Find PromptDetails by key.
+	 * Finds latest recommendations for multiple projects. Used for hierarchical
+	 * rollup.
 	 *
-	 * @param key
-	 *          the key of Prompt
-	 * @return the PromptDetails object
+	 * @param projectIds
+	 *          list of project identifiers
+	 * @return list of latest recommendations for each project
 	 */
-	PromptDetails findByKey(String key);
+	List<RecommendationsActionPlan> findByProjectIdInOrderByCreatedAtDesc(List<String> projectIds);
 }

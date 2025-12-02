@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RecommendationLevel {
-
 	PROJECT_LEVEL("project"), KPI_LEVEL("kpi");
 
 	private final String displayName;

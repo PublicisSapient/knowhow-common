@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Persona {
-
 	EXECUTIVE_SPONSOR("executive_sponsor"), ENGINEERING_LEAD("engineering_lead"), SCRUM_MASTER(
 			"scrum_master"), PRODUCT_OWNER("product_owner");
 

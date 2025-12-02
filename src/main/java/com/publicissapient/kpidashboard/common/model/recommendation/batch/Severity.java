@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Severity {
-
 	HIGH("high"), MEDIUM("medium"), LOW("low");
 
 	private final String displayName;

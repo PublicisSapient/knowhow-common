@@ -23,32 +23,19 @@ import lombok.Data;
 
 @Data
 public class KpiDataPrompt {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private String data;
-    private String sProjectName;
-    private String sSprintName;
-    private String date;
+	private String data;
+	private String sProjectName;
+	private String sSprintName;
+	private String date;
 
-    @Override
-    public String toString() {
-        try {
-            return OBJECT_MAPPER.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            return "KpiDataPrompt("
-                    + "data='"
-                    + data
-                    + '\''
-                    + ", sProjectName='"
-                    + sProjectName
-                    + '\''
-                    + ", sSprintName='"
-                    + sSprintName
-                    + '\''
-                    + ", date='"
-                    + date
-                    + '\''
-                    + ')';
-        }
-    }
+	@Override
+	public String toString() {
+		try {
+			return OBJECT_MAPPER.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			return "KpiDataPrompt(" + "data='" + data + '\'' + ", sProjectName='" + sProjectName + '\'' + ", sSprintName='" + sSprintName + '\'' + ", date='" + date + '\'' + ')';
+		}
+	}
 }
