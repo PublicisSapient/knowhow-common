@@ -207,6 +207,9 @@ public class DateUtil {
 
 	public static boolean isWithinDateTimeRange(LocalDateTime targetDate, LocalDateTime startDate,
 			LocalDateTime endDate) {
+		if (targetDate == null || startDate == null || endDate == null) {
+			return false;
+		}
 		return !targetDate.isBefore(startDate) && !targetDate.isAfter(endDate);
 	}
 
