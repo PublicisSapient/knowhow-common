@@ -77,17 +77,23 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	}
 
 	@Override
-	public void saveSuccessfulExecution(String processorName, String basicProjectConfigId) {
+	public void upsertTraceLog(String processorName, String basicProjectConfigId, boolean executionSuccess, String errorMessage) {
 		try {
 			ProcessorExecutionTraceLog traceLog = new ProcessorExecutionTraceLog();
 			traceLog.setProcessorName(processorName);
 			traceLog.setBasicProjectConfigId(basicProjectConfigId);
-			traceLog.setExecutionSuccess(true);
+			traceLog.setExecutionSuccess(executionSuccess);
 			traceLog.setExecutionEndedAt(System.currentTimeMillis());
+			
+			if (!executionSuccess && errorMessage != null) {
+				traceLog.setErrorMessage(errorMessage);
+			}
+			
 			save(traceLog);
-			log.debug("Saved execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId);
+			log.debug("Upserted {} trace log for processor: {} and project: {}", 
+					executionSuccess ? "success" : "failure", processorName, basicProjectConfigId);
 		} catch (Exception e) {
-			log.error("Failed to save execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
+			log.error("Failed to upsert trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
 		}
 	}
 
