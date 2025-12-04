@@ -34,9 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PromptService {
 
-	public static final String ANALYSIS_REPORT_PLACEHOLDER = "ANALYSIS_REPORT_PLACEHOLDER";
+	public static final String KPI_CORRELATION_REPORT_PLACEHOLDER = "KPI_CORRELATION_REPORT_PLACEHOLDER";
 	public static final String KPI_DATA_BY_PROJECT_PLACEHOLDER = "KPI_DATA_BY_PROJECT_PLACEHOLDER";
-	public static final String USER_ROLE_PLACEHOLDER = "USER_ROLE_PLACEHOLDER";
+	public static final String PERSONA_PLACEHOLDER = "Persona_PLACEHOLDER";
 
 	private final PromptDetailsRepository promptDetailsRepository;
 
@@ -58,7 +58,7 @@ public class PromptService {
 	}
 
 	/**
-	 * Generates recommendation prompt with KPI data and persona.
+	 * Generates batch recommendation prompt with KPI data and persona.
 	 *
 	 * @param kpiDataByProject
 	 *          Map of KPI data by project
@@ -68,12 +68,13 @@ public class PromptService {
 	 */
 	public String getKpiRecommendationPrompt(Map<String, Object> kpiDataByProject, Persona persona) {
 		try {
-			PromptDetails analysisReport = getPromptDetails(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT);
-			PromptDetails kpiRecommendationPrompt = getPromptDetails(PromptKeys.KPI_RECOMMENDATION_PROMPT);
+			PromptDetails kpiCorrelationReport = getPromptDetails(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT);
+			PromptDetails batchRecommendationPrompt = getPromptDetails(PromptKeys.BATCH_RECOMMENDATION_PROMPT);
 
-			return kpiRecommendationPrompt.toString().replace(ANALYSIS_REPORT_PLACEHOLDER, analysisReport.toString())
+			return batchRecommendationPrompt.toString()
+					.replace(KPI_CORRELATION_REPORT_PLACEHOLDER, kpiCorrelationReport.toString())
 					.replace(KPI_DATA_BY_PROJECT_PLACEHOLDER, kpiDataByProject.toString())
-					.replace(USER_ROLE_PLACEHOLDER, persona.getDisplayName());
+					.replace(PERSONA_PLACEHOLDER, persona.getDisplayName());
 		} catch (Exception e) {
 			log.error("Error building KPI recommendation prompt: {}", e.getMessage(), e);
 			throw new RuntimeException("Failed to generate prompt", e);
