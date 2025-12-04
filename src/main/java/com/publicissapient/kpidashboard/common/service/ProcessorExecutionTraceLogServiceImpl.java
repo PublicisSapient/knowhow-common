@@ -77,6 +77,21 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	}
 
 	@Override
+	public void saveSuccessfulExecution(String processorName, String basicProjectConfigId) {
+		try {
+			ProcessorExecutionTraceLog traceLog = new ProcessorExecutionTraceLog();
+			traceLog.setProcessorName(processorName);
+			traceLog.setBasicProjectConfigId(basicProjectConfigId);
+			traceLog.setExecutionSuccess(true);
+			traceLog.setExecutionEndedAt(System.currentTimeMillis());
+			save(traceLog);
+			log.debug("Saved execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId);
+		} catch (Exception e) {
+			log.error("Failed to save execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
+		}
+	}
+
+	@Override
 	public List<ProcessorExecutionTraceLog> getTraceLogs() {
 		return processorExecutionTraceLogRepository.findAll();
 	}
@@ -124,30 +139,6 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	public List<ProcessorExecutionTraceLogDTO> getTraceLogDTOs(String processorName, String basicProjectConfigId) {
 		List<ProcessorExecutionTraceLog> traceLogs = getTraceLogs(processorName, basicProjectConfigId);
 		return traceLogs.stream().map(this::convertToProcessorExecutionTraceLogDTO).toList();
-	}
-
-	public ProcessorExecutionTraceLog createNewProcessorJobExecution(String jobName) {
-		Instant startingTime = Instant.now();
-		ProcessorExecutionTraceLog processorExecutionTraceLog = new ProcessorExecutionTraceLog();
-		processorExecutionTraceLog.setProcessorName(jobName);
-		processorExecutionTraceLog.setExecutionOngoing(true);
-		processorExecutionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
-		processorExecutionTraceLog.setExecutionSuccess(true);
-		return this.processorExecutionTraceLogRepository.save(processorExecutionTraceLog);
-	}
-
-	public Optional<ProcessorExecutionTraceLog> findById(ObjectId objectId) {
-		return this.processorExecutionTraceLogRepository.findById(objectId);
-	}
-
-	public List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName,
-			int numberOfExecutions) {
-		return this.processorExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorName(processorName,
-				PageRequest.ofSize(numberOfExecutions));
-	}
-
-	public void saveAiDataProcessorExecutions(ProcessorExecutionTraceLog processorExecutionTracelog) {
-		this.processorExecutionTraceLogRepository.save(processorExecutionTracelog);
 	}
 
 	/**
