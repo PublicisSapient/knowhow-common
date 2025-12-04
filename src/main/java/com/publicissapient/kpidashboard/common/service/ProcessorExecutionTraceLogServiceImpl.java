@@ -17,7 +17,6 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -87,7 +85,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			save(traceLog);
 			log.debug("Saved execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId);
 		} catch (Exception e) {
-			log.error("Failed to save execution trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
+			log.error("Failed to save execution trace log for processor: {} and project: {}", processorName,
+					basicProjectConfigId, e);
 		}
 	}
 

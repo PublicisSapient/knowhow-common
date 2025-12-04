@@ -45,8 +45,9 @@ public interface ProcessorExecutionTraceLogService {
 
 	/**
 	 * Creates or updates execution trace log for successful project processing.
-	 * Maintains only one trace log per processor-project combination (upsert operation).
-	 * 
+	 * Maintains only one trace log per processor-project combination (upsert
+	 * operation).
+	 *
 	 * @param processorName
 	 *          Name of the processor/job
 	 * @param basicProjectConfigId

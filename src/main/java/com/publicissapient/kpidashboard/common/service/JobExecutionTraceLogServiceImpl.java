@@ -47,7 +47,7 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 		executionTraceLog.setExecutionOngoing(true);
 		executionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
 		executionTraceLog.setExecutionSuccess(true);
-		
+
 		JobExecutionTraceLog savedLog = this.jobExecutionTraceLogRepository.save(executionTraceLog);
 		log.info("Created new job execution trace log for job '{}' with id '{}'", jobName, savedLog.getId());
 		return savedLog;
@@ -56,8 +56,8 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	@Override
 	public void updateJobExecution(JobExecutionTraceLog executionTraceLog) {
 		JobExecutionTraceLog savedLog = this.jobExecutionTraceLogRepository.save(executionTraceLog);
-		log.info("Updated job execution trace log for job '{}' with id '{}', status: {}", 
-				savedLog.getProcessorName(), savedLog.getId(), savedLog.isExecutionSuccess());
+		log.info("Updated job execution trace log for job '{}' with id '{}', status: {}", savedLog.getProcessorName(),
+				savedLog.getId(), savedLog.isExecutionSuccess());
 	}
 
 	@Override
@@ -67,8 +67,8 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 
 	@Override
 	public List<JobExecutionTraceLog> findLastExecutionsByJobName(String jobName, int numberOfExecutions) {
-		return this.jobExecutionTraceLogRepository
-				.findLastExecutionTraceLogsByProcessorName(jobName, PageRequest.ofSize(numberOfExecutions));
+		return this.jobExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorName(jobName,
+				PageRequest.ofSize(numberOfExecutions));
 	}
 
 	@Override
@@ -79,7 +79,6 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	@Override
 	public boolean isJobCurrentlyRunning(String jobName) {
 		List<JobExecutionTraceLog> executionTraceLogs = findLastExecutionsByJobName(jobName, 1);
-		return CollectionUtils.isNotEmpty(executionTraceLogs) 
-				&& executionTraceLogs.get(0).isExecutionOngoing();
+		return CollectionUtils.isNotEmpty(executionTraceLogs) && executionTraceLogs.get(0).isExecutionOngoing();
 	}
 }
