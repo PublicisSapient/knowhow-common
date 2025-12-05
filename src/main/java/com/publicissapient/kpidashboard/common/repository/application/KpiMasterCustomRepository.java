@@ -21,7 +21,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.repository.projection.BasicKpiMasterProjection;
-import com.publicissapient.kpidashboard.common.shared.enums.ProjectDeliveryMethodology;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,9 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class KpiMasterCustomRepository {
 	private final KpiMasterRepository kpiMasterRepository;
 
-	public List<BasicKpiMasterProjection> findByDeliveryMethodologyTypeSupportingMaturityCalculation(
-			ProjectDeliveryMethodology projectDeliveryMethodology) {
-		return kpiMasterRepository
-				.findByKanbanAndCalculateMaturity(ProjectDeliveryMethodology.KANBAN == projectDeliveryMethodology, true);
+	public List<BasicKpiMasterProjection> findKpisSupportingMaturityCalculation() {
+		return kpiMasterRepository.findByCalculateMaturity(true);
 	}
 }

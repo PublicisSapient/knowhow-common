@@ -73,5 +73,5 @@ public interface KpiMasterRepository extends CrudRepository<KpiMaster, ObjectId>
 	 */
 	List<KpiMaster> findByKpiIdIn(List<String> kpiIds);
 
-	List<BasicKpiMasterProjection> findByKanbanAndCalculateMaturity(boolean kanban, boolean calculateMaturity);
+	List<BasicKpiMasterProjection> findByCalculateMaturity(boolean calculateMaturity);
 }
