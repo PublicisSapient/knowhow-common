@@ -85,7 +85,10 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			traceLog.setExecutionSuccess(executionSuccess);
 			traceLog.setExecutionEndedAt(System.currentTimeMillis());
 			
-			if (!executionSuccess && errorMessage != null) {
+			if (executionSuccess) {
+				traceLog.setErrorMessage(null);
+				traceLog.setLastSuccessfulRun(String.valueOf(System.currentTimeMillis()));
+			} else if (errorMessage != null) {
 				traceLog.setErrorMessage(errorMessage);
 			}
 			
