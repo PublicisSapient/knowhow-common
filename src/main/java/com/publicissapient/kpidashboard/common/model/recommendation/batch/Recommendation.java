@@ -18,10 +18,18 @@ package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
 import java.util.List;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /** Represents a recommendation with associated action plans. */
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Recommendation {
 
 	private String title;

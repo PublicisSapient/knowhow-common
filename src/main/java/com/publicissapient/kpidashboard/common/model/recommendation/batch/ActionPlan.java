@@ -16,10 +16,18 @@
 
 package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /** Represents a specific action plan within a recommendation. */
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActionPlan {
 
 	private String title;

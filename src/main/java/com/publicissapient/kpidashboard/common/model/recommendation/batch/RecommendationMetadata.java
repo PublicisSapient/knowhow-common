@@ -18,10 +18,18 @@ package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
 import java.util.List;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /** Metadata about the recommendation batch processing. */
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RecommendationMetadata {
 
 	private List<String> requestedKpis;
