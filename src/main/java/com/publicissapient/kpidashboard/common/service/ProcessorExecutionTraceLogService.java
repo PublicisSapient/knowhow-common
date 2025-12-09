@@ -44,8 +44,9 @@ public interface ProcessorExecutionTraceLogService {
 	List<ProcessorExecutionTraceLogDTO> getTraceLogDTOs(String processorName, String basicProjectConfigId);
 
 	/**
-	 * Creates or updates execution trace log for project processing (success or failure).
-	 * Maintains only one trace log per processor-project combination (upsert operation).
+	 * Creates or updates execution trace log for project processing (success or
+	 * failure). Maintains only one trace log per processor-project combination
+	 * (upsert operation).
 	 *
 	 * @param processorName
 	 *          Name of the processor/job

@@ -19,17 +19,15 @@ package com.publicissapient.kpidashboard.common.model.tracelog;
 
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.publicissapient.kpidashboard.common.model.application.ErrorDetail;
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-/**
- * MongoDB entity for tracking job executions.
- */
+/** MongoDB entity for tracking job executions. */
 @Data
 @Document("job_execution_trace_log")
 @EqualsAndHashCode(callSuper = true)
@@ -41,28 +39,18 @@ public class JobExecutionTraceLog extends BasicModel {
 	 */
 	private String processorName;
 
-	/**
-	 * Job execution start time in milliseconds
-	 */
+	/** Job execution start time in milliseconds */
 	private long executionStartedAt;
 
-	/**
-	 * Job execution end time in milliseconds
-	 */
+	/** Job execution end time in milliseconds */
 	private long executionEndedAt;
 
-	/**
-	 * Indicates if the job execution is currently ongoing
-	 */
+	/** Indicates if the job execution is currently ongoing */
 	private boolean executionOngoing;
 
-	/**
-	 * Indicates if the job execution was successful
-	 */
+	/** Indicates if the job execution was successful */
 	private boolean executionSuccess;
 
-	/**
-	 * List of errors encountered during job execution
-	 */
+	/** List of errors encountered during job execution */
 	private List<ErrorDetail> errorDetailList;
 }

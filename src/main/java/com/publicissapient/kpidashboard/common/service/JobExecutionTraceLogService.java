@@ -26,61 +26,62 @@ import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceL
 
 /**
  * Service interface for managing job execution trace logs.
+ *
  * @author shunaray
  */
 public interface JobExecutionTraceLogService {
 
 	/**
 	 * Creates a new job execution trace log entry.
-	 * 
+	 *
 	 * @param jobName
-	 *            the name of the job/processor
+	 *          the name of the job/processor
 	 * @return the created execution trace log
 	 */
 	JobExecutionTraceLog createJobExecution(String jobName);
 
 	/**
 	 * Updates an existing job execution trace log.
-	 * 
+	 *
 	 * @param executionTraceLog
-	 *            the execution trace log to update
+	 *          the execution trace log to update
 	 */
 	void updateJobExecution(JobExecutionTraceLog executionTraceLog);
 
 	/**
 	 * Finds an execution trace log by ID.
-	 * 
+	 *
 	 * @param id
-	 *            the execution trace log ID
+	 *          the execution trace log ID
 	 * @return optional execution trace log
 	 */
 	Optional<JobExecutionTraceLog> findById(ObjectId id);
 
 	/**
 	 * Finds the last N execution trace logs for a given job name.
-	 * 
+	 *
 	 * @param jobName
-	 *            the job/processor name
+	 *          the job/processor name
 	 * @param numberOfExecutions
-	 *            number of recent executions to fetch
+	 *          number of recent executions to fetch
 	 * @return list of execution trace logs
 	 */
 	List<JobExecutionTraceLog> findLastExecutionsByJobName(String jobName, int numberOfExecutions);
 
 	/**
 	 * Finds all execution trace logs for a given job name.
-	 * 
+	 *
 	 * @param jobName
-	 *            the job/processor name
+	 *          the job/processor name
 	 * @return list of execution trace logs
 	 */
 	List<JobExecutionTraceLog> findByJobName(String jobName);
 
 	/**
 	 * Checks if a job is currently running based on its execution trace log.
-	 * 
+	 *
 	 * @param jobName
-	 *            the job name to check
+	 *          the job name to check
 	 * @return true if job is currently running, false otherwise
 	 */
 	boolean isJobCurrentlyRunning(String jobName);

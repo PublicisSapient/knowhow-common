@@ -17,7 +17,6 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -77,24 +75,25 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	}
 
 	@Override
-	public void upsertTraceLog(String processorName, String basicProjectConfigId, boolean executionSuccess, String errorMessage) {
+	public void upsertTraceLog(String processorName, String basicProjectConfigId, boolean executionSuccess,
+			String errorMessage) {
 		try {
 			ProcessorExecutionTraceLog traceLog = new ProcessorExecutionTraceLog();
 			traceLog.setProcessorName(processorName);
 			traceLog.setBasicProjectConfigId(basicProjectConfigId);
 			traceLog.setExecutionSuccess(executionSuccess);
 			traceLog.setExecutionEndedAt(System.currentTimeMillis());
-			
+
 			if (executionSuccess) {
 				traceLog.setErrorMessage(null);
 				traceLog.setLastSuccessfulRun(String.valueOf(System.currentTimeMillis()));
 			} else if (errorMessage != null) {
 				traceLog.setErrorMessage(errorMessage);
 			}
-			
+
 			save(traceLog);
-			log.debug("Upserted {} trace log for processor: {} and project: {}", 
-					executionSuccess ? "success" : "failure", processorName, basicProjectConfigId);
+			log.debug("Upserted {} trace log for processor: {} and project: {}", executionSuccess ? "success" : "failure",
+					processorName, basicProjectConfigId);
 		} catch (Exception e) {
 			log.error("Failed to upsert trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
 		}
