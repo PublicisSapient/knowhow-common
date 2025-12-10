@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.common.feature;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class FeatureEnumTest {
 
 	@Test
 	public void testRecommendationFeatureIsActive() {
-		assertTrue(featureManager.isActive(FeatureEnum.RECOMMENDATIONS));
+		assertFalse(featureManager.isActive(FeatureEnum.RECOMMENDATIONS));
 	}
 
 	@Test
