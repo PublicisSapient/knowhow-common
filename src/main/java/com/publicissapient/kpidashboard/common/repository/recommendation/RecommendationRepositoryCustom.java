@@ -31,10 +31,11 @@ public interface RecommendationRepositoryCustom {
 	 * Finds the latest N recommendations for each project using MongoDB aggregation
 	 * pipeline.
 	 *
-	 * @param projectIds list of project identifiers
-	 * @param limit      number of recommendations per project
+	 * @param projectIds
+	 *          list of project identifiers
+	 * @param limit
+	 *          number of recommendations per project
 	 * @return list of latest N recommendations per project
 	 */
 	List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit);
 }
-

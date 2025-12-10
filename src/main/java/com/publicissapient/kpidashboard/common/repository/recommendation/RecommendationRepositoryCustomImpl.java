@@ -38,7 +38,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Custom repository implementation for complex RecommendationsActionPlan queries
+ * Custom repository implementation for complex RecommendationsActionPlan
+ * queries
  */
 @Slf4j
 @Service
@@ -53,29 +54,29 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	private final MongoOperations operations;
 
 	/**
-	 * Finds the latest N recommendations for each project using MongoDB
-	 * Aggregation pipeline with push/slice pattern (compatible with MongoDB 4.x+).
+	 * Finds the latest N recommendations for each project using MongoDB Aggregation
+	 * pipeline with push/slice pattern (compatible with MongoDB 4.x+).
 	 *
-	 * @param projectIds list of project identifiers (must not be null or empty)
-	 * @param limit      number of recommendations per project (must be > 0)
+	 * @param projectIds
+	 *          list of project identifiers (must not be null or empty)
+	 * @param limit
+	 *          number of recommendations per project (must be > 0)
 	 * @return list of latest N recommendations per project
-	 * @throws IllegalArgumentException if projectIds is null/empty or limit <= 0
+	 * @throws IllegalArgumentException
+	 *           if projectIds is null/empty or limit <= 0
 	 */
 	@Override
 	public List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit) {
 		validateInputParameters(projectIds, limit);
 
-		log.debug("Executing aggregation pipeline to fetch {} latest recommendation(s) for {} projects",
-				limit, projectIds.size());
+		log.debug("Executing aggregation pipeline to fetch {} latest recommendation(s) for {} projects", limit,
+				projectIds.size());
 
 		Aggregation aggregation = buildAggregation(projectIds, limit);
-		List<RecommendationsActionPlan> recommendations = operations.aggregate(
-				aggregation,
-				COLLECTION_NAME,
-				RecommendationsActionPlan.class).getMappedResults();
+		List<RecommendationsActionPlan> recommendations = operations
+				.aggregate(aggregation, COLLECTION_NAME, RecommendationsActionPlan.class).getMappedResults();
 
-		log.debug("Successfully retrieved {} recommendation(s) using aggregation framework",
-				recommendations.size());
+		log.debug("Successfully retrieved {} recommendation(s) using aggregation framework", recommendations.size());
 
 		return recommendations;
 	}
@@ -83,9 +84,12 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	/**
 	 * Validates input parameters for aggregation query.
 	 *
-	 * @param projectIds list of project identifiers
-	 * @param limit      number of recommendations per project
-	 * @throws IllegalArgumentException if validation fails
+	 * @param projectIds
+	 *          list of project identifiers
+	 * @param limit
+	 *          number of recommendations per project
+	 * @throws IllegalArgumentException
+	 *           if validation fails
 	 */
 	private void validateInputParameters(List<String> projectIds, int limit) {
 		if (CollectionUtils.isEmpty(projectIds)) {
@@ -100,27 +104,29 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	}
 
 	/**
-	 * Builds Spring Data MongoDB Aggregation for fetching latest recommendations per project.
+	 * Builds Spring Data MongoDB Aggregation for fetching latest recommendations
+	 * per project.
 	 *
-	 * @param projectIds list of project identifiers to filter
-	 * @param limit      number of recommendations to fetch per project
+	 * @param projectIds
+	 *          list of project identifiers to filter
+	 * @param limit
+	 *          number of recommendations to fetch per project
 	 * @return Aggregation object
 	 */
 	private Aggregation buildAggregation(List<String> projectIds, int limit) {
 		// Stage 1: Match documents by project IDs
-		MatchOperation matchStage = Aggregation.match(
-				Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectIds));
+		MatchOperation matchStage = Aggregation.match(Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectIds));
 
 		// Stage 2: Sort by createdAt descending to get latest first
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, FIELD_CREATED_AT);
 
 		// Stage 3: Group by project and push all documents into array
-		GroupOperation groupStage = Aggregation.group(FIELD_BASIC_PROJECT_CONFIG_ID)
-				.push("$$ROOT").as(FIELD_RECOMMENDATIONS);
+		GroupOperation groupStage = Aggregation.group(FIELD_BASIC_PROJECT_CONFIG_ID).push("$$ROOT")
+				.as(FIELD_RECOMMENDATIONS);
 
 		// Stage 4: Slice array to limit to N documents per project
-		ProjectionOperation sliceStage = Aggregation.project()
-				.and(FIELD_RECOMMENDATIONS).slice(limit).as(FIELD_RECOMMENDATIONS);
+		ProjectionOperation sliceStage = Aggregation.project().and(FIELD_RECOMMENDATIONS).slice(limit)
+				.as(FIELD_RECOMMENDATIONS);
 
 		// Stage 5: Unwind the recommendations array
 		UnwindOperation unwindStage = Aggregation.unwind(FIELD_RECOMMENDATIONS);
@@ -128,13 +134,6 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 		// Stage 6: Replace root to return clean recommendation documents
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(FIELD_RECOMMENDATIONS);
 
-		return Aggregation.newAggregation(
-				matchStage,
-				sortStage,
-				groupStage,
-				sliceStage,
-				unwindStage,
-				replaceRootStage);
+		return Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage, replaceRootStage);
 	}
 }
-
