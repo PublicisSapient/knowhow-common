@@ -42,7 +42,7 @@ import lombok.Setter;
 @Document(collection = "recommendations_action_plan")
 public class RecommendationsActionPlan extends BasicModel {
 
-	private String projectNodeId;
+	private String basicProjectConfigId;
 	private String projectName;
 	private Persona persona;
 	private RecommendationLevel level;

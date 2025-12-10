@@ -48,9 +48,9 @@ public enum FeatureEnum implements Feature {
 	@Label("Analysis")
 	ANALYSIS,
 
-    @EnabledByDefault
-    @Label("Recommendations Action Plan")
-    RECOMMENDATION_ACTION_PLAN;
+	@EnabledByDefault
+	@Label("Recommendations Action Plan")
+	RECOMMENDATION_ACTION_PLAN;
 
 	public boolean isActive() {
 		return FeatureContext.getFeatureManager().isActive(this);

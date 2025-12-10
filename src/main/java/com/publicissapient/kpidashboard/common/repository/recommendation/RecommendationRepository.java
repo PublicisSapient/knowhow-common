@@ -16,7 +16,6 @@
 
 package com.publicissapient.kpidashboard.common.repository.recommendation;
 
-import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -26,15 +25,7 @@ import com.publicissapient.kpidashboard.common.model.recommendation.batch.Recomm
 
 /** Repository interface for RecommendationsActionPlan entity. */
 @Repository
-public interface RecommendationRepository extends MongoRepository<RecommendationsActionPlan, ObjectId> {
+public interface RecommendationRepository
+		extends MongoRepository<RecommendationsActionPlan, ObjectId>, RecommendationRepositoryCustom {
 
-	/**
-	 * Finds latest recommendations for multiple projects. Used for hierarchical
-	 * rollup.
-	 *
-	 * @param projectIds
-	 *          list of project identifiers
-	 * @return list of latest recommendations for each project
-	 */
-	List<RecommendationsActionPlan> findByProjectIdInOrderByCreatedAtDesc(List<String> projectIds);
 }
