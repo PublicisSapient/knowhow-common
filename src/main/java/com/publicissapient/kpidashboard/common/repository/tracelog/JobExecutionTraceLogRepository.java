@@ -37,8 +37,8 @@ import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceL
 public interface JobExecutionTraceLogRepository extends MongoRepository<JobExecutionTraceLog, ObjectId> {
 
 	/**
-	 * Find last execution trace logs by processor and job name ordered by execution start
-	 * time descending.
+	 * Find last execution trace logs by processor and job name ordered by execution
+	 * start time descending.
 	 *
 	 * @param processorName
 	 *          the processor name (e.g., "ai-data", "jira")
@@ -49,7 +49,8 @@ public interface JobExecutionTraceLogRepository extends MongoRepository<JobExecu
 	 * @return list of execution trace logs
 	 */
 	@Query(value = "{ 'processorName': ?0, 'jobName': ?1 }", sort = "{ 'executionStartedAt': -1 }")
-	List<JobExecutionTraceLog> findLastExecutionTraceLogsByProcessorAndJobName(String processorName, String jobName, Pageable pageable);
+	List<JobExecutionTraceLog> findLastExecutionTraceLogsByProcessorAndJobName(String processorName, String jobName,
+			Pageable pageable);
 
 	/**
 	 * Find all execution trace logs by processor and job name.

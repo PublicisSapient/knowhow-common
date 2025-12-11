@@ -50,8 +50,8 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 		executionTraceLog.setExecutionSuccess(true);
 
 		JobExecutionTraceLog savedLog = this.jobExecutionTraceLogRepository.save(executionTraceLog);
-		log.info("Created new job execution trace log for processor '{}' and job '{}' with id '{}'", processorName,
-				jobName, savedLog.getId());
+		log.info("Created new job execution trace log for processor '{}' and job '{}' with id '{}'", processorName, jobName,
+				savedLog.getId());
 		return savedLog;
 	}
 
@@ -70,8 +70,8 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	@Override
 	public List<JobExecutionTraceLog> findLastExecutionsByProcessorAndJobName(String processorName, String jobName,
 			int numberOfExecutions) {
-		return this.jobExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorAndJobName(processorName,
-				jobName, PageRequest.ofSize(numberOfExecutions));
+		return this.jobExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorAndJobName(processorName, jobName,
+				PageRequest.ofSize(numberOfExecutions));
 	}
 
 	@Override

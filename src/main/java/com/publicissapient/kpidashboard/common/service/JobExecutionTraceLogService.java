@@ -32,12 +32,14 @@ import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceL
 public interface JobExecutionTraceLogService {
 
 	/**
-	 * Creates a new job execution trace log entry for a specific job under a processor.
+	 * Creates a new job execution trace log entry for a specific job under a
+	 * processor.
 	 *
 	 * @param processorName
 	 *          the name of the processor (e.g., "ai-data", "jira", "scm")
 	 * @param jobName
-	 *          the name of the job (e.g., "calculate-kpi-maturity", "calculate-productivity")
+	 *          the name of the job (e.g., "calculate-kpi-maturity",
+	 *          "calculate-productivity")
 	 * @return the created execution trace log
 	 */
 	JobExecutionTraceLog createProcessorJobExecution(String processorName, String jobName);
@@ -70,7 +72,8 @@ public interface JobExecutionTraceLogService {
 	 *          number of recent executions to fetch
 	 * @return list of execution trace logs
 	 */
-	List<JobExecutionTraceLog> findLastExecutionsByProcessorAndJobName(String processorName, String jobName, int numberOfExecutions);
+	List<JobExecutionTraceLog> findLastExecutionsByProcessorAndJobName(String processorName, String jobName,
+			int numberOfExecutions);
 
 	/**
 	 * Checks if a job under a specific processor is currently running.

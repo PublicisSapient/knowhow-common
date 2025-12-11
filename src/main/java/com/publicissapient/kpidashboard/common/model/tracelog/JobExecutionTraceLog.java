@@ -35,15 +35,15 @@ import lombok.EqualsAndHashCode;
 public class JobExecutionTraceLog extends BasicModel {
 
 	/**
-	 * Name of the processor (e.g., "ai-data-processor", "jira", "scm").
-	 * A processor can contain multiple jobs.
+	 * Name of the processor (e.g., "ai-data-processor", "jira", "scm"). A processor
+	 * can contain multiple jobs.
 	 */
 	private String processorName;
 
 	/**
 	 * Name of the specific job being executed (e.g., "calculate-kpi-maturity",
-	 * "calculate-productivity", "calculate-recommendation").
-	 * Multiple jobs can exist under a single processor.
+	 * "calculate-productivity", "calculate-recommendation"). Multiple jobs can
+	 * exist under a single processor.
 	 */
 	private String jobName;
 
