@@ -17,6 +17,7 @@
 
 package com.publicissapient.kpidashboard.common.model.tracelog;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,16 +35,23 @@ import lombok.EqualsAndHashCode;
 public class JobExecutionTraceLog extends BasicModel {
 
 	/**
-	 * Name of the processor/job (e.g., "KpiMaturityCalculationJob",
-	 * "RecommendationCalculationJob")
+	 * Name of the processor (e.g., "ai-data-processor", "jira", "scm").
+	 * A processor can contain multiple jobs.
 	 */
 	private String processorName;
 
-	/** Job execution start time in milliseconds */
-	private long executionStartedAt;
+	/**
+	 * Name of the specific job being executed (e.g., "calculate-kpi-maturity",
+	 * "calculate-productivity", "calculate-recommendation").
+	 * Multiple jobs can exist under a single processor.
+	 */
+	private String jobName;
 
-	/** Job execution end time in milliseconds */
-	private long executionEndedAt;
+	/** Job execution start time as Instant */
+	private Instant executionStartedAt;
+
+	/** Job execution end time as Instant */
+	private Instant executionEndedAt;
 
 	/** Indicates if the job execution is currently ongoing */
 	private boolean executionOngoing;

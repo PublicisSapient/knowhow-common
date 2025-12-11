@@ -32,13 +32,15 @@ import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceL
 public interface JobExecutionTraceLogService {
 
 	/**
-	 * Creates a new job execution trace log entry.
+	 * Creates a new job execution trace log entry for a specific job under a processor.
 	 *
+	 * @param processorName
+	 *          the name of the processor (e.g., "ai-data", "jira", "scm")
 	 * @param jobName
-	 *          the name of the job/processor
+	 *          the name of the job (e.g., "calculate-kpi-maturity", "calculate-productivity")
 	 * @return the created execution trace log
 	 */
-	JobExecutionTraceLog createJobExecution(String jobName);
+	JobExecutionTraceLog createProcessorJobExecution(String processorName, String jobName);
 
 	/**
 	 * Updates an existing job execution trace log.
@@ -58,31 +60,26 @@ public interface JobExecutionTraceLogService {
 	Optional<JobExecutionTraceLog> findById(ObjectId id);
 
 	/**
-	 * Finds the last N execution trace logs for a given job name.
+	 * Finds the last N execution trace logs for a specific job under a processor.
 	 *
+	 * @param processorName
+	 *          the processor name (e.g., "ai-data", "jira")
 	 * @param jobName
-	 *          the job/processor name
+	 *          the specific job name to search for
 	 * @param numberOfExecutions
 	 *          number of recent executions to fetch
 	 * @return list of execution trace logs
 	 */
-	List<JobExecutionTraceLog> findLastExecutionsByJobName(String jobName, int numberOfExecutions);
+	List<JobExecutionTraceLog> findLastExecutionsByProcessorAndJobName(String processorName, String jobName, int numberOfExecutions);
 
 	/**
-	 * Finds all execution trace logs for a given job name.
+	 * Checks if a job under a specific processor is currently running.
 	 *
+	 * @param processorName
+	 *          the processor name (e.g., "ai-data", "jira")
 	 * @param jobName
-	 *          the job/processor name
-	 * @return list of execution trace logs
-	 */
-	List<JobExecutionTraceLog> findByJobName(String jobName);
-
-	/**
-	 * Checks if a job is currently running based on its execution trace log.
-	 *
-	 * @param jobName
-	 *          the job name to check
+	 *          the specific job name under the processor
 	 * @return true if job is currently running, false otherwise
 	 */
-	boolean isJobCurrentlyRunning(String jobName);
+	boolean isJobCurrentlyRunning(String processorName, String jobName);
 }

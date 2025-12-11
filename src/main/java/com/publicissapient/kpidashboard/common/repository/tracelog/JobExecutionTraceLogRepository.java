@@ -37,26 +37,30 @@ import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceL
 public interface JobExecutionTraceLogRepository extends MongoRepository<JobExecutionTraceLog, ObjectId> {
 
 	/**
-	 * Find execution trace logs by processor/job name ordered by execution start
+	 * Find last execution trace logs by processor and job name ordered by execution start
 	 * time descending.
 	 *
 	 * @param processorName
-	 *          the processor/job name
+	 *          the processor name (e.g., "ai-data", "jira")
+	 * @param jobName
+	 *          the job name (e.g., "calculate-kpi-maturity")
 	 * @param pageable
 	 *          pagination parameters
 	 * @return list of execution trace logs
 	 */
-	@Query(value = "{ 'processorName': ?0 }", sort = "{ 'executionStartedAt': -1 }")
-	List<JobExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName, Pageable pageable);
+	@Query(value = "{ 'processorName': ?0, 'jobName': ?1 }", sort = "{ 'executionStartedAt': -1 }")
+	List<JobExecutionTraceLog> findLastExecutionTraceLogsByProcessorAndJobName(String processorName, String jobName, Pageable pageable);
 
 	/**
-	 * Find all execution trace logs by processor/job name.
+	 * Find all execution trace logs by processor and job name.
 	 *
 	 * @param processorName
-	 *          the processor/job name
+	 *          the processor name (e.g., "ai-data", "jira")
+	 * @param jobName
+	 *          the job name (e.g., "calculate-kpi-maturity")
 	 * @return list of execution trace logs
 	 */
-	List<JobExecutionTraceLog> findByProcessorName(String processorName);
+	List<JobExecutionTraceLog> findByProcessorNameAndJobName(String processorName, String jobName);
 
 	/**
 	 * Find execution trace log by ID.
