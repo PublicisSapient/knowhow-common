@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -94,6 +96,21 @@ public interface ProjectBasicConfigRepository extends MongoRepository<ProjectBas
 
 	@Query("{ 'kanban': ?0, 'projectOnHold': ?1 }")
 	List<ProjectBasicConfig> findByKanbanAndProjectOnHold(boolean isKanban, boolean projectOnHold);
+
+	/**
+	 * Returns paginated ProjectBasicConfig from persistence store filtered by
+	 * kanban and projectOnHold status
+	 *
+	 * @param isKanban
+	 *          filter for kanban projects
+	 * @param projectOnHold
+	 *          filter for projects on hold (false = active projects only)
+	 * @param pageable
+	 *          pagination parameters
+	 * @return {@link ProjectBasicConfig} paginated list
+	 */
+	@Query("{ 'kanban': ?0, 'projectOnHold': ?1 }")
+	Page<ProjectBasicConfig> findByKanbanAndProjectOnHold(boolean isKanban, boolean projectOnHold, Pageable pageable);
 
 	/**
 	 * Returns ProjectBasicConfig from persistence store by list of projectNodeId
