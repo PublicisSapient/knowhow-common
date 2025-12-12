@@ -80,11 +80,11 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	 * Validates input parameters for aggregation query.
 	 *
 	 * @param projectIds
-	 *            list of project identifiers
+	 *          list of project identifiers
 	 * @param limit
-	 *            number of recommendations per project
+	 *          number of recommendations per project
 	 * @throws IllegalArgumentException
-	 *             if validation fails
+	 *           if validation fails
 	 */
 	private void validateInputParameters(List<String> projectIds, int limit) {
 		if (CollectionUtils.isEmpty(projectIds)) {
@@ -129,7 +129,8 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 		// Stage 7: Replace root to return clean recommendation documents
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(FIELD_RECOMMENDATIONS);
 
-		// Stage 8: Final sort across all projects by severity priority (CRITICAL projects first)
+		// Stage 8: Final sort across all projects by severity priority (CRITICAL
+		// projects first)
 		SortOperation finalSortStage = Aggregation
 				.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT)));
 
@@ -141,7 +142,7 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	 * Creates $addFields stage to map severity enum to numeric priority using
 	 * $switch operator. Mapping: CRITICAL=1, HIGH=2, MEDIUM=3, LOW=4, unknown=999
 	 * (dynamically from {@link Severity} enum).
-	 * 
+	 *
 	 * @return AddFieldsOperation with severityPriority computed field
 	 */
 	private AddFieldsOperation buildSeverityPriorityMapping() {
@@ -163,7 +164,7 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 
 		ConditionalOperators.Switch switchBuilder = ConditionalOperators
 				.switchCases(criticalCase, highCase, mediumCase, lowCase).defaultTo(999); // Fallback for null/unknown
-																						  // severity - sorts last
+		// severity - sorts last
 
 		return Aggregation.addFields().addField(FIELD_SEVERITY_PRIORITY).withValue(switchBuilder).build();
 	}

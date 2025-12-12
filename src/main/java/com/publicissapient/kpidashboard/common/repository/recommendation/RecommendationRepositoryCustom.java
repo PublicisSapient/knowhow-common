@@ -36,13 +36,13 @@ public interface RecommendationRepositoryCustom {
 	 * $slice → $unwind → $replaceRoot → $sort (final cross-project sorting)
 	 *
 	 * @param projectIds
-	 *            list of project identifiers (must not be null or empty)
+	 *          list of project identifiers (must not be null or empty)
 	 * @param limit
-	 *            number of recommendations per project (must be > 0)
+	 *          number of recommendations per project (must be > 0)
 	 * @return list of recommendations sorted by severity priority across all
 	 *         projects
 	 * @throws IllegalArgumentException
-	 *             if projectIds is null/empty or limit <= 0
+	 *           if projectIds is null/empty or limit <= 0
 	 */
 	List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit);
 }
