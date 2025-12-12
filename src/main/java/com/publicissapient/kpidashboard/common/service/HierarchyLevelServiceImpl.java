@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
@@ -12,17 +11,17 @@ import com.publicissapient.kpidashboard.common.model.application.AdditionalFilte
 import com.publicissapient.kpidashboard.common.model.application.HierarchyLevel;
 import com.publicissapient.kpidashboard.common.repository.application.HierarchyLevelRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 
-	@Autowired
-	private HierarchyLevelRepository hierarchyLevelRepository;
+	private final HierarchyLevelRepository hierarchyLevelRepository;
 
-	@Autowired
-	private AdditionalFilterCategoryService filterCategoryLevelService;
+	private final AdditionalFilterCategoryService filterCategoryLevelService;
 
 	@Override
 	public List<HierarchyLevel> getTopHierarchyLevels() {
@@ -31,12 +30,11 @@ public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 
 	@Override
 	public List<HierarchyLevel> getFullHierarchyLevels(boolean isKanban) {
-		List<HierarchyLevel> hierarchyLevels = new ArrayList<>();
-		List<HierarchyLevel> topHierarchyLevels = getTopHierarchyLevels();
+        List<HierarchyLevel> topHierarchyLevels = getTopHierarchyLevels();
 		HierarchyLevel projectHierarchyLevel = getProjectHierarchyLevel();
 		HierarchyLevel sprintHierarchyLevel = getSprintHierarchyLevel();
 		HierarchyLevel releaseHierarchyLevel = getReleaseHierarchyLevel();
-		hierarchyLevels.addAll(topHierarchyLevels);
+        List<HierarchyLevel> hierarchyLevels = new ArrayList<>(topHierarchyLevels);
 		hierarchyLevels.add(projectHierarchyLevel);
 		if (!isKanban) {
 			hierarchyLevels.add(sprintHierarchyLevel);
@@ -77,7 +75,7 @@ public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 		return createReleaseHierarchyLevel(getTopHierarchyLevels());
 	}
 
-	private HierarchyLevel createProjectHierarchyLevel(List<HierarchyLevel> topHierarchies) {
+	private static HierarchyLevel createProjectHierarchyLevel(List<HierarchyLevel> topHierarchies) {
 
 		HierarchyLevel hierarchyLevel = new HierarchyLevel();
 		hierarchyLevel.setHierarchyLevelId(CommonConstant.HIERARCHY_LEVEL_ID_PROJECT);
@@ -92,7 +90,6 @@ public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 	}
 
 	private HierarchyLevel createSprintHierarchyLevel(List<HierarchyLevel> topHierarchies) {
-
 		HierarchyLevel hierarchyLevel = new HierarchyLevel();
 		hierarchyLevel.setHierarchyLevelId(CommonConstant.HIERARCHY_LEVEL_ID_SPRINT);
 		hierarchyLevel.setHierarchyLevelName(CommonConstant.HIERARCHY_LEVEL_NAME_SPRINT);
@@ -106,7 +103,6 @@ public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 	}
 
 	private HierarchyLevel createReleaseHierarchyLevel(List<HierarchyLevel> topHierarchies) {
-
 		HierarchyLevel hierarchyLevel = new HierarchyLevel();
 		hierarchyLevel.setHierarchyLevelId(CommonConstant.HIERARCHY_LEVEL_ID_RELEASE);
 		hierarchyLevel.setHierarchyLevelName(CommonConstant.HIERARCHY_LEVEL_NAME_RELEASE);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 <Sapient Corporation>
+ *  Copyright 2024 Sapient Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.application;
+package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import com.publicissapient.kpidashboard.common.repository.projection.BasicKpiMasterProjection;
-
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Repository
+/** Enum representing different persona types for recommendations. */
+@Getter
 @RequiredArgsConstructor
-public class KpiMasterCustomRepository {
-	private final KpiMasterRepository kpiMasterRepository;
+public enum Persona {
+	EXECUTIVE_SPONSOR("executive_sponsor"), ENGINEERING_LEAD("engineering_lead"), SCRUM_MASTER(
+			"scrum_master"), PRODUCT_OWNER("product_owner"), PROJECT_ADMIN("project_admin");
 
-	public List<BasicKpiMasterProjection> findKpisSupportingMaturityCalculation() {
-		return kpiMasterRepository.findByCalculateMaturity(true);
-	}
+	private final String displayName;
 }

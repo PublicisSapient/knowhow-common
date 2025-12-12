@@ -68,6 +68,8 @@ public final class ProcessorConstants {
 
 	public static final String SCM = "SCM";
 
+	public static final String AI_DATA = "AIData";
+
 	private ProcessorConstants() {
 		// This class should not be instantiable
 	}

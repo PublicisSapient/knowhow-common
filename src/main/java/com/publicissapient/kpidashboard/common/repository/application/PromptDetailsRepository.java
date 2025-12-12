@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 <Sapient Corporation>
+ *  Copyright 2024 Sapient Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 
 package com.publicissapient.kpidashboard.common.repository.application;
 
-import java.util.List;
-
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.publicissapient.kpidashboard.common.repository.projection.BasicKpiMasterProjection;
+import com.publicissapient.kpidashboard.common.model.application.PromptDetails;
 
-import lombok.RequiredArgsConstructor;
-
+/** Repository for PromptDetails documents. */
 @Repository
-@RequiredArgsConstructor
-public class KpiMasterCustomRepository {
-	private final KpiMasterRepository kpiMasterRepository;
+public interface PromptDetailsRepository extends MongoRepository<PromptDetails, String> {
 
-	public List<BasicKpiMasterProjection> findKpisSupportingMaturityCalculation() {
-		return kpiMasterRepository.findByCalculateMaturity(true);
-	}
+	/**
+	 * Find PromptDetails by key.
+	 *
+	 * @param key
+	 *          the key of Prompt
+	 * @return the PromptDetails object
+	 */
+	PromptDetails findByKey(String key);
 }
