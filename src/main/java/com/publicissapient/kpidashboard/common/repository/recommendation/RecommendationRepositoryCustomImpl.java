@@ -22,7 +22,11 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.AddFieldsOperation;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.CaseOperator;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
@@ -33,6 +37,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationsActionPlan;
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.Severity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,21 +55,11 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	private static final String FIELD_BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
 	private static final String FIELD_CREATED_AT = "createdAt";
 	private static final String FIELD_RECOMMENDATIONS = "recommendations";
+	private static final String FIELD_SEVERITY = "recommendations.severity";
+	private static final String FIELD_SEVERITY_PRIORITY = "severityPriority";
 
 	private final MongoOperations operations;
 
-	/**
-	 * Finds the latest N recommendations for each project using MongoDB Aggregation
-	 * pipeline with push/slice pattern (compatible with MongoDB 4.x+).
-	 *
-	 * @param projectIds
-	 *          list of project identifiers (must not be null or empty)
-	 * @param limit
-	 *          number of recommendations per project (must be > 0)
-	 * @return list of latest N recommendations per project
-	 * @throws IllegalArgumentException
-	 *           if projectIds is null/empty or limit <= 0
-	 */
 	@Override
 	public List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit) {
 		validateInputParameters(projectIds, limit);
@@ -85,11 +80,11 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	 * Validates input parameters for aggregation query.
 	 *
 	 * @param projectIds
-	 *          list of project identifiers
+	 *            list of project identifiers
 	 * @param limit
-	 *          number of recommendations per project
+	 *            number of recommendations per project
 	 * @throws IllegalArgumentException
-	 *           if validation fails
+	 *             if validation fails
 	 */
 	private void validateInputParameters(List<String> projectIds, int limit) {
 		if (CollectionUtils.isEmpty(projectIds)) {
@@ -104,36 +99,72 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	}
 
 	/**
-	 * Builds Spring Data MongoDB Aggregation for fetching latest recommendations
-	 * per project.
-	 *
-	 * @param projectIds
-	 *          list of project identifiers to filter
-	 * @param limit
-	 *          number of recommendations to fetch per project
-	 * @return Aggregation object
+	 * Builds MongoDB aggregation pipeline with severity-based sorting. 8 stages:
+	 * match → addFields → sort → group → slice → unwind → replaceRoot → sort
 	 */
 	private Aggregation buildAggregation(List<String> projectIds, int limit) {
 		// Stage 1: Match documents by project IDs
 		MatchOperation matchStage = Aggregation.match(Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectIds));
 
-		// Stage 2: Sort by createdAt descending to get latest first
-		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, FIELD_CREATED_AT);
+		// Stage 2: Add computed field for severity priority (CRITICAL=1, HIGH=2,
+		// MEDIUM=3, LOW=4)
+		AddFieldsOperation addSeverityPriorityStage = buildSeverityPriorityMapping();
 
-		// Stage 3: Group by project and push all documents into array
+		// Stage 3: Sort by severity priority ASC (CRITICAL first), then createdAt DESC
+		// (latest first) - within each project
+		SortOperation sortStage = Aggregation
+				.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT)));
+
+		// Stage 4: Group by project and push all documents into array
 		GroupOperation groupStage = Aggregation.group(FIELD_BASIC_PROJECT_CONFIG_ID).push("$$ROOT")
 				.as(FIELD_RECOMMENDATIONS);
 
-		// Stage 4: Slice array to limit to N documents per project
+		// Stage 5: Slice array to limit to N documents per project
 		ProjectionOperation sliceStage = Aggregation.project().and(FIELD_RECOMMENDATIONS).slice(limit)
 				.as(FIELD_RECOMMENDATIONS);
 
-		// Stage 5: Unwind the recommendations array
+		// Stage 6: Unwind the recommendations array
 		UnwindOperation unwindStage = Aggregation.unwind(FIELD_RECOMMENDATIONS);
 
-		// Stage 6: Replace root to return clean recommendation documents
+		// Stage 7: Replace root to return clean recommendation documents
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(FIELD_RECOMMENDATIONS);
 
-		return Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage, replaceRootStage);
+		// Stage 8: Final sort across all projects by severity priority (CRITICAL projects first)
+		SortOperation finalSortStage = Aggregation
+				.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT)));
+
+		return Aggregation.newAggregation(matchStage, addSeverityPriorityStage, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage, finalSortStage);
+	}
+
+	/**
+	 * Creates $addFields stage to map severity enum to numeric priority using
+	 * $switch operator. Mapping: CRITICAL=1, HIGH=2, MEDIUM=3, LOW=4, unknown=999
+	 * (dynamically from {@link Severity} enum).
+	 * 
+	 * @return AddFieldsOperation with severityPriority computed field
+	 */
+	private AddFieldsOperation buildSeverityPriorityMapping() {
+		CaseOperator criticalCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.CRITICAL.name()))
+				.then(Severity.CRITICAL.getPriority());
+
+		CaseOperator highCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.HIGH.name()))
+				.then(Severity.HIGH.getPriority());
+
+		CaseOperator mediumCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.MEDIUM.name()))
+				.then(Severity.MEDIUM.getPriority());
+
+		CaseOperator lowCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.LOW.name()))
+				.then(Severity.LOW.getPriority());
+
+		ConditionalOperators.Switch switchBuilder = ConditionalOperators
+				.switchCases(criticalCase, highCase, mediumCase, lowCase).defaultTo(999); // Fallback for null/unknown
+																						  // severity - sorts last
+
+		return Aggregation.addFields().addField(FIELD_SEVERITY_PRIORITY).withValue(switchBuilder).build();
 	}
 }
