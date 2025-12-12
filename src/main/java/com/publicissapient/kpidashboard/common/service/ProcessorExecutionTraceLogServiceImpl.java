@@ -17,7 +17,6 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -74,6 +72,31 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			}
 		});
 		processorExecutionTraceLogRepository.save(processorExecutionTracelog);
+	}
+
+	@Override
+	public void upsertTraceLog(String processorName, String basicProjectConfigId, boolean executionSuccess,
+			String errorMessage) {
+		try {
+			ProcessorExecutionTraceLog traceLog = new ProcessorExecutionTraceLog();
+			traceLog.setProcessorName(processorName);
+			traceLog.setBasicProjectConfigId(basicProjectConfigId);
+			traceLog.setExecutionSuccess(executionSuccess);
+			traceLog.setExecutionEndedAt(System.currentTimeMillis());
+
+			if (executionSuccess) {
+				traceLog.setErrorMessage(null);
+				traceLog.setLastSuccessfulRun(String.valueOf(System.currentTimeMillis()));
+			} else if (errorMessage != null) {
+				traceLog.setErrorMessage(errorMessage);
+			}
+
+			save(traceLog);
+			log.debug("Upserted {} trace log for processor: {} and project: {}", executionSuccess ? "success" : "failure",
+					processorName, basicProjectConfigId);
+		} catch (Exception e) {
+			log.error("Failed to upsert trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
+		}
 	}
 
 	@Override
@@ -124,30 +147,6 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 	public List<ProcessorExecutionTraceLogDTO> getTraceLogDTOs(String processorName, String basicProjectConfigId) {
 		List<ProcessorExecutionTraceLog> traceLogs = getTraceLogs(processorName, basicProjectConfigId);
 		return traceLogs.stream().map(this::convertToProcessorExecutionTraceLogDTO).toList();
-	}
-
-	public ProcessorExecutionTraceLog createNewProcessorJobExecution(String jobName) {
-		Instant startingTime = Instant.now();
-		ProcessorExecutionTraceLog processorExecutionTraceLog = new ProcessorExecutionTraceLog();
-		processorExecutionTraceLog.setProcessorName(jobName);
-		processorExecutionTraceLog.setExecutionOngoing(true);
-		processorExecutionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
-		processorExecutionTraceLog.setExecutionSuccess(true);
-		return this.processorExecutionTraceLogRepository.save(processorExecutionTraceLog);
-	}
-
-	public Optional<ProcessorExecutionTraceLog> findById(ObjectId objectId) {
-		return this.processorExecutionTraceLogRepository.findById(objectId);
-	}
-
-	public List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName,
-			int numberOfExecutions) {
-		return this.processorExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorName(processorName,
-				PageRequest.ofSize(numberOfExecutions));
-	}
-
-	public void saveAiDataProcessorExecutions(ProcessorExecutionTraceLog processorExecutionTracelog) {
-		this.processorExecutionTraceLogRepository.save(processorExecutionTracelog);
 	}
 
 	/**
