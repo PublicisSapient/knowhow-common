@@ -19,11 +19,15 @@ package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-/** Enum representing the severity level of a recommendation. */
+/**
+ * Enum representing the severity level of a recommendation. Priority determines
+ * sort order: lower number = higher priority.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum Severity {
-	CRITICAL("critical"), HIGH("high"), MEDIUM("medium"), LOW("low");
+	CRITICAL("critical", 1), HIGH("high", 2), MEDIUM("medium", 3), LOW("low", 4);
 
 	private final String displayName;
+	private final int priority;
 }

@@ -28,14 +28,21 @@ import com.publicissapient.kpidashboard.common.model.recommendation.batch.Recomm
 public interface RecommendationRepositoryCustom {
 
 	/**
-	 * Finds the latest N recommendations for each project using MongoDB aggregation
-	 * pipeline.
+	 * Finds latest N recommendations per project sorted by severity priority
+	 * (CRITICAL→LOW) then creation date (latest first).
+	 *
+	 * <p>
+	 * <b>Pipeline:</b> $match → $addFields (severityPriority) → $sort → $group →
+	 * $slice → $unwind → $replaceRoot → $sort (final cross-project sorting)
 	 *
 	 * @param projectIds
-	 *          list of project identifiers
+	 *          list of project identifiers (must not be null or empty)
 	 * @param limit
-	 *          number of recommendations per project
-	 * @return list of latest N recommendations per project
+	 *          number of recommendations per project (must be > 0)
+	 * @return list of recommendations sorted by severity priority across all
+	 *         projects
+	 * @throws IllegalArgumentException
+	 *           if projectIds is null/empty or limit <= 0
 	 */
 	List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit);
 }
