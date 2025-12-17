@@ -16,6 +16,7 @@
 
 package com.publicissapient.kpidashboard.common.model.kpibenchmark;
 
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -26,7 +27,7 @@ import java.util.List;
 @Data
 @Builder
 @Document(collection = "kpi_benchmark_values")
-public class KpiBenchmarkValues {
+public class KpiBenchmarkValues extends BasicModel {
 
     @Indexed(name = "kpiId", unique = true)
     private String kpiId;
