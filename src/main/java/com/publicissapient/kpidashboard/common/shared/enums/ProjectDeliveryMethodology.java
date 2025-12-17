@@ -16,8 +16,6 @@
 
 package com.publicissapient.kpidashboard.common.shared.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +24,5 @@ import lombok.RequiredArgsConstructor;
 public enum ProjectDeliveryMethodology {
 	SCRUM("scrum"), KANBAN("kanban");
 
-	@JsonValue
 	private final String deliveryMethodology;
 }
