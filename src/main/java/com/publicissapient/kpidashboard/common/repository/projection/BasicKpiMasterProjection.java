@@ -19,6 +19,8 @@ package com.publicissapient.kpidashboard.common.repository.projection;
 public interface BasicKpiMasterProjection {
 	boolean isKanban();
 
+	Integer getGroupId();
+
 	String getKpiId();
 
 	String getKpiName();
