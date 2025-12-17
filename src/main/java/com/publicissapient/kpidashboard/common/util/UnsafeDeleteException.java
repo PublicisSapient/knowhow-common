@@ -18,14 +18,10 @@
 
 package com.publicissapient.kpidashboard.common.util;
 
-import java.io.Serial;
-
 /**
  * Class provides method for unsafe delete exception. Created by jkc on 1/20/16.
  */
 public class UnsafeDeleteException extends RuntimeException {
-
-	@Serial
 	private static final long serialVersionUID = -664077740219817001L;
 
 	/** Instantiates a new unsafe delete exception. */

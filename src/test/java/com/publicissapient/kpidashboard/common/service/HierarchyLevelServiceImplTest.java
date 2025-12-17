@@ -18,7 +18,10 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -68,6 +71,20 @@ public class HierarchyLevelServiceImplTest {
 		category2.setFilterCategoryId("Category ID2");
 		category2.setFilterCategoryName("Category B");
 		mockCategories = Arrays.asList(category1, category2);
+	}
+
+	@Test
+	public void testGetTopHierarchyLevels() {
+		when(hierarchyLevelRepository.findAllByOrderByLevel()).thenReturn(mockHierarchyLevels);
+
+		// Calling the actual method
+		List<HierarchyLevel> result = hierarchyLevelService.getTopHierarchyLevels();
+
+		// Verifying the interactions
+		verify(hierarchyLevelRepository, times(1)).findAllByOrderByLevel();
+
+		// Asserting the result
+		assertEquals(mockHierarchyLevels, result);
 	}
 
 	@Test
