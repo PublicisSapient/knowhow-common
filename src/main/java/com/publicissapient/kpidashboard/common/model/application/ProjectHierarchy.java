@@ -55,10 +55,10 @@ public class ProjectHierarchy extends OrganizationHierarchy implements Serializa
 		if (o == null || getClass() != o.getClass())
 			return false;
 		ProjectHierarchy that = (ProjectHierarchy) o;
-		return Objects.equals(basicProjectConfigId, that.basicProjectConfigId) &&
-				Objects.equals(sprintState, that.sprintState) && Objects.equals(releaseState, that.releaseState) &&
-				Objects.equals(beginDate, that.beginDate) && Objects.equals(endDate, that.endDate) &&
-				Objects.equals(this.getParentId(), that.getParentId());
+		return Objects.equals(basicProjectConfigId, that.basicProjectConfigId) && Objects.equals(sprintState,
+				that.sprintState) && Objects.equals(releaseState, that.releaseState) && Objects.equals(beginDate,
+						that.beginDate) && Objects.equals(endDate,
+								that.endDate) && Objects.equals(this.getParentId(), that.getParentId());
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class ProjectHierarchy extends OrganizationHierarchy implements Serializa
 	public ProjectHierarchy(String nodeId, String nodeName, String nodeDisplayName, String hierarchyLevelId,
 			String parentId, LocalDateTime createdDate, LocalDateTime modifiedDate, ObjectId basicProjectConfigId,
 			String createdBy, String updatedBy, String externalId, boolean onHold) {
-		super(nodeId, nodeName, externalId, nodeDisplayName, hierarchyLevelId, parentId, createdDate, modifiedDate, createdBy,
-				updatedBy);
+		super(nodeId, nodeName, externalId, nodeDisplayName, hierarchyLevelId, parentId, createdDate, modifiedDate,
+				createdBy, updatedBy);
 		this.basicProjectConfigId = basicProjectConfigId;
 		this.onHold = onHold;
 	}

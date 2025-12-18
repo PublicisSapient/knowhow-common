@@ -120,4 +120,14 @@ public class ProjectToolConfigDTO {
 	private String scanningBranch;
 	private Boolean azureRefreshActiveSprintReport = false;
 	private String jiraConfigurationType;
+	private List<ScmToolConfig> scmToolConfigList;
+
+	@Setter
+	@Getter
+	private static class ScmToolConfig {
+		private String repositoryUrl;
+		private String connectionId;
+		private List<String> branches;
+		private String repositoryName;
+	}
 }

@@ -28,6 +28,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.publicissapient.kpidashboard.common.constant.AuthType;
+import com.publicissapient.kpidashboard.common.model.audit.Auditable;
 
 import lombok.Data;
 import lombok.Getter;
@@ -41,7 +42,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserInfo {
+public class UserInfo extends Auditable {
 
 	@Id
 	private ObjectId id;
@@ -52,7 +53,6 @@ public class UserInfo {
 	private String middleName;
 	private String lastName;
 	private String displayName;
-	private String createdOn;
 	private String emailAddress;
 	private List<ProjectsAccess> projectsAccess;
 	private Map<String, Boolean> notificationEmail;

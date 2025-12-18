@@ -28,7 +28,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -37,6 +36,7 @@ import com.publicissapient.kpidashboard.common.model.application.dto.ProcessorEx
 import com.publicissapient.kpidashboard.common.model.application.dto.SprintRefreshLogDTO;
 import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,13 +44,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecutionTraceLogService {
 
-	@Autowired
-	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+	private final ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
 
-	@Autowired
-	private AzureSprintReportLogService azureSprintReportLogService;
+	private final AzureSprintReportLogService azureSprintReportLogService;
 
 	@Override
 	public void save(ProcessorExecutionTraceLog processorExecutionTracelog) {
@@ -66,13 +65,38 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 						processorExecutionTracelog.getBasicProjectConfigId());
 		existingTraceLogOptional.ifPresent(existingProcessorExecutionTraceLog -> {
 			processorExecutionTracelog.setId(existingProcessorExecutionTraceLog.getId());
-			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType()) &&
-					MapUtils.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
+			if (MapUtils.isNotEmpty(existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType()) && MapUtils
+					.isEmpty(processorExecutionTracelog.getLastSavedEntryUpdatedDateByType())) {
 				processorExecutionTracelog.setLastSavedEntryUpdatedDateByType(
 						existingProcessorExecutionTraceLog.getLastSavedEntryUpdatedDateByType());
 			}
 		});
 		processorExecutionTraceLogRepository.save(processorExecutionTracelog);
+	}
+
+	@Override
+	public void upsertTraceLog(String processorName, String basicProjectConfigId, boolean executionSuccess,
+			String errorMessage) {
+		try {
+			ProcessorExecutionTraceLog traceLog = new ProcessorExecutionTraceLog();
+			traceLog.setProcessorName(processorName);
+			traceLog.setBasicProjectConfigId(basicProjectConfigId);
+			traceLog.setExecutionSuccess(executionSuccess);
+			traceLog.setExecutionEndedAt(System.currentTimeMillis());
+
+			if (executionSuccess) {
+				traceLog.setErrorMessage(null);
+				traceLog.setLastSuccessfulRun(String.valueOf(System.currentTimeMillis()));
+			} else if (errorMessage != null) {
+				traceLog.setErrorMessage(errorMessage);
+			}
+
+			save(traceLog);
+			log.debug("Upserted {} trace log for processor: {} and project: {}", executionSuccess ? "success" : "failure",
+					processorName, basicProjectConfigId);
+		} catch (Exception e) {
+			log.error("Failed to upsert trace log for processor: {} and project: {}", processorName, basicProjectConfigId, e);
+		}
 	}
 
 	@Override
@@ -94,8 +118,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 			List<ProcessorExecutionTraceLog> traceLogsByProject = processorExecutionTraceLogRepository
 					.findByBasicProjectConfigId(basicProjectConfigId);
 			resultTraceLogs.addAll(traceLogsByProject);
-		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA) &&
-				StringUtils.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
+		} else if (processorName.equalsIgnoreCase(ProcessorConstants.JIRA) && StringUtils
+				.isNotEmpty(basicProjectConfigId)) { // api for jira progress trace log
 			Optional<ProcessorExecutionTraceLog> jiraProgressTraceLog = processorExecutionTraceLogRepository
 					.findByProcessorNameAndBasicProjectConfigIdAndProgressStatsTrue(processorName, basicProjectConfigId);
 			return jiraProgressTraceLog.map(Collections::singletonList).orElseGet(Collections::emptyList);

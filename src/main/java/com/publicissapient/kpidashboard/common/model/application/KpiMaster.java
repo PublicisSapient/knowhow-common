@@ -91,6 +91,7 @@ public class KpiMaster extends BasicModel {
 	private String kpiFilter;
 	private String aggregationCriteria;
 	private String aggregationCircleCriteria;
+	private String forecastModel;
 	private boolean isTrendCalculative;
 	private List<KpiFormula> trendCalculation;
 

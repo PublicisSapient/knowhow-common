@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.ProcessorExecutionTraceLog;
@@ -54,4 +56,8 @@ public interface ProcessorExecutionTraceLogRepository extends MongoRepository<Pr
 
 	List<ProcessorExecutionTraceLog> findByProcessorNameAndBasicProjectConfigIdAndProgressStatsFalse(String processorName,
 			String basicProjectConfigId);
+
+	@Query(value = "{'processorName': ?0}", sort = "{ 'executionStartedAt': -1}")
+	List<ProcessorExecutionTraceLog> findLastExecutionTraceLogsByProcessorName(String processorName,
+			PageRequest pageRequest);
 }

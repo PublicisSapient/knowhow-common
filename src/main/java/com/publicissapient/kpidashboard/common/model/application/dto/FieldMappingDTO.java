@@ -381,6 +381,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> jiraIterationCompletionStatusKPI119;
 	private List<String> jiraIterationCompletionStatusKPI131;
 	private List<String> jiraIterationCompletionStatusKPI138;
+	private List<String> includedStatusesToIdentifyCompletedIssuesKPI198;
 
 	private List<String> jiraIterationCompletionTypeCustomField;
 	private List<String> jiraIterationIssuetypeKPI122;
@@ -398,6 +399,8 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private List<String> jiraIterationIssuetypeKPI120;
 	private List<String> jiraIterationIssuetypeKPI124;
 	private List<String> jiraIterationIssuetypeKPI39;
+	private List<String> includedIssueTypesFromTheCompletedIssuesKPI198;
+
 	private String jiraDefectRejectionStatusKPI155;
 	private List<String> jiraDodKPI155;
 	private String jiraLiveStatusKPI155;
@@ -563,7 +566,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 
 	private List<String> defectRejectionLabelsKPI37;
 
-    private List<String> jiraLabelsKPI120;
+	private List<String> jiraLabelsKPI120;
 
 	private List<String> resolutionTypeForRejectionKPI190;
 	private String jiraDefectRejectionStatusKPI190;
@@ -578,6 +581,9 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String jiraDefectSeverityByCustomFieldKPI194;
 
 	private List<BaseFieldMappingStructure.Options> includedSeveritySlasKPI195;
+
+	private String aiEfficiencyGainJiraCustomFieldKPI198;
+	private String aiUsageTypeJiraCustomFieldKPI198;
 
 	/**
 	 * Get jira issue type names string [ ].

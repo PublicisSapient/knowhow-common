@@ -21,6 +21,7 @@ package com.publicissapient.kpidashboard.common.repository.rbac;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.publicissapient.kpidashboard.common.constant.AuthType;
@@ -102,4 +103,15 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 
 	/** find all the users */
 	List<UserInfo> findAll();
+
+	/**
+	 * find all the users for itemIds and createdBy user
+	 *
+	 * @param itemIds
+	 *          -> ProjectId
+	 * @param createdBy
+	 *          -> createdBy
+	 */
+	@Query("{ $or: [ { 'projectsAccess.accessNodes.accessItems.itemId': { $in: ?0 } }, { 'createdBy': ?1 } ] }")
+	List<UserInfo> findUsersByItemIdsOrCreatedBy(List<String> itemIds, String createdBy);
 }

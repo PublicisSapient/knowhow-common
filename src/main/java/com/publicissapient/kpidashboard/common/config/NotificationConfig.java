@@ -16,14 +16,14 @@
  *
  ******************************************************************************/
 
-
 package com.publicissapient.kpidashboard.common.config;
 
-import lombok.Data;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import lombok.Data;
 
 /**
  * This class is used to bind external configurations to a bean in application
@@ -32,7 +32,6 @@ import java.util.Map;
  *
  * @author rendk
  */
-
 @Data
 @Component
 @ConfigurationProperties(prefix = "broken-connection")
@@ -46,4 +45,3 @@ public class NotificationConfig {
 	private Map<String, String> mailTemplate;
 	private boolean notificationSwitch;
 }
-

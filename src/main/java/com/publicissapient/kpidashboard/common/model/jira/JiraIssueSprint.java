@@ -65,8 +65,6 @@ public class JiraIssueSprint {
 
 	@Override
 	public String toString() {
-		return "FeatureSprint [sprintId=" + sprintId + ", status=" + status + ", type=" + type + ", fromStatus=" +
-				fromStatus + ", buildNumber=" + buildNumber + ", activityDate=" + activityDate + ", sprintComponentId=" +
-				sprintComponentId + "]";
+		return "FeatureSprint [sprintId=" + sprintId + ", status=" + status + ", type=" + type + ", fromStatus=" + fromStatus + ", buildNumber=" + buildNumber + ", activityDate=" + activityDate + ", sprintComponentId=" + sprintComponentId + "]";
 	}
 }

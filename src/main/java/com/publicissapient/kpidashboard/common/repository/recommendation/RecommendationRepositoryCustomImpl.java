@@ -1,0 +1,171 @@
+/*
+ *   Copyright 2014 CapitalOne, LLC.
+ *   Further development Copyright 2022 Sapient Corporation.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package com.publicissapient.kpidashboard.common.repository.recommendation;
+
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.AddFieldsOperation;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.CaseOperator;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.aggregation.ReplaceRootOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationsActionPlan;
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.Severity;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Custom repository implementation for complex RecommendationsActionPlan
+ * queries
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class RecommendationRepositoryCustomImpl implements RecommendationRepositoryCustom {
+
+	private static final String COLLECTION_NAME = "recommendations_action_plan";
+	private static final String FIELD_BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
+	private static final String FIELD_CREATED_AT = "createdAt";
+	private static final String FIELD_RECOMMENDATIONS = "recommendations";
+	private static final String FIELD_SEVERITY = "recommendations.severity";
+	private static final String FIELD_SEVERITY_PRIORITY = "severityPriority";
+
+	private final MongoOperations operations;
+
+	@Override
+	public List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit) {
+		validateInputParameters(projectIds, limit);
+
+		log.debug("Executing aggregation pipeline to fetch {} latest recommendation(s) for {} projects", limit,
+				projectIds.size());
+
+		Aggregation aggregation = buildAggregation(projectIds, limit);
+		List<RecommendationsActionPlan> recommendations = operations
+				.aggregate(aggregation, COLLECTION_NAME, RecommendationsActionPlan.class).getMappedResults();
+
+		log.debug("Successfully retrieved {} recommendation(s) using aggregation framework", recommendations.size());
+
+		return recommendations;
+	}
+
+	/**
+	 * Validates input parameters for aggregation query.
+	 *
+	 * @param projectIds
+	 *          list of project identifiers
+	 * @param limit
+	 *          number of recommendations per project
+	 * @throws IllegalArgumentException
+	 *           if validation fails
+	 */
+	private void validateInputParameters(List<String> projectIds, int limit) {
+		if (CollectionUtils.isEmpty(projectIds)) {
+			log.error("Aggregation called with empty or null projectIds list");
+			throw new IllegalArgumentException("Project IDs list must not be null or empty");
+		}
+
+		if (limit <= 0) {
+			log.error("Aggregation called with invalid limit: {}", limit);
+			throw new IllegalArgumentException("Limit must be greater than 0, got: " + limit);
+		}
+	}
+
+	/**
+	 * Builds MongoDB aggregation pipeline with severity-based sorting. 8 stages:
+	 * match → addFields → sort → group → slice → unwind → replaceRoot → sort
+	 */
+	private Aggregation buildAggregation(List<String> projectIds, int limit) {
+		// Stage 1: Match documents by project IDs
+		MatchOperation matchStage = Aggregation.match(Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectIds));
+
+		// Stage 2: Add computed field for severity priority (CRITICAL=1, HIGH=2,
+		// MEDIUM=3, LOW=4)
+		AddFieldsOperation addSeverityPriorityStage = buildSeverityPriorityMapping();
+
+		// Stage 3: Sort by severity priority ASC (CRITICAL first), then createdAt DESC
+		// (latest first) - within each project
+		SortOperation sortStage = Aggregation
+				.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT)));
+
+		// Stage 4: Group by project and push all documents into array
+		GroupOperation groupStage = Aggregation.group(FIELD_BASIC_PROJECT_CONFIG_ID).push("$$ROOT")
+				.as(FIELD_RECOMMENDATIONS);
+
+		// Stage 5: Slice array to limit to N documents per project
+		ProjectionOperation sliceStage = Aggregation.project().and(FIELD_RECOMMENDATIONS).slice(limit)
+				.as(FIELD_RECOMMENDATIONS);
+
+		// Stage 6: Unwind the recommendations array
+		UnwindOperation unwindStage = Aggregation.unwind(FIELD_RECOMMENDATIONS);
+
+		// Stage 7: Replace root to return clean recommendation documents
+		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(FIELD_RECOMMENDATIONS);
+
+		// Stage 8: Final sort across all projects by severity priority (CRITICAL
+		// projects first)
+		SortOperation finalSortStage = Aggregation
+				.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT)));
+
+		return Aggregation.newAggregation(matchStage, addSeverityPriorityStage, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage, finalSortStage);
+	}
+
+	/**
+	 * Creates $addFields stage to map severity enum to numeric priority using
+	 * $switch operator. Mapping: CRITICAL=1, HIGH=2, MEDIUM=3, LOW=4, unknown=999
+	 * (dynamically from {@link Severity} enum).
+	 *
+	 * @return AddFieldsOperation with severityPriority computed field
+	 */
+	private AddFieldsOperation buildSeverityPriorityMapping() {
+		CaseOperator criticalCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.CRITICAL.name()))
+				.then(Severity.CRITICAL.getPriority());
+
+		CaseOperator highCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.HIGH.name()))
+				.then(Severity.HIGH.getPriority());
+
+		CaseOperator mediumCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.MEDIUM.name()))
+				.then(Severity.MEDIUM.getPriority());
+
+		CaseOperator lowCase = CaseOperator
+				.when(ComparisonOperators.Eq.valueOf(FIELD_SEVERITY).equalToValue(Severity.LOW.name()))
+				.then(Severity.LOW.getPriority());
+
+		ConditionalOperators.Switch switchBuilder = ConditionalOperators
+				.switchCases(criticalCase, highCase, mediumCase, lowCase).defaultTo(999); // Fallback for null/unknown
+		// severity - sorts last
+
+		return Aggregation.addFields().addField(FIELD_SEVERITY_PRIORITY).withValue(switchBuilder).build();
+	}
+}

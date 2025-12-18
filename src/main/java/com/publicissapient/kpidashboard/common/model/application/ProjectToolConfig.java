@@ -123,6 +123,16 @@ public class ProjectToolConfig extends BasicModel implements Cloneable {
 	private String azureRefreshActiveSprintReportUpdatedBy;
 	private long azureRefreshActiveSprintReportUpdatedOn;
 	private String jiraConfigurationType;
+	private List<ScmToolConfig> scmToolConfig;
+
+	@Setter
+	@Getter
+	public static class ScmToolConfig {
+		private String repositoryUrl;
+		private ObjectId connectionId;
+		private List<String> branches;
+		private String repositoryName;
+	}
 
 	@Override
 	public ProjectToolConfig clone() throws CloneNotSupportedException {

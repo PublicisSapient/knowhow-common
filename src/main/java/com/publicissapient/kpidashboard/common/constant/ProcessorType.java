@@ -22,7 +22,7 @@ public enum ProcessorType {
 	BUILD("Build"), @Deprecated
 	FEATURE("Feature"), SONAR_ANALYSIS("SonarDetails"), EXCEL("Excel"), APP_PERFORMANCE("AppPerformance"), AGILE_TOOL(
 			"AgileTool"), STATIC_SECURITY_SCAN(
-					"StaticSecurityScan"), NEW_RELIC("NewRelic"), SCM("Scm"), TESTING_TOOLS("TestingTools");
+					"StaticSecurityScan"), NEW_RELIC("NewRelic"), SCM("Scm"), TESTING_TOOLS("TestingTools"), AI_DATA("AiData");
 
 	private String value;
 

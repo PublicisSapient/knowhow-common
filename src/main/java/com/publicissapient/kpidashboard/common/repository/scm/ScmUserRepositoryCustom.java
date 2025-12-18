@@ -16,10 +16,10 @@
 
 package com.publicissapient.kpidashboard.common.repository.scm;
 
+import java.util.List;
+
 import com.mongodb.BasicDBList;
 import com.publicissapient.kpidashboard.common.model.scm.User;
-
-import java.util.List;
 
 public interface ScmUserRepositoryCustom {
 	List<User> findScmUserList(BasicDBList filterList);
