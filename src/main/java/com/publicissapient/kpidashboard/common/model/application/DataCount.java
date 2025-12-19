@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.publicissapient.kpidashboard.common.model.kpibenchmark.BenchmarkPercentiles;
 import org.joda.time.DateTime;
 
 import lombok.AllArgsConstructor;
@@ -94,6 +95,7 @@ public class DataCount implements Serializable {
 
 	private List<DataCount> forecasts; // forecast data points
 	private String forecastingModel; // model used to generate forecasts
+    private BenchmarkPercentiles benchmarkPercentiles;
 
 	/**
 	 * Instantiates a new Data count.
