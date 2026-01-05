@@ -26,9 +26,9 @@ import lombok.Data;
 
 @Data
 public class KpiMaturityTemporalGrouping {
-    private Instant periodStart;
+	private Instant periodStart;
 
-    private TemporalAggregationUnit temporalAggregationUnit;
+	private TemporalAggregationUnit temporalAggregationUnit;
 
-    private List<KpiMaturity> kpiMaturities;
+	private List<KpiMaturity> kpiMaturities;
 }

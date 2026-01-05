@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 <Sapient Corporation>
+ *  Copyright 2024 Sapient Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,22 +14,27 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.application;
+package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import com.publicissapient.kpidashboard.common.repository.projection.BasicKpiMasterProjection;
+/** Represents a recommendation with associated action plans. */
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Recommendation {
 
-import lombok.RequiredArgsConstructor;
-
-@Repository
-@RequiredArgsConstructor
-public class KpiMasterCustomRepository {
-	private final KpiMasterRepository kpiMasterRepository;
-
-	public List<BasicKpiMasterProjection> findKpisSupportingMaturityCalculation() {
-		return kpiMasterRepository.findByCalculateMaturity(true);
-	}
+	private String title;
+	private String description;
+	private Severity severity;
+	private String timeToValue;
+	private List<ActionPlan> actionPlans;
 }

@@ -17,52 +17,48 @@
 
 package com.publicissapient.kpidashboard.common.model.tracelog;
 
+import java.time.Instant;
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.publicissapient.kpidashboard.common.model.application.ErrorDetail;
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-/**
- * MongoDB entity for tracking job executions.
- */
+/** MongoDB entity for tracking job executions. */
 @Data
 @Document("job_execution_trace_log")
 @EqualsAndHashCode(callSuper = true)
 public class JobExecutionTraceLog extends BasicModel {
 
 	/**
-	 * Name of the processor/job (e.g., "KpiMaturityCalculationJob",
-	 * "RecommendationCalculationJob")
+	 * Name of the processor (e.g., "ai-data-processor", "jira", "scm"). A processor
+	 * can contain multiple jobs.
 	 */
 	private String processorName;
 
 	/**
-	 * Job execution start time in milliseconds
+	 * Name of the specific job being executed (e.g., "calculate-kpi-maturity",
+	 * "calculate-productivity", "calculate-recommendation"). Multiple jobs can
+	 * exist under a single processor.
 	 */
-	private long executionStartedAt;
+	private String jobName;
 
-	/**
-	 * Job execution end time in milliseconds
-	 */
-	private long executionEndedAt;
+	/** Job execution start time as Instant */
+	private Instant executionStartedAt;
 
-	/**
-	 * Indicates if the job execution is currently ongoing
-	 */
+	/** Job execution end time as Instant */
+	private Instant executionEndedAt;
+
+	/** Indicates if the job execution is currently ongoing */
 	private boolean executionOngoing;
 
-	/**
-	 * Indicates if the job execution was successful
-	 */
+	/** Indicates if the job execution was successful */
 	private boolean executionSuccess;
 
-	/**
-	 * List of errors encountered during job execution
-	 */
+	/** List of errors encountered during job execution */
 	private List<ErrorDetail> errorDetailList;
 }

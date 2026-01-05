@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 <Sapient Corporation>
+ *  Copyright 2024 Sapient Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.projection;
+package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
-public interface BasicKpiMasterProjection {
-	boolean isKanban();
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-	Integer getGroupId();
+/** Represents a specific action plan within a recommendation. */
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ActionPlan {
 
-	String getKpiId();
-
-	String getKpiName();
-
-	String getxAxisLabel();
-
-	String getKpiCategory();
-
-	String getKpiSource();
+	private String title;
+	private String description;
 }

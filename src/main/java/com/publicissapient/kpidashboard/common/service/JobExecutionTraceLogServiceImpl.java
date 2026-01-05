@@ -40,24 +40,26 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	private final JobExecutionTraceLogRepository jobExecutionTraceLogRepository;
 
 	@Override
-	public JobExecutionTraceLog createJobExecution(String jobName) {
+	public JobExecutionTraceLog createProcessorJobExecution(String processorName, String jobName) {
 		Instant startingTime = Instant.now();
 		JobExecutionTraceLog executionTraceLog = new JobExecutionTraceLog();
-		executionTraceLog.setProcessorName(jobName);
+		executionTraceLog.setProcessorName(processorName);
+		executionTraceLog.setJobName(jobName);
 		executionTraceLog.setExecutionOngoing(true);
-		executionTraceLog.setExecutionStartedAt(startingTime.toEpochMilli());
+		executionTraceLog.setExecutionStartedAt(startingTime);
 		executionTraceLog.setExecutionSuccess(true);
-		
+
 		JobExecutionTraceLog savedLog = this.jobExecutionTraceLogRepository.save(executionTraceLog);
-		log.info("Created new job execution trace log for job '{}' with id '{}'", jobName, savedLog.getId());
+		log.info("Created new job execution trace log for processor '{}' and job '{}' with id '{}'", processorName, jobName,
+				savedLog.getId());
 		return savedLog;
 	}
 
 	@Override
 	public void updateJobExecution(JobExecutionTraceLog executionTraceLog) {
 		JobExecutionTraceLog savedLog = this.jobExecutionTraceLogRepository.save(executionTraceLog);
-		log.info("Updated job execution trace log for job '{}' with id '{}', status: {}", 
-				savedLog.getProcessorName(), savedLog.getId(), savedLog.isExecutionSuccess());
+		log.info("Updated job execution trace log for job '{}' with id '{}', status: {}", savedLog.getJobName(),
+				savedLog.getId(), savedLog.isExecutionSuccess());
 	}
 
 	@Override
@@ -66,20 +68,15 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	}
 
 	@Override
-	public List<JobExecutionTraceLog> findLastExecutionsByJobName(String jobName, int numberOfExecutions) {
-		return this.jobExecutionTraceLogRepository
-				.findLastExecutionTraceLogsByProcessorName(jobName, PageRequest.ofSize(numberOfExecutions));
+	public List<JobExecutionTraceLog> findLastExecutionsByProcessorAndJobName(String processorName, String jobName,
+			int numberOfExecutions) {
+		return this.jobExecutionTraceLogRepository.findLastExecutionTraceLogsByProcessorAndJobName(processorName, jobName,
+				PageRequest.ofSize(numberOfExecutions));
 	}
 
 	@Override
-	public List<JobExecutionTraceLog> findByJobName(String jobName) {
-		return this.jobExecutionTraceLogRepository.findByProcessorName(jobName);
-	}
-
-	@Override
-	public boolean isJobCurrentlyRunning(String jobName) {
-		List<JobExecutionTraceLog> executionTraceLogs = findLastExecutionsByJobName(jobName, 1);
-		return CollectionUtils.isNotEmpty(executionTraceLogs) 
-				&& executionTraceLogs.get(0).isExecutionOngoing();
+	public boolean isJobCurrentlyRunning(String processorName, String jobName) {
+		List<JobExecutionTraceLog> executionTraceLogs = findLastExecutionsByProcessorAndJobName(processorName, jobName, 1);
+		return CollectionUtils.isNotEmpty(executionTraceLogs) && executionTraceLogs.get(0).isExecutionOngoing();
 	}
 }
