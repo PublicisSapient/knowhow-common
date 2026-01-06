@@ -14,21 +14,12 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.repository.kpimaturity.organization.dto;
+package com.publicissapient.kpidashboard.common.repository.kpibenchmark;
 
-import java.time.Instant;
-import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.publicissapient.kpidashboard.common.model.kpimaturity.organization.KpiMaturity;
-import com.publicissapient.kpidashboard.common.shared.enums.TemporalAggregationUnit;
+import com.publicissapient.kpidashboard.common.model.kpibenchmark.KpiBenchmarkValues;
 
-import lombok.Data;
+public interface KpiBenchmarkValuesRepository extends MongoRepository<KpiBenchmarkValues, String> {
 
-@Data
-public class KpiMaturityTemporalGrouping {
-	private Instant periodStart;
-
-	private TemporalAggregationUnit temporalAggregationUnit;
-
-	private List<KpiMaturity> kpiMaturities;
 }
