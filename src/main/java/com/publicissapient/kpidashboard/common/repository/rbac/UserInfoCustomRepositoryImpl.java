@@ -19,7 +19,6 @@ package com.publicissapient.kpidashboard.common.repository.rbac;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -28,14 +27,16 @@ import org.springframework.stereotype.Repository;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author anisingh4
  */
 @Repository
+@RequiredArgsConstructor
 public class UserInfoCustomRepositoryImpl implements UserInfoCustomRepository {
 
-	@Autowired
-	private MongoOperations mongoOperations;
+	private final MongoOperations mongoOperations;
 
 	@Override
 	public List<UserInfo> findByProjectAccess(String basicProjectConfigId) {
