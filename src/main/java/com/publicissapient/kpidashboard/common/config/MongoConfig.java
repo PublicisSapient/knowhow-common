@@ -17,31 +17,28 @@
 
 package com.publicissapient.kpidashboard.common.config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 
 import com.publicissapient.kpidashboard.common.converter.DateToJodaDateTimeConverter;
 import com.publicissapient.kpidashboard.common.converter.ZonedDateTimeReadConverter;
 import com.publicissapient.kpidashboard.common.converter.ZonedDateTimeWriteConverter;
 
+/** MongoDB configuration for custom type conversions. */
 @Configuration
 public class MongoConfig {
+
 	/**
-	 * Registering the Custom DateToJodaDateTimeConverter with mongo
+	 * Registers custom converters for MongoDB type conversions.
 	 *
-	 * @return mongoCustomConversions
+	 * @return configured MongoCustomConversions
 	 */
 	@Bean
 	public MongoCustomConversions customConversions() {
-		List<Converter<?, ?>> converters = new ArrayList<>();
-		converters.add(new DateToJodaDateTimeConverter());
-		converters.add(new ZonedDateTimeReadConverter());
-		converters.add(new ZonedDateTimeWriteConverter());
-		return new MongoCustomConversions(converters);
+		return new MongoCustomConversions(List.of(new DateToJodaDateTimeConverter(), new ZonedDateTimeReadConverter(),
+				new ZonedDateTimeWriteConverter()));
 	}
 }

@@ -36,7 +36,7 @@ class KpiMaturityCustomRepositoryImplTest {
 	@BeforeEach
 	void setUp() {
 		hierarchyNodeIds = Set.of("node1", "node2");
-		kpiMaturity = new KpiMaturity();
+		kpiMaturity = KpiMaturity.builder().build();
 		kpiMaturity.setHierarchyEntityNodeId("node1");
 		kpiMaturityList = Arrays.asList(kpiMaturity);
 	}
