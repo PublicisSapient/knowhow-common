@@ -43,7 +43,7 @@ public final class CommonConstant {
 	public static final String CACHE_PROJECT_TOOL_CONFIG_MAP = "projectToolConfigMap";
 	public static final String CACHE_PROJECT_KPI_DATA = "project_kpi_data_cache";
 	public static final String CACHE_PROMPT_DETAILS = "prompt_details_cache";
-    public static final String CACHE_KPI_BENCHMARK_TARGETS = "kpiBenchmarkTargets";
+	public static final String CACHE_KPI_BENCHMARK_TARGETS = "kpiBenchmarkTargets";
 
 	public static final String PARAM1 = "param1";
 	public static final String PARAM2 = "param2";

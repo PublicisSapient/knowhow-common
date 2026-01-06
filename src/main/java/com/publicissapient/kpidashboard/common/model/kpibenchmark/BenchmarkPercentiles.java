@@ -22,8 +22,8 @@ import lombok.Data;
 @Data
 @Builder
 public class BenchmarkPercentiles {
-    private String filter;
-    private double seventyPercentile;
-    private double eightyPercentile;
-    private double nintyPercentile;
+	private String filter;
+	private double seventyPercentile;
+	private double eightyPercentile;
+	private double nintyPercentile;
 }

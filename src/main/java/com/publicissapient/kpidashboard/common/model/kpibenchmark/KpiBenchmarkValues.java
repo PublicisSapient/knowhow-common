@@ -16,22 +16,24 @@
 
 package com.publicissapient.kpidashboard.common.model.kpibenchmark;
 
-import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-import lombok.Builder;
-import lombok.Data;
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
 @Document(collection = "kpi_benchmark_values")
 public class KpiBenchmarkValues extends BasicModel {
 
-    @Indexed(name = "kpiId", unique = true)
-    private String kpiId;
-    private long lastUpdatedTimestamp;
-    List<BenchmarkPercentiles> filterWiseBenchmarkValues;
+	private String kpiId;
 
+	private Instant calculationDate;
+	List<BenchmarkPercentiles> filterWiseBenchmarkValues;
 }
