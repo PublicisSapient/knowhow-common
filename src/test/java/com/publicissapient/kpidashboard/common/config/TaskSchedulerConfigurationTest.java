@@ -29,21 +29,19 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.publicissapient.kpidashboard.common.util.ProcessorErrorHandler;
 
-class TaskSchedulerConfigurationTest {
+public class TaskSchedulerConfigurationTest {
 
 	private TaskSchedulerConfiguration taskSchedulerConfiguration;
-	private ProcessorErrorHandler processorErrorHandler;
 
 	@BeforeEach
-	void setUp() {
-		processorErrorHandler = mock(ProcessorErrorHandler.class);
-		taskSchedulerConfiguration = new TaskSchedulerConfiguration(processorErrorHandler);
+	public void setUp() {
+		ProcessorErrorHandler processorErrorHandler = mock(ProcessorErrorHandler.class);
+		taskSchedulerConfiguration = new TaskSchedulerConfiguration();
 	}
 
 	@Test
-	void testTaskSchedulerBeanCreation() {
+	public void testTaskSchedulerBean() {
 		TaskScheduler taskScheduler = taskSchedulerConfiguration.taskScheduler();
-
 		assertNotNull(taskScheduler);
 		assertTrue(taskScheduler instanceof ThreadPoolTaskScheduler);
 	}

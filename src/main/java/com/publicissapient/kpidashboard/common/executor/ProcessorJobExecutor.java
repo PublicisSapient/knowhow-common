@@ -23,6 +23,7 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,31 +41,52 @@ import com.publicissapient.kpidashboard.common.context.ExecutionLogContext;
 import com.publicissapient.kpidashboard.common.model.generic.Processor;
 import com.publicissapient.kpidashboard.common.repository.generic.ProcessorRepository;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@Getter
-@Setter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class ProcessorJobExecutor<T extends Processor> implements Runnable {
 
 	private final TaskScheduler taskScheduler;
 	private final String processorName;
-
 	private List<String> projectsBasicConfigIds;
 	private ExecutionLogContext executionLogContext;
+	// field for scm processor tool label
 	private String processorLabel;
 
+	@Autowired
+	protected ProcessorJobExecutor(TaskScheduler taskScheduler, String processorName) {
+		this.taskScheduler = taskScheduler;
+		this.processorName = processorName;
+	}
+
+	public ExecutionLogContext getExecutionLogContext() {
+		return executionLogContext;
+	}
+
+	public void setExecutionLogContext(ExecutionLogContext executionLogContext) {
+		this.executionLogContext = executionLogContext;
+	}
+
 	public void destroyLogContext() {
-		if (executionLogContext != null) {
-			this.executionLogContext.destroy();
-			this.executionLogContext = null;
-		}
+		this.executionLogContext.destroy();
+		this.executionLogContext = null;
+	}
+
+	public List<String> getProjectsBasicConfigIds() {
+		return projectsBasicConfigIds;
+	}
+
+	public void setProjectsBasicConfigIds(List<String> projectsBasicConfigIds) {
+		this.projectsBasicConfigIds = projectsBasicConfigIds;
+	}
+
+	public String getProcessorLabel() {
+		return processorLabel;
+	}
+
+	public void setProcessorLabel(String processorLabel) {
+		this.processorLabel = processorLabel;
 	}
 
 	@Override
@@ -73,14 +95,27 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 		log.debug("Running Processor: {}", processorName);
 		T processor = getProcessorRepository().findByProcessorName(processorName);
 		if (processor == null) {
+			// Register new processor
 			processor = getProcessorRepository().save(getProcessor());
 		} else {
-			processor = updateProcessorSettings(processor);
+			// In case the processor options changed via processors properties setup.
+			// We want to keep the existing processors ID same as it ties to processor
+			// items.
+			T newProcessor = getProcessor();
+			newProcessor.setId(processor.getId());
+			newProcessor.setActive(processor.isActive());
+			newProcessor.setProcessorType(processor.getProcessorType());
+			newProcessor.setUpdatedTime(processor.getUpdatedTime());
+			newProcessor.setProcessorName(processor.getProcessorName());
+			newProcessor.setLastSuccess(processor.isLastSuccess());
+			processor = getProcessorRepository().save(newProcessor);
 		}
 
 		if (processor.isActive()) {
+			// Do collection run
 			processor.setLastSuccess(execute(processor));
 			log.debug("Saving the last executed status as: {} for {} processor!", processor.isLastSuccess(), processorName);
+			// Update lastUpdate timestamp in Processor
 			processor.setUpdatedTime(System.currentTimeMillis());
 			getProcessorRepository().save(processor);
 		}
@@ -89,18 +124,6 @@ public abstract class ProcessorJobExecutor<T extends Processor> implements Runna
 	public void runSprint(String sprintId) {
 		boolean isSuccess = executeSprint(sprintId);
 		log.debug("Saving the last executed status as: {} for {} sprint!", isSuccess, sprintId);
-	}
-
-	// Method to update processor settings
-	private T updateProcessorSettings(T currentProcessor) {
-		T newProcessor = getProcessor();
-		newProcessor.setId(currentProcessor.getId());
-		newProcessor.setActive(currentProcessor.isActive());
-		newProcessor.setProcessorType(currentProcessor.getProcessorType());
-		newProcessor.setUpdatedTime(currentProcessor.getUpdatedTime());
-		newProcessor.setProcessorName(currentProcessor.getProcessorName());
-		newProcessor.setLastSuccess(currentProcessor.isLastSuccess());
-		return getProcessorRepository().save(newProcessor);
 	}
 
 	@PostConstruct

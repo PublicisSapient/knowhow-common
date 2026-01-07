@@ -38,7 +38,6 @@ import com.publicissapient.kpidashboard.common.executor.ProcessorJobExecutor;
 import com.publicissapient.kpidashboard.common.model.ProcessorExecutionBasicConfig;
 import com.publicissapient.kpidashboard.common.repository.application.ProjectBasicConfigRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -48,47 +47,40 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class RunProcessorController {
 
 	private static final ExecutorService PROCESSOR_EXECUTORS = Executors.newFixedThreadPool(5);
+	private static final ExecutorService ACTIVE_ITERATION_EXECUTORS = Executors.newFixedThreadPool(5);
 
 	@Autowired(required = false)
-	private ProcessorJobExecutor<?> jobExecutor;
+	private ProcessorJobExecutor<?> jobExecuter;
 
 	@Autowired
 	private ProjectBasicConfigRepository projectBasicConfigRepository;
 
 	@RequestMapping(value = "/processor/run", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> runProcessorForProjects(
+	public ResponseEntity<Map> runProcessorForProjects(
 			@RequestBody ProcessorExecutionBasicConfig processorExecutionBasicConfig) {
-		if (jobExecutor == null) {
-			Map<String, String> errorResponse = new HashMap<>();
-			errorResponse.put("status", "error");
-			errorResponse.put("message", "No processor available");
-			return ResponseEntity.badRequest().body(errorResponse);
-		}
-
 		ExecutionLogContext.set(processorExecutionBasicConfig.getLogContext());
-		MDC.put("Processor Name", jobExecutor.getProcessor().getProcessorName());
+		MDC.put("Processor Name", jobExecuter.getProcessor().getProcessorName());
 		MDC.put("RequestStartTime", String.valueOf(System.currentTimeMillis()));
-		log.info("Received request to run the processor: {} for projects {}", jobExecutor.getProcessor().getProcessorName(),
+		log.info("Received request to run the processor: {} for projects {}", jobExecuter.getProcessor().getProcessorName(),
 				processorExecutionBasicConfig.getProjectBasicConfigIds());
 
 		if (processorExecutionBasicConfig.getScmProcessorName() != null) {
-			jobExecutor.setProcessorLabel(processorExecutionBasicConfig.getScmProcessorName());
+			jobExecuter.setProcessorLabel(processorExecutionBasicConfig.getScmProcessorName());
 		}
 		projectBasicConfigRepository.findActiveProjects(false);
-		jobExecutor.setProjectsBasicConfigIds(processorExecutionBasicConfig.getProjectBasicConfigIds());
-		jobExecutor.setExecutionLogContext(ExecutionLogContext.getContext());
-		PROCESSOR_EXECUTORS.execute(jobExecutor);
+		jobExecuter.setProjectsBasicConfigIds(processorExecutionBasicConfig.getProjectBasicConfigIds());
+		jobExecuter.setExecutionLogContext(ExecutionLogContext.getContext());
+		PROCESSOR_EXECUTORS.execute(jobExecuter);
 
 		MDC.put("RequestEndTime", String.valueOf(System.currentTimeMillis()));
 		log.info("Processor execution called");
 		ExecutionLogContext.getContext().destroy();
-		jobExecutor.getExecutionLogContext().destroy();
+		jobExecuter.getExecutionLogContext().destroy();
 		MDC.clear();
-		Map<String, String> response = new HashMap<>();
+		Map response = new HashMap();
 		response.put("status", "processing");
 		return ResponseEntity.ok().body(response);
 	}

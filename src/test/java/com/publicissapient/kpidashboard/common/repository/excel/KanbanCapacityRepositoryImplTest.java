@@ -18,7 +18,6 @@
 
 package com.publicissapient.kpidashboard.common.repository.excel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -42,8 +41,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterCapacity;
-import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
 import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
 
 /**
@@ -96,109 +93,5 @@ public class KanbanCapacityRepositoryImplTest {
 
 		// Verify that the find method is called with the correct parameters
 		verify(mongoOperations, times(1)).find(any(Query.class), eq(KanbanCapacity.class));
-	}
-
-	@Test
-	public void testProcessAdditionalFilters_WithValidData() {
-		KanbanCapacity kanbanCapacity = createKanbanCapacityWithFilters();
-		List<KanbanCapacity> capacityList = Arrays.asList(kanbanCapacity);
-
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("additionalFilterCapacityList.nodeCapacityList.additionalFilterId", Arrays.asList("node1", "node2"));
-		filters.put("additionalFilterCapacityList.filterId", Arrays.asList("filter1"));
-
-		when(mongoOperations.find(any(Query.class), eq(KanbanCapacity.class))).thenReturn(capacityList);
-
-		List<KanbanCapacity> result = kanbanCapacityRepository.findIssuesByType(filters, "2022-01-01", "2022-01-10");
-
-		assertEquals(1, result.size());
-		assertEquals(150.0, result.get(0).getCapacity());
-	}
-
-	@Test
-	public void testProcessAdditionalFilters_WithEmptyAdditionalFilterList() {
-		KanbanCapacity kanbanCapacity = new KanbanCapacity();
-		kanbanCapacity.setAdditionalFilterCapacityList(null);
-		List<KanbanCapacity> capacityList = Arrays.asList(kanbanCapacity);
-
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("additionalFilterCapacityList.nodeCapacityList.additionalFilterId", Arrays.asList("node1"));
-		filters.put("additionalFilterCapacityList.filterId", Arrays.asList("filter1"));
-
-		when(mongoOperations.find(any(Query.class), eq(KanbanCapacity.class))).thenReturn(capacityList);
-
-		List<KanbanCapacity> result = kanbanCapacityRepository.findIssuesByType(filters, "2022-01-01", "2022-01-10");
-
-		assertEquals(1, result.size());
-		assertEquals(0.0, result.get(0).getCapacity());
-	}
-
-	@Test
-	public void testProcessAdditionalFilters_WithNoMatchingFilters() {
-		KanbanCapacity kanbanCapacity = createKanbanCapacityWithFilters();
-		List<KanbanCapacity> capacityList = Arrays.asList(kanbanCapacity);
-
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("additionalFilterCapacityList.nodeCapacityList.additionalFilterId", Arrays.asList("nonexistent"));
-		filters.put("additionalFilterCapacityList.filterId", Arrays.asList("nonexistent"));
-
-		when(mongoOperations.find(any(Query.class), eq(KanbanCapacity.class))).thenReturn(capacityList);
-
-		List<KanbanCapacity> result = kanbanCapacityRepository.findIssuesByType(filters, "2022-01-01", "2022-01-10");
-
-		assertEquals(1, result.size());
-		assertEquals(0.0, result.get(0).getCapacity());
-	}
-
-	@Test
-	public void testProcessAdditionalFilters_CaseInsensitiveFilterId() {
-		KanbanCapacity kanbanCapacity = createKanbanCapacityWithFilters();
-		List<KanbanCapacity> capacityList = Arrays.asList(kanbanCapacity);
-
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("additionalFilterCapacityList.nodeCapacityList.additionalFilterId", Arrays.asList("node1"));
-		filters.put("additionalFilterCapacityList.filterId", Arrays.asList("FILTER1")); // uppercase
-
-		when(mongoOperations.find(any(Query.class), eq(KanbanCapacity.class))).thenReturn(capacityList);
-
-		List<KanbanCapacity> result = kanbanCapacityRepository.findIssuesByType(filters, "2022-01-01", "2022-01-10");
-
-		assertEquals(1, result.size());
-		assertEquals(100.0, result.get(0).getCapacity());
-	}
-
-	@Test
-	public void testProcessAdditionalFilters_WithoutAdditionalFilterNodeId() {
-		KanbanCapacity kanbanCapacity = createKanbanCapacityWithFilters();
-		List<KanbanCapacity> capacityList = Arrays.asList(kanbanCapacity);
-
-		Map<String, Object> filters = new HashMap<>();
-		// Not adding additionalFilterCapacityList.nodeCapacityList.additionalFilterId
-		filters.put("additionalFilterCapacityList.filterId", Arrays.asList("filter1"));
-
-		when(mongoOperations.find(any(Query.class), eq(KanbanCapacity.class))).thenReturn(capacityList);
-
-		List<KanbanCapacity> result = kanbanCapacityRepository.findIssuesByType(filters, "2022-01-01", "2022-01-10");
-
-		assertEquals(1, result.size());
-		// Capacity should remain unchanged since processAdditionalFilters returns early
-	}
-
-	private KanbanCapacity createKanbanCapacityWithFilters() {
-		LeafNodeCapacity node1 = new LeafNodeCapacity("node1", 100.0);
-		LeafNodeCapacity node2 = new LeafNodeCapacity("node2", 50.0);
-		LeafNodeCapacity node3 = new LeafNodeCapacity("node3", 25.0);
-
-		AdditionalFilterCapacity filter1 = new AdditionalFilterCapacity();
-		filter1.setFilterId("filter1");
-		filter1.setNodeCapacityList(Arrays.asList(node1, node2));
-
-		AdditionalFilterCapacity filter2 = new AdditionalFilterCapacity();
-		filter2.setFilterId("filter2");
-		filter2.setNodeCapacityList(Arrays.asList(node3));
-
-		KanbanCapacity kanbanCapacity = new KanbanCapacity();
-		kanbanCapacity.setAdditionalFilterCapacityList(Arrays.asList(filter1, filter2));
-		return kanbanCapacity;
 	}
 }

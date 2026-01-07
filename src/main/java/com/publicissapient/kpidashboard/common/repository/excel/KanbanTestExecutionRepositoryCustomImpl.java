@@ -7,63 +7,58 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
 
-import lombok.RequiredArgsConstructor;
-
-/** Repository implementation for Kanban test execution operations. */
-@RequiredArgsConstructor
+/**
+ * Provides implementation for methods available in interface
+ * KanbanTestExecutionDetailRepository.
+ */
 public class KanbanTestExecutionRepositoryCustomImpl implements KanbanTestExecutionRepositoryCustom {
 
-	private static final String FIELD_PROJECT_ID = "basicProjectConfigId";
-	private static final String FIELD_EXECUTION_DATE = "executionDate";
+	private static final String PROJECT_ID = "basicProjectConfigId";
+	private static final String EXECUTION_DATE = "executionDate";
 
-	private final MongoOperations mongoOperations;
+	@Autowired
+	private MongoOperations operations;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<KanbanTestExecution> findTestExecutionDetailByFilters(Map<String, List<String>> filters,
+	public List<KanbanTestExecution> findTestExecutionDetailByFilters(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo) {
 
-		Criteria criteria = applyCommonFilters(new Criteria(), filters);
-		criteria = applyDateRangeFilter(criteria, dateFrom, dateTo);
-		Query query = buildQueryWithProjectFilters(criteria, uniqueProjectMap);
+		Criteria criteria = new Criteria();
 
-		return mongoOperations.find(query, KanbanTestExecution.class);
-	}
-
-	private Criteria applyCommonFilters(Criteria criteria, Map<String, List<String>> filters) {
-		for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
 			if (CollectionUtils.isNotEmpty(entry.getValue())) {
 				criteria = criteria.and(entry.getKey()).in(entry.getValue());
 			}
 		}
-		return criteria;
-	}
+		criteria.and(EXECUTION_DATE).gte(dateFrom).lte(dateTo);
 
-	private Criteria applyDateRangeFilter(Criteria criteria, String dateFrom, String dateTo) {
-		return criteria.and(FIELD_EXECUTION_DATE).gte(dateFrom).lte(dateTo);
-	}
+		Query query = new Query(criteria);
 
-	private Query buildQueryWithProjectFilters(Criteria criteria, Map<String, Map<String, Object>> uniqueProjectMap) {
-		if (MapUtils.isEmpty(uniqueProjectMap)) {
-			return new Query(criteria);
+		// Project level filters
+		if (MapUtils.isNotEmpty(uniqueProjectMap)) {
+			List<Criteria> projectCriteriaList = new ArrayList<>();
+			uniqueProjectMap.forEach((project, filterMap) -> {
+				Criteria projectCriteria = new Criteria();
+				projectCriteria.and(PROJECT_ID).is(project);
+				filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+				projectCriteriaList.add(projectCriteria);
+			});
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+			query = new Query(criteriaProjectLevelAdded);
 		}
 
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria();
-			projectCriteria.and(FIELD_PROJECT_ID).is(project);
-			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria combinedCriteria = new Criteria().andOperator(criteria, projectLevelCriteria);
-		return new Query(combinedCriteria);
+		return operations.find(query, KanbanTestExecution.class);
 	}
 }

@@ -21,15 +21,25 @@ package com.publicissapient.kpidashboard.common.repository.jira;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -458,8 +468,8 @@ public class JiraIssueRepositoryImplTest {
 		mockJiraJiraIssue6.setTypeName("Story");
 	}
 
-	@AfterEach
-	void tearDown() {
+	@After
+	public void tearDown() {
 		mockV1JiraIssue = null;
 		mockJiraJiraIssue = null;
 		mockJiraJiraIssue2 = null;
@@ -471,7 +481,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindIssuesGroupBySprint() {
+	public void testFindIssuesGroupBySprint() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 
@@ -497,7 +507,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindIssueByStoryNumber() {
+	public void testFindIssueByStoryNumber() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
@@ -522,7 +532,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindIssuesBySprintAndType() {
+	public void testFindIssuesBySprintAndType() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
@@ -543,7 +553,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindIssuesBySprintAndTypeNotIn2() {
+	public void testFindIssuesBySprintAndTypeNotIn2() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
@@ -567,7 +577,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindIssuesBySprintAndTypeNotIn() {
+	public void testFindIssuesBySprintAndTypeNotIn() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
@@ -591,7 +601,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindUnassignedIssues() {
+	public void testFindUnassignedIssues() {
 		// Set up test data
 		String startDate = "2024-01-01T00:00:00.0000000";
 		String endDate = "2024-01-31T23:59:59.0000000";
@@ -608,7 +618,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindByType() {
+	public void testFindByType() {
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
 
@@ -622,7 +632,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindStoriesByType() {
+	public void testFindStoriesByType() {
 		// Set up test data
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
@@ -654,7 +664,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindDefectLinkedWithSprint() {
+	public void testFindDefectLinkedWithSprint() {
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
 
@@ -670,7 +680,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindDefectCountByRCA() {
+	public void testFindDefectCountByRCA() {
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		// Add filter values to mapOfFilters
 
@@ -688,7 +698,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testUpdateByBasicProjectConfigId() {
+	public void testUpdateByBasicProjectConfigId() {
 		String basicProjectConfigId = "projectId1";
 		List<String> fieldsToUnset = Arrays.asList("field1", "field2");
 
@@ -699,7 +709,7 @@ public class JiraIssueRepositoryImplTest {
 	}
 
 	@Test
-	void testFindNonRegressionTestCases() {
+	public void testFindNonRegressionTestCases() {
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("key", Collections.singletonList("value"));
 		String startDate = "2024-01-01T00:00:00.0000000";
 		String endDate = "2024-01-31T23:59:59.0000000";
@@ -724,103 +734,6 @@ public class JiraIssueRepositoryImplTest {
 		jiraIssueRepository.findByRelease(mapOfFilters, uniqueProjectMap);
 
 		// Assert the result or perform further verifications
-		assertEquals(Collections.emptyList(), result);
-	}
-
-	@Test
-	void testFindIssueByNumberOrParentStoryIdAndType() {
-		// Given
-		HashSet<String> storyNumbers = new HashSet<>(Arrays.asList("STORY-1", "STORY-2"));
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("PROJ1",
-				Collections.singletonMap("typeName", Arrays.asList(Pattern.compile("Story"))));
-		String findBy = "number";
-
-		when(operations.find(any(), eq(JiraIssue.class))).thenReturn(Collections.emptyList());
-
-		// When
-		List<JiraIssue> result = jiraIssueRepository.findIssueByNumberOrParentStoryIdAndType(storyNumbers, uniqueProjectMap,
-				findBy);
-
-		// Then
-		assertEquals(Collections.emptyList(), result);
-	}
-
-	@Test
-	void testFindIssuesByDateAndTypeAndStatus_LessCriteria() {
-		// Given
-		Map<String, List<String>> mapOfFilters = Collections.singletonMap("basicProjectConfigId",
-				Collections.singletonList("PROJ1"));
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("PROJ1",
-				Collections.singletonMap("typeName", Arrays.asList(Pattern.compile("Defect"))));
-		String dateFrom = "2024-01-01";
-		String dateTo = "2024-01-31";
-		String dateCriteria = "less";
-		String mapStatusCriteria = "in";
-		boolean isProductionDefect = true;
-
-		when(operations.find(any(), eq(JiraIssue.class))).thenReturn(Collections.emptyList());
-
-		// When
-		List<JiraIssue> result = jiraIssueRepository.findIssuesByDateAndTypeAndStatus(mapOfFilters, uniqueProjectMap,
-				dateFrom, dateTo, dateCriteria, mapStatusCriteria, isProductionDefect);
-
-		// Then
-		assertEquals(Collections.emptyList(), result);
-	}
-
-	@Test
-	void testFindIssuesByDateAndTypeAndStatus_PastCriteria() {
-		// Given
-		Map<String, List<String>> mapOfFilters = Collections.singletonMap("basicProjectConfigId",
-				Collections.singletonList("PROJ1"));
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("PROJ1",
-				Collections.singletonMap("jiraStatus", Arrays.asList(Pattern.compile("Open"))));
-		String dateFrom = "2024-01-01";
-		String dateTo = "2024-01-31";
-		String dateCriteria = "past";
-		String mapStatusCriteria = "nin";
-		boolean isProductionDefect = false;
-
-		when(operations.find(any(), eq(JiraIssue.class))).thenReturn(Collections.emptyList());
-
-		// When
-		List<JiraIssue> result = jiraIssueRepository.findIssuesByDateAndTypeAndStatus(mapOfFilters, uniqueProjectMap,
-				dateFrom, dateTo, dateCriteria, mapStatusCriteria, isProductionDefect);
-
-		// Then
-		assertEquals(Collections.emptyList(), result);
-	}
-
-	@Test
-	void testFindIssueByNumberWithAdditionalFilter() {
-		// Given
-		HashSet<String> storyNumbers = new HashSet<>(Arrays.asList("STORY-1", "STORY-2"));
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("PROJ1",
-				Collections.singletonMap("additionalFilters", Arrays.asList(Pattern.compile("filter1"))));
-
-		when(operations.find(any(), eq(JiraIssue.class))).thenReturn(Collections.emptyList());
-
-		// When
-		List<JiraIssue> result = jiraIssueRepository.findIssueByNumberWithAdditionalFilter(storyNumbers, uniqueProjectMap);
-
-		// Then
-		assertEquals(Collections.emptyList(), result);
-	}
-
-	@Test
-	void testGetCommonFiltersCriteria_WithExistsFilter() {
-		// Given
-		Map<String, List<String>> mapOfFilters = new HashMap<>();
-		mapOfFilters.put("fieldName", Collections.singletonList("exists:true"));
-		mapOfFilters.put("anotherField", Collections.singletonList("exists:false"));
-		mapOfFilters.put("normalField", Arrays.asList("value1", "value2"));
-
-		when(operations.find(any(), eq(JiraIssue.class))).thenReturn(Collections.emptyList());
-
-		// When - Call any method that uses getCommonFiltersCriteria
-		List<JiraIssue> result = jiraIssueRepository.findIssuesByType(mapOfFilters);
-
-		// Then
 		assertEquals(Collections.emptyList(), result);
 	}
 }

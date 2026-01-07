@@ -5,10 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUtils {
 
-	private JsonUtils() {
-		// Utility class - private constructor
-	}
-
 	public static boolean isValidJSON(String jsonInString) {
 		try {
 			final ObjectMapper mapper = new ObjectMapper();

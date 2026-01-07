@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,10 +33,11 @@ import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
 
-import lombok.RequiredArgsConstructor;
-
+/**
+ * Kanban Feature repository class provides implementation of
+ * KanbanFeatureRepoCustom.
+ */
 @Service
-@RequiredArgsConstructor
 public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom {
 
 	private static final String TICKET_PROJECT_ID_FIELD = "basicProjectConfigId";
@@ -45,26 +47,76 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 	private static final String PAST = "past";
 	private static final String START_TIME = "T00:00:00.0000000";
 	private static final String END_TIME = "T23:59:59.0000000";
+	private static final String COST_OF_DELAY = "costOfDelay";
+	private static final String TYPE_NAME = "typeName";
 	private static final String JIRA_ISSUE_STATUS = "jiraStatus";
 	private static final String NIN = "nin";
-
-	private final MongoOperations operations;
+	private static final String NUMBER = "number";
+	private static final String NAME = "name";
+	private static final String URL = "url";
+	private static final String CREATED_DATE = "createdDate";
+	@Autowired
+	private MongoOperations operations;
 
 	@Override
 	public List<KanbanJiraIssue> findIssuesByType(Map<String, List<String>> mapOfFilters, String dateFrom,
 			String dateTo) {
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		criteria = addDateCriteria(criteria, dateFrom, dateTo, RANGE);
-		Query query = new Query(criteria);
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+		criteria = criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+		Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria);
+
+		Query query = new Query(criteriaProjectLevelAdded);
 		return operations.find(query, KanbanJiraIssue.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<KanbanJiraIssue> findIssuesByDateAndType(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo, String dateCriteria) {
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		criteria = addDateCriteria(criteria, dateFrom, dateTo, dateCriteria);
-		Query query = buildQueryWithProjectCriteria(criteria, uniqueProjectMap);
+
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
+
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+		if (dateCriteria.equals(RANGE)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+		} else if (dateCriteria.equals(LESS)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).lt(startDate);
+		} else if (dateCriteria.equals(PAST)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).lt(endDate);
+		}
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
+			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+			projectCriteriaList.add(projectCriteria);
+		});
+
+		Query query = new Query(criteria);
+		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+			query = new Query(criteriaProjectLevelAdded);
+		}
 		return operations.find(query, KanbanJiraIssue.class);
 	}
 
@@ -72,9 +124,62 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 	public List<KanbanJiraIssue> findIssuesByDateAndTypeAndStatus(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo, String dateCriteria,
 			String mapStatusCriteria) {
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		criteria = addDateCriteria(criteria, dateFrom, dateTo, dateCriteria);
-		Query query = buildQueryWithProjectCriteriaAndStatus(criteria, uniqueProjectMap, mapStatusCriteria);
+
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
+
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+		if (dateCriteria.equals(RANGE)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+		} else if (dateCriteria.equals(LESS)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).lt(startDate);
+		} else if (dateCriteria.equals(PAST)) {
+			criteria = criteria.and(TICKET_CREATED_DATE_FIELD).lt(endDate);
+		}
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
+			filterMap.forEach((subk, subv) -> {
+				if (subk.equals(JIRA_ISSUE_STATUS) && mapStatusCriteria.equalsIgnoreCase(NIN)) {
+					projectCriteria.and(subk).nin((List<Pattern>) subv);
+				} else {
+					projectCriteria.and(subk).in((List<Pattern>) subv);
+				}
+			});
+			projectCriteriaList.add(projectCriteria);
+		});
+
+		Query query = new Query(criteria);
+		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+			query = new Query(criteriaProjectLevelAdded);
+		}
+		return operations.find(query, KanbanJiraIssue.class);
+	}
+
+	public List<KanbanJiraIssue> findCostOfDelayByType(Map<String, List<String>> mapOfFilters) {
+
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+
+		Query query = new Query(criteria);
 		return operations.find(query, KanbanJiraIssue.class);
 	}
 
@@ -83,80 +188,12 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 		Criteria criteria = new Criteria();
 		criteria.and(TICKET_PROJECT_ID_FIELD).is(basicProjectConfigId);
 		Query query = new Query(criteria);
+
 		if (CollectionUtils.isNotEmpty(fieldsToUnset)) {
 			Update update = new Update();
-			fieldsToUnset.stream().forEach(update::unset);
+			fieldsToUnset.stream().forEach(field -> update.unset(field));
+
 			operations.updateMulti(query, update, KanbanJiraIssue.class);
 		}
-	}
-
-	public List<KanbanJiraIssue> findCostOfDelayByType(Map<String, List<String>> mapOfFilters) {
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		Query query = new Query(criteria);
-		return operations.find(query, KanbanJiraIssue.class);
-	}
-
-	private Criteria buildCommonCriteria(Map<String, List<String>> mapOfFilters) {
-		Criteria criteria = new Criteria();
-		mapOfFilters.forEach((key, values) -> {
-			if (CollectionUtils.isNotEmpty(values)) {
-				criteria.and(key).in(values);
-			}
-		});
-		return criteria;
-	}
-
-	private Criteria addDateCriteria(Criteria criteria, String dateFrom, String dateTo, String dateCriteria) {
-		String startDate = dateFrom + START_TIME;
-		String endDate = dateTo + END_TIME;
-
-		if (RANGE.equals(dateCriteria)) {
-			return criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
-		} else if (LESS.equals(dateCriteria)) {
-			return criteria.and(TICKET_CREATED_DATE_FIELD).lt(startDate);
-		} else if (PAST.equals(dateCriteria)) {
-			return criteria.and(TICKET_CREATED_DATE_FIELD).lt(endDate);
-		}
-		return criteria;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Query buildQueryWithProjectCriteriaAndStatus(Criteria baseCriteria,
-			Map<String, Map<String, Object>> uniqueProjectMap, String mapStatusCriteria) {
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria().and(TICKET_PROJECT_ID_FIELD).is(project);
-			filterMap.forEach((key, value) -> {
-				List<Pattern> patterns = (List<Pattern>) value;
-				if (JIRA_ISSUE_STATUS.equals(key) && NIN.equalsIgnoreCase(mapStatusCriteria)) {
-					projectCriteria.and(key).nin(patterns);
-				} else {
-					projectCriteria.and(key).in(patterns);
-				}
-			});
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria finalCriteria = new Criteria().andOperator(baseCriteria, projectLevelCriteria);
-
-		return new Query(finalCriteria);
-	}
-
-	@SuppressWarnings("unchecked")
-	private Query buildQueryWithProjectCriteria(Criteria baseCriteria,
-			Map<String, Map<String, Object>> uniqueProjectMap) {
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria();
-			projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
-			filterMap.forEach((key, value) -> projectCriteria.and(key).in((List<Pattern>) value));
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria finalCriteria = new Criteria().andOperator(baseCriteria, projectLevelCriteria);
-
-		return new Query(finalCriteria);
 	}
 }

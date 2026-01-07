@@ -265,7 +265,7 @@ public class DateUtil {
 				.toEpochMilli();
 	}
 
-	public static LocalDateTime convertingStringToLocalDateTime(String time) {
+	public static LocalDateTime convertingStringToLocalDateTime(String time, String format) {
 		Instant timestamp = Instant.parse(time);
 		return timestamp.atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
@@ -287,19 +287,21 @@ public class DateUtil {
 	}
 
 	public static String dateTimeConverter(DateTime dateTime, final String fromFormat) {
-		if (dateTime == null) {
-			return null;
-		}
+		String strDate = null;
 		Date dateTimeData = dateTimeParser(dateTime.toString(fromFormat), fromFormat);
-		return dateTimeFormatter(dateTimeData, DISPLAY_DATE_FORMAT);
+		if (dateTime != null) {
+			strDate = dateTimeFormatter(dateTimeData, DISPLAY_DATE_FORMAT);
+		}
+		return strDate;
 	}
 
 	public static String localDateTimeConverter(LocalDate dateTime) {
-		if (dateTime == null) {
-			return null;
-		}
+		String strDate = null;
 		Date dateTimeData = Date.from(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		return dateTimeFormatter(dateTimeData, DISPLAY_DATE_FORMAT);
+		if (dateTime != null) {
+			strDate = dateTimeFormatter(dateTimeData, DISPLAY_DATE_FORMAT);
+		}
+		return strDate;
 	}
 
 	public static String dateConverter(Date dateTime) {

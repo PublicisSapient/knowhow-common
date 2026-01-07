@@ -16,8 +16,9 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.repository.comments;
+package com.publicissapient.kpidashboard.common.repository.comments; // NOPMD
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -26,25 +27,16 @@ import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.comments.KpiCommentsHistory;
 
-import lombok.RequiredArgsConstructor;
-
-/**
- * Implementation of {@link KpiCommentHistoryRepositoryCustom} for KPI comment
- * history operations.
- */
 @Service
-@RequiredArgsConstructor
 public class KpiCommentHistoryRepositoryImpl implements KpiCommentHistoryRepositoryCustom {
 
-	private static final String FIELD_COMMENT_ID = "commentsInfo.commentId";
-	private static final String FIELD_IS_DELETED = "commentsInfo.$.isDeleted";
-
-	private final MongoTemplate mongoTemplate;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Override
 	public void markCommentDelete(String commentId) {
-		Query query = Query.query(Criteria.where(FIELD_COMMENT_ID).is(commentId));
-		Update update = new Update().set(FIELD_IS_DELETED, true);
+		Query query = Query.query(Criteria.where("commentsInfo.commentId").is(commentId));
+		Update update = new Update().set("commentsInfo.$.isDeleted", true);
 		mongoTemplate.updateMulti(query, update, KpiCommentsHistory.class);
 	}
 }

@@ -27,31 +27,30 @@ import org.springframework.stereotype.Component;
 
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 @Component
-@Getter
-@NoArgsConstructor
 public class ExecutionLogContext implements Serializable {
 
 	private static final long serialVersionUID = -6751490154133933000L;
+	// Atomic integer containing the next thread ID to be assigned
 	private static final AtomicInteger nextId = new AtomicInteger(0);
+
+	private static final String CONTEXT_ERROR = "Unauthorize to access.";
 	private static final ThreadLocal<ExecutionLogContext> EXECUTION_CONTEXT = new ThreadLocal<ExecutionLogContext>() {
+
 		@Override
 		protected ExecutionLogContext initialValue() {
 			return new ExecutionLogContext(nextId.getAndIncrement());
 		}
 	};
-
 	private String requestId;
 	private String environment;
 	private String projectName;
 	private String projectBasicConfgId;
 	private String isCron;
-	@Setter
 	private int threadId;
+
+	public ExecutionLogContext() {
+	}
 
 	private ExecutionLogContext(int threadId) {
 		this.threadId = threadId;
@@ -82,9 +81,17 @@ public class ExecutionLogContext implements Serializable {
 		return currentContext;
 	}
 
+	public String getProjectBasicConfgId() {
+		return projectBasicConfgId;
+	}
+
 	public void setProjectBasicConfgId(String projectBasicConfgId) {
 		MDC.put(CommonConstant.PROJECT_CONFIG_ID, projectBasicConfgId);
 		this.projectBasicConfgId = projectBasicConfgId;
+	}
+
+	public String getProjectName() {
+		return projectName;
 	}
 
 	public void setProjectName(String projectName) {
@@ -92,9 +99,17 @@ public class ExecutionLogContext implements Serializable {
 		this.projectName = projectName;
 	}
 
+	public String getIsCron() {
+		return isCron;
+	}
+
 	public void setIsCron(String isCron) {
 		MDC.put(CommonConstant.CRON, isCron);
 		this.isCron = isCron;
+	}
+
+	public String getEnvironment() {
+		return environment;
 	}
 
 	public void setEnvironment(String environment) {
@@ -102,12 +117,24 @@ public class ExecutionLogContext implements Serializable {
 		this.environment = environment;
 	}
 
+	public void destroy() {
+		EXECUTION_CONTEXT.remove();
+	}
+
+	public String getRequestId() {
+		return requestId;
+	}
+
 	public void setRequestId(String requestId) {
 		MDC.put(CommonConstant.REQUESTID, requestId);
 		this.requestId = requestId;
 	}
 
-	public void destroy() {
-		EXECUTION_CONTEXT.remove();
+	public int getThreadId() {
+		return threadId;
+	}
+
+	public void setThreadId(int threadId) {
+		this.threadId = threadId;
 	}
 }

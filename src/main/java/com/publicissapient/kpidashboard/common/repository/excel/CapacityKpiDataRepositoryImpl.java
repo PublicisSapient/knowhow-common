@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,85 +32,80 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
 import com.publicissapient.kpidashboard.common.model.excel.CapacityKpiData;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/** Repository for {@link CapacityKpiData} operations. */
+/**
+ * Repository for {@link CapacityKpiData}
+ *
+ * @author anisingh4
+ */
 @Slf4j
-@RequiredArgsConstructor
 public class CapacityKpiDataRepositoryImpl implements CapacityKpiDataCustomRepository {
 
-	private static final String FIELD_BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
-	private static final String FIELD_ADDITIONAL_FILTER_CAPACITY_NODE_ID = "additionalFilterCapacityList.nodeCapacityList.additionalFilterId";
-	private static final String FIELD_ADDITIONAL_FILTER_ID = "additionalFilterCapacityList.filterId";
+	private static final String CONFIG_ID = "basicProjectConfigId";
+	@Autowired
+	private MongoOperations operations;
 
-	private final MongoOperations mongoOperations;
-
+	/*
+	 * Find Data by filters
+	 *
+	 * @see
+	 * com.publicissapient.kpidashboard.repository.CapacityKpiDataCustomRepository#
+	 * findByFilters(java.util.Map)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CapacityKpiData> findByFilters(Map<String, Object> filters,
+	public List<CapacityKpiData> findByFilters(Map<String, Object> mapofFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap) {
-		Criteria criteria = buildCommonCriteria(filters);
-		Query query = buildQueryWithProjectFilters(criteria, uniqueProjectMap);
+		Criteria criteria = new Criteria();
 
-		List<CapacityKpiData> data = mongoOperations.find(query, CapacityKpiData.class);
-
-		if (filters.containsKey(FIELD_ADDITIONAL_FILTER_CAPACITY_NODE_ID)) {
-			processAdditionalFilters(data, filters);
+		// map of common filters Project, Project and Sprint
+		for (Map.Entry<String, Object> entry : mapofFilters.entrySet()) {
+			String key = entry.getKey();
+			if (!key.equalsIgnoreCase("additionalFilterCapacityList.nodeCapacityList.additionalFilterId") && !key
+					.equalsIgnoreCase("additionalFilterCapacityList.filterId")) {
+				if (CollectionUtils.isNotEmpty((List<Pattern>) entry.getValue())) {
+					criteria = criteria.and(key).in((List<Pattern>) entry.getValue());
+				}
+			}
 		}
-
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(CONFIG_ID).is(project);
+			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+			projectCriteriaList.add(projectCriteria);
+		});
+		Query query = new Query(criteria);
+		if (CollectionUtils.isNotEmpty(projectCriteriaList)) {
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+			query = new Query(criteriaProjectLevelAdded);
+		}
+		List<CapacityKpiData> data = operations.find(query, CapacityKpiData.class);
+		if (mapofFilters.containsKey("additionalFilterCapacityList.nodeCapacityList.additionalFilterId")) {
+			data.stream().forEach(capacityKpiData -> {
+				if (CollectionUtils.isNotEmpty(capacityKpiData.getAdditionalFilterCapacityList())) {
+					List<String> additionalFilter = (List<String>) mapofFilters
+							.get("additionalFilterCapacityList.nodeCapacityList.additionalFilterId");
+					List<String> upperCaseKey = ((List<String>) mapofFilters.get("additionalFilterCapacityList.filterId"))
+							.stream().map(String::toUpperCase).toList();
+					capacityKpiData.setCapacityPerSprint(capacityKpiData.getAdditionalFilterCapacityList().stream()
+							.filter(additionalFilterCapacity -> upperCaseKey
+									.contains(additionalFilterCapacity.getFilterId().toUpperCase()))
+							.flatMap(additionalFilterCapacity -> additionalFilterCapacity.getNodeCapacityList().stream())
+							.filter(leaf -> additionalFilter.contains(leaf.getAdditionalFilterId()))
+							.mapToDouble(LeafNodeCapacity::getAdditionalFilterCapacity).sum());
+				} else {
+					capacityKpiData.setCapacityPerSprint(0D);
+				}
+			});
+		}
 		if (CollectionUtils.isEmpty(data)) {
 			log.info("No Data found for filters");
 		}
 		return data;
-	}
-
-	private Criteria buildCommonCriteria(Map<String, Object> filters) {
-		Criteria criteria = new Criteria();
-		for (Map.Entry<String, Object> entry : filters.entrySet()) {
-			String key = entry.getKey();
-			if (!key.equalsIgnoreCase(FIELD_ADDITIONAL_FILTER_CAPACITY_NODE_ID) && !key.equalsIgnoreCase(
-					FIELD_ADDITIONAL_FILTER_ID) && CollectionUtils.isNotEmpty((List<Pattern>) entry.getValue())) {
-				criteria = criteria.and(key).in((List<Pattern>) entry.getValue());
-			}
-		}
-		return criteria;
-	}
-
-	private Query buildQueryWithProjectFilters(Criteria criteria, Map<String, Map<String, Object>> uniqueProjectMap) {
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria();
-			projectCriteria.and(FIELD_BASIC_PROJECT_CONFIG_ID).is(project);
-			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		if (CollectionUtils.isNotEmpty(projectCriteriaList)) {
-			Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-			Criteria combinedCriteria = new Criteria().andOperator(criteria, projectLevelCriteria);
-			return new Query(combinedCriteria);
-		}
-		return new Query(criteria);
-	}
-
-	private void processAdditionalFilters(List<CapacityKpiData> data, Map<String, Object> filters) {
-		List<String> additionalFilter = (List<String>) filters.get(FIELD_ADDITIONAL_FILTER_CAPACITY_NODE_ID);
-		List<String> upperCaseKeys = ((List<String>) filters.get(FIELD_ADDITIONAL_FILTER_ID)).stream()
-				.map(String::toUpperCase).toList();
-
-		data.forEach(capacityKpiData -> {
-			if (CollectionUtils.isNotEmpty(capacityKpiData.getAdditionalFilterCapacityList())) {
-				double capacity = capacityKpiData.getAdditionalFilterCapacityList().stream()
-						.filter(additionalFilterCapacity -> upperCaseKeys
-								.contains(additionalFilterCapacity.getFilterId().toUpperCase()))
-						.flatMap(additionalFilterCapacity -> additionalFilterCapacity.getNodeCapacityList().stream())
-						.filter(leaf -> additionalFilter.contains(leaf.getAdditionalFilterId()))
-						.mapToDouble(LeafNodeCapacity::getAdditionalFilterCapacity).sum();
-				capacityKpiData.setCapacityPerSprint(capacity);
-			} else {
-				capacityKpiData.setCapacityPerSprint(0D);
-			}
-		});
 	}
 }
