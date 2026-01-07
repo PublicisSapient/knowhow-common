@@ -24,16 +24,14 @@ import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.application.Tool;
 
-/** Custom repository interface for project tool configuration operations. */
+/** The interface Project Release custom repository. */
 @Repository
 public interface ProjectToolConfigRepositoryCustom {
 
 	/**
-	 * Retrieves a list of tools with their associated processor item information.
-	 * This method performs aggregation to join tool configurations with their
-	 * corresponding connections and processor items.
+	 * Returns List tools with processorItem info.
 	 *
-	 * @return list of tools with complete processor item details
+	 * @return result list
 	 */
 	List<Tool> getToolList();
 }

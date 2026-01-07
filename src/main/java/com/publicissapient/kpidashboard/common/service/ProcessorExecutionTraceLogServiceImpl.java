@@ -17,7 +17,12 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -125,7 +130,8 @@ public class ProcessorExecutionTraceLogServiceImpl implements ProcessorExecution
 		}
 
 		return resultTraceLogs.stream()
-				.sorted(Comparator.comparing(ProcessorExecutionTraceLog::getExecutionEndedAt).reversed()).toList();
+				.sorted(Comparator.comparing(ProcessorExecutionTraceLog::getExecutionEndedAt).reversed())
+				.collect(Collectors.toList());
 	}
 
 	/**

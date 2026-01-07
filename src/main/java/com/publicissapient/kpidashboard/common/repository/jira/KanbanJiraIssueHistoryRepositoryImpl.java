@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -37,10 +38,13 @@ import org.springframework.stereotype.Service;
 import com.publicissapient.kpidashboard.common.model.jira.IssueHistoryMappedData;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 
-import lombok.RequiredArgsConstructor;
-
+/**
+ * This class provide implementation of KanbanFeatureHistoryRepoCustom
+ * interface.
+ *
+ * @author prijain3
+ */
 @Service
-@RequiredArgsConstructor
 public class KanbanJiraIssueHistoryRepositoryImpl implements KanbanJiraIssueHistoryRepoCustom {
 
 	private static final String TICKET_STATUS_FIELD = "historyDetails.status";
@@ -57,163 +61,65 @@ public class KanbanJiraIssueHistoryRepositoryImpl implements KanbanJiraIssueHist
 	private static final String END_TIME = "T23:59:59.000Z";
 	private static final String URL = "url";
 
-	private final MongoOperations mongoOperations;
+	/** The operations. */
+	@Autowired
+	private MongoOperations operations;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<KanbanIssueCustomHistory> findIssuesByStatusAndDate(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo, String mapStatusCriteria) {
-		List<AggregationOperation> aggregationOps = buildStatusAndDateAggregation(mapOfFilters, uniqueProjectMap, dateFrom,
-				dateTo, mapStatusCriteria);
-		TypedAggregation<KanbanIssueCustomHistory> aggregation = Aggregation.newAggregation(KanbanIssueCustomHistory.class,
-				aggregationOps);
-		AggregationResults<IssueHistoryMappedData> results = mongoOperations.aggregate(aggregation,
-				KanbanIssueCustomHistory.class, IssueHistoryMappedData.class);
-		return mapToKanbanHistory(results.getMappedResults());
-	}
+		List<AggregationOperation> list = new ArrayList<>();
 
-	@Override
-	public List<KanbanIssueCustomHistory> findIssuesByCreatedDateAndType(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo) {
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		criteria = addCreatedDateCriteria(criteria, dateFrom, dateTo);
-		Query query = buildQueryWithProjectCriteria(criteria, uniqueProjectMap);
-		return mongoOperations.find(query, KanbanIssueCustomHistory.class);
-	}
-
-	@Override
-	public List<KanbanIssueCustomHistory> findIssuesInWipByDate(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueWipProjectMap,
-			String dateFrom, String dateTo) {
-		List<AggregationOperation> aggregationOps = buildWipAggregation(mapOfFilters, uniqueProjectMap, uniqueWipProjectMap,
-				dateFrom, dateTo);
-		TypedAggregation<KanbanIssueCustomHistory> aggregation = Aggregation.newAggregation(KanbanIssueCustomHistory.class,
-				aggregationOps);
-		return mongoOperations.aggregate(aggregation, KanbanIssueCustomHistory.class, KanbanIssueCustomHistory.class)
-				.getMappedResults();
-	}
-
-	private Criteria buildCommonCriteria(Map<String, List<String>> mapOfFilters) {
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
 		Criteria criteria = new Criteria();
-		mapOfFilters.forEach((key, values) -> {
-			if (CollectionUtils.isNotEmpty(values)) {
-				criteria.and(key).in(values);
+
+		// map of common filters
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
 			}
-		});
-		return criteria;
-	}
+		}
 
-	private Criteria addCreatedDateCriteria(Criteria criteria, String dateFrom, String dateTo) {
-		String startDate = dateFrom + START_TIME;
-		String endDate = dateTo + END_TIME;
-		return criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
-	}
+		list.add(Aggregation.match(criteria));
+		list.add(Aggregation.unwind(HISTORY_DETAILS));
 
-	@SuppressWarnings("unchecked")
-	private Query buildQueryWithProjectCriteria(Criteria baseCriteria,
-			Map<String, Map<String, Object>> uniqueProjectMap) {
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria().and(TICKET_PROJECT_ID_FIELD).is(project);
-			filterMap.forEach((key, value) -> {
-				List<Pattern> patterns = (List<Pattern>) value;
-				projectCriteria.and(key).in(patterns);
-			});
-			projectCriteriaList.add(projectCriteria);
-		});
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria finalCriteria = new Criteria().andOperator(baseCriteria, projectLevelCriteria);
-		return new Query(finalCriteria);
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<AggregationOperation> buildStatusAndDateAggregation(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo, String mapStatusCriteria) {
-		List<AggregationOperation> operations = new ArrayList<>();
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-
-		operations.add(Aggregation.match(criteria));
-		operations.add(Aggregation.unwind(HISTORY_DETAILS));
-
+		// project level status filter
 		if (MapUtils.isNotEmpty(uniqueProjectMap)) {
-			String startDate = dateFrom + START_TIME;
-			String endDate = dateTo + END_TIME;
 			List<Criteria> projectCriteriaList = new ArrayList<>();
-
 			uniqueProjectMap.forEach((project, filterMap) -> {
-				Criteria projectCriteria = new Criteria().and(TICKET_PROJECT_ID_FIELD).is(project);
-				filterMap.forEach((key, value) -> {
-					List<Pattern> patterns = (List<Pattern>) value;
-					if (TICKET_STATUS_FIELD.equals(key) && NIN.equalsIgnoreCase(mapStatusCriteria)) {
-						projectCriteria.and(key).nin(patterns);
+				Criteria projectCriteria = new Criteria();
+				projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
+				filterMap.forEach((subk, subv) -> {
+					if (subk.equals(TICKET_STATUS_FIELD) && mapStatusCriteria.equalsIgnoreCase(NIN)) {
+						projectCriteria.and(subk).nin((List<Pattern>) subv);
 					} else {
-						projectCriteria.and(key).in(patterns);
+						projectCriteria.and(subk).in((List<Pattern>) subv);
 					}
 				});
 				projectCriteria.and(TICKET_ACTIVITY_DATE).gte(startDate).lte(endDate);
 				projectCriteriaList.add(projectCriteria);
 			});
 
-			Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-			operations.add(Aggregation.match(projectLevelCriteria));
-		}
+			Criteria criteriaAggregatedAtProjectLevelForStatus = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
 
-		operations.add(Aggregation
+			list.add(Aggregation.match(criteriaAggregatedAtProjectLevelForStatus));
+		}
+		list.add(Aggregation
 				.group(STORY_ID, STORY_TYPE, TICKET_PROJECT_ID_FIELD, TICKET_CREATED_DATE_FIELD, PRIORITY, ESTIMATE_TIME, URL)
 				.push(HISTORY_DETAILS).as(HISTORY_DETAILS));
-		operations.add(Aggregation.project(HISTORY_DETAILS));
+		list.add(Aggregation.project(HISTORY_DETAILS));
+		TypedAggregation<KanbanIssueCustomHistory> agg = Aggregation.newAggregation(KanbanIssueCustomHistory.class, list);
 
-		return operations;
-	}
+		AggregationResults<IssueHistoryMappedData> aggregate = operations.aggregate(agg, KanbanIssueCustomHistory.class,
+				IssueHistoryMappedData.class);
+		List<IssueHistoryMappedData> data = aggregate.getMappedResults();
 
-	@SuppressWarnings("unchecked")
-	private List<AggregationOperation> buildWipAggregation(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueWipProjectMap,
-			String dateFrom, String dateTo) {
-		List<AggregationOperation> operations = new ArrayList<>();
-		Criteria criteria = buildCommonCriteria(mapOfFilters);
-		String startDate = dateFrom + START_TIME;
-		String endDate = dateTo + END_TIME;
-
-		operations.add(Aggregation.match(criteria));
-
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueWipProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria().and(TICKET_PROJECT_ID_FIELD).is(project);
-			Criteria closedIssueCriteria = new Criteria();
-			Criteria historyCriteria = new Criteria();
-			Map<String, Object> closedIssueMap = uniqueProjectMap.get(project);
-
-			filterMap.forEach((key, value) -> {
-				if (TICKET_STATUS_FIELD.equals(key)) {
-					List<Pattern> patterns = (List<Pattern>) value;
-					List<Pattern> closedPatterns = (List<Pattern>) closedIssueMap.get(TICKET_STATUS_FIELD);
-					historyCriteria.andOperator(Criteria.where(key).in(patterns), Criteria.where(key).nin(closedPatterns));
-				}
-			});
-			historyCriteria.and(TICKET_ACTIVITY_DATE).lte(endDate);
-
-			closedIssueMap.forEach((key, value) -> {
-				List<Pattern> patterns = (List<Pattern>) value;
-				if (TICKET_STATUS_FIELD.equals(key)) {
-					closedIssueCriteria.and(key).in(patterns);
-				} else {
-					projectCriteria.and(key).in(patterns);
-				}
-			});
-			closedIssueCriteria.and(TICKET_ACTIVITY_DATE).gt(startDate);
-			projectCriteria.orOperator(historyCriteria, closedIssueCriteria);
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		operations.add(Aggregation.match(projectLevelCriteria));
-
-		return operations;
-	}
-
-	private List<KanbanIssueCustomHistory> mapToKanbanHistory(List<IssueHistoryMappedData> data) {
 		List<KanbanIssueCustomHistory> resultList = new ArrayList<>();
-		data.forEach(result -> {
+
+		data.stream().forEach(result -> {
 			KanbanIssueCustomHistory history = new KanbanIssueCustomHistory();
 			history.setStoryID(result.getId().getStoryID());
 			history.setStoryType(result.getId().getStoryType());
@@ -227,5 +133,91 @@ public class KanbanJiraIssueHistoryRepositoryImpl implements KanbanJiraIssueHist
 			resultList.add(history);
 		});
 		return resultList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<KanbanIssueCustomHistory> findIssuesByCreatedDateAndType(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo) {
+
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+		criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
+			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+			projectCriteriaList.add(projectCriteria);
+		});
+
+		Criteria criteriaAggregatedAtProjectLevel = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
+		Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+		Query query = new Query(criteriaProjectLevelAdded);
+		return operations.find(query, KanbanIssueCustomHistory.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<KanbanIssueCustomHistory> findIssuesInWipByDate(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueWipProjectMap,
+			String dateFrom, String dateTo) {
+		List<AggregationOperation> list = new ArrayList<>();
+
+		String startDate = new StringBuilder(dateFrom).append(START_TIME).toString();
+		String endDate = new StringBuilder(dateTo).append(END_TIME).toString();
+		Criteria criteria = new Criteria();
+
+		// map of common filters
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
+			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+				criteria = criteria.and(entry.getKey()).in(entry.getValue());
+			}
+		}
+
+		list.add(Aggregation.match(criteria));
+		// project level status filter
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueWipProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			Criteria closedIssueCriteria = new Criteria();
+			Criteria historyCriteria = new Criteria();
+			Map<String, Object> closedIssueMap = uniqueProjectMap.get(project);
+			projectCriteria.and(TICKET_PROJECT_ID_FIELD).is(project);
+			filterMap.forEach((subk, subv) -> {
+				if (subk.equals(TICKET_STATUS_FIELD)) {
+					historyCriteria.andOperator(Criteria.where(subk).in((List<Pattern>) subv),
+							Criteria.where(subk).nin((List<Pattern>) closedIssueMap.get(TICKET_STATUS_FIELD)));
+				}
+			});
+			historyCriteria.and(TICKET_ACTIVITY_DATE).lte(endDate);
+
+			closedIssueMap.forEach((subk, subv) -> {
+				if (subk.equals(TICKET_STATUS_FIELD)) {
+					closedIssueCriteria.and(subk).in((List<Pattern>) subv);
+				} else {
+					projectCriteria.and(subk).in((List<Pattern>) subv);
+				}
+			});
+			closedIssueCriteria.and(TICKET_ACTIVITY_DATE).gt(startDate);
+			projectCriteria.orOperator(historyCriteria, closedIssueCriteria);
+			projectCriteriaList.add(projectCriteria);
+		});
+		Criteria criteriaAggregatedAtProjectLevelForStatus = new Criteria()
+				.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+
+		list.add(Aggregation.match(criteriaAggregatedAtProjectLevelForStatus));
+		TypedAggregation<KanbanIssueCustomHistory> agg = Aggregation.newAggregation(KanbanIssueCustomHistory.class, list);
+
+		return operations.aggregate(agg, KanbanIssueCustomHistory.class, KanbanIssueCustomHistory.class).getMappedResults();
 	}
 }

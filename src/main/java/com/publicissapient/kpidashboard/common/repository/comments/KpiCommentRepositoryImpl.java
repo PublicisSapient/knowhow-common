@@ -16,8 +16,9 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.common.repository.comments;
+package com.publicissapient.kpidashboard.common.repository.comments; // NOPMD
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -26,27 +27,16 @@ import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.comments.KPIComments;
 
-import lombok.RequiredArgsConstructor;
-
-/**
- * Implementation of {@link KpiCommentRepositoryCustom} for KPI comment
- * operations.
- */
 @Service
-@RequiredArgsConstructor
 public class KpiCommentRepositoryImpl implements KpiCommentRepositoryCustom {
 
-	private static final String FIELD_COMMENTS_INFO_COMMENT_ID = "commentsInfo.commentId";
-	private static final String FIELD_COMMENT_ID = "commentId";
-	private static final String FIELD_COMMENTS_INFO = "commentsInfo";
-
-	private final MongoTemplate mongoTemplate;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Override
 	public void deleteByCommentId(String commentId) {
-		Query query = Query.query(Criteria.where(FIELD_COMMENTS_INFO_COMMENT_ID).is(commentId));
-		Query commentIdQuery = Query.query(Criteria.where(FIELD_COMMENT_ID).is(commentId));
-		Update update = new Update().pull(FIELD_COMMENTS_INFO, commentIdQuery);
-		mongoTemplate.updateMulti(query, update, KPIComments.class);
+		Query query = Query.query(Criteria.where("commentsInfo.commentId").is(commentId));
+		Query commentIdQuery = Query.query(Criteria.where("commentId").is(commentId));
+		mongoTemplate.updateMulti(query, new Update().pull("commentsInfo", commentIdQuery), KPIComments.class);
 	}
 }

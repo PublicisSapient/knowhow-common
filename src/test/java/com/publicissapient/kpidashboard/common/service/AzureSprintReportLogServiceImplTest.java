@@ -32,6 +32,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -47,12 +48,12 @@ public class AzureSprintReportLogServiceImplTest {
 	@Mock
 	private AzureSprintReportLogRepository azureSprintReportLogRepository;
 
+	@InjectMocks
 	private AzureSprintReportLogServiceImpl azureSprintReportLogService;
 
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
-		azureSprintReportLogService = new AzureSprintReportLogServiceImpl(azureSprintReportLogRepository);
 	}
 
 	@Test

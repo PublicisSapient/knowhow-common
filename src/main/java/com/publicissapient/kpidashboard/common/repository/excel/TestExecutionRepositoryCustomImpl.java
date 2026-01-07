@@ -7,57 +7,54 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 
-import lombok.RequiredArgsConstructor;
-
-/** Repository implementation for test execution operations. */
-@RequiredArgsConstructor
+/**
+ * @author narsingh9
+ */
 public class TestExecutionRepositoryCustomImpl implements TestExecutionRepositoryCustom {
+	private static final String CONF_ID = "basicProjectConfigId";
 
-	private static final String FIELD_PROJECT_CONFIG_ID = "basicProjectConfigId";
-
-	private final MongoOperations mongoOperations;
+	@Autowired
+	private MongoOperations operations;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestExecution> findTestExecutionDetailByFilters(Map<String, List<String>> filters,
+	public List<TestExecution> findTestExecutionDetailByFilters(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap) {
 
-		Criteria criteria = applyCommonFilters(new Criteria(), filters);
-		Query query = buildQueryWithProjectFilters(criteria, uniqueProjectMap);
+		Criteria criteria = new Criteria();
 
-		return mongoOperations.find(query, TestExecution.class);
-	}
-
-	private Criteria applyCommonFilters(Criteria criteria, Map<String, List<String>> filters) {
-		for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+		// map of common filters Project and Sprint
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
 			if (CollectionUtils.isNotEmpty(entry.getValue())) {
 				criteria = criteria.and(entry.getKey()).in(entry.getValue());
 			}
 		}
-		return criteria;
-	}
 
-	private Query buildQueryWithProjectFilters(Criteria criteria, Map<String, Map<String, Object>> uniqueProjectMap) {
-		if (MapUtils.isEmpty(uniqueProjectMap)) {
-			return new Query(criteria);
+		Query query = new Query(criteria);
+
+		// Project level filters
+		if (MapUtils.isNotEmpty(uniqueProjectMap)) {
+			List<Criteria> projectCriteriaList = new ArrayList<>();
+			uniqueProjectMap.forEach((project, filterMap) -> {
+				Criteria projectCriteria = new Criteria();
+				projectCriteria.and(CONF_ID).is(project);
+				filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+				projectCriteriaList.add(projectCriteria);
+			});
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+			query = new Query(criteriaProjectLevelAdded);
 		}
 
-		List<Criteria> projectCriteriaList = new ArrayList<>();
-		uniqueProjectMap.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria();
-			projectCriteria.and(FIELD_PROJECT_CONFIG_ID).is(project);
-			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
-			projectCriteriaList.add(projectCriteria);
-		});
-
-		Criteria projectLevelCriteria = new Criteria().orOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria combinedCriteria = new Criteria().andOperator(criteria, projectLevelCriteria);
-		return new Query(combinedCriteria);
+		return operations.find(query, TestExecution.class);
 	}
 }
