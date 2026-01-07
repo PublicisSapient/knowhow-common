@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.common.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
@@ -26,14 +27,12 @@ import org.springframework.stereotype.Component;
 
 import com.publicissapient.kpidashboard.common.util.ProcessorErrorHandler;
 
-import lombok.RequiredArgsConstructor;
-
 @SpringBootTest
 @Component
-@RequiredArgsConstructor
 public class TaskSchedulerConfiguration {
 
-	private final ProcessorErrorHandler processorErrorHandler;
+	@Autowired
+	private ProcessorErrorHandler processorErrorHandler;
 
 	@Bean
 	public TaskScheduler taskScheduler() {
