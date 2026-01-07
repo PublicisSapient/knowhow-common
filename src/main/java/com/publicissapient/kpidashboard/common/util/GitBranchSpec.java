@@ -42,7 +42,7 @@ public class GitBranchSpec {
 	private void setName(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException();
-		} else if (name.isEmpty()) {
+		} else if (name.length() == 0) {
 			this.name = "**";
 		} else {
 			this.name = name.trim();

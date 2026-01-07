@@ -33,10 +33,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class TestUtil {
 
-	private TestUtil() {
-		// Utility class - private constructor
-	}
-
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(APPLICATION_JSON.getType(),
 			APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
