@@ -30,11 +30,11 @@ public class HierarchyLevelServiceImpl implements HierarchyLevelService {
 
 	@Override
 	public List<HierarchyLevel> getFullHierarchyLevels(boolean isKanban) {
-		List<HierarchyLevel> topHierarchyLevels = getTopHierarchyLevels();
+        List<HierarchyLevel> topHierarchyLevels = getTopHierarchyLevels();
 		HierarchyLevel projectHierarchyLevel = getProjectHierarchyLevel();
 		HierarchyLevel sprintHierarchyLevel = getSprintHierarchyLevel();
 		HierarchyLevel releaseHierarchyLevel = getReleaseHierarchyLevel();
-		List<HierarchyLevel> hierarchyLevels = new ArrayList<>(topHierarchyLevels);
+        List<HierarchyLevel> hierarchyLevels = new ArrayList<>(topHierarchyLevels);
 		hierarchyLevels.add(projectHierarchyLevel);
 		if (!isKanban) {
 			hierarchyLevels.add(sprintHierarchyLevel);
