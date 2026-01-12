@@ -28,18 +28,26 @@ import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.publicissapient.kpidashboard.common.model.application.Build;
 
-/** An implementation of {@link BuildRepositoryCustom} */
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Implementation of {@link BuildRepositoryCustom} that provides custom
+ * repository operations for build data queries.
+ */
+@RequiredArgsConstructor
 public class BuildRepositoryImpl implements BuildRepositoryCustom {
 
-	@Autowired
-	private MongoOperations operations;
+	private static final String FIELD_START_TIME = "startTime";
+	private static final String FIELD_END_TIME = "endTime";
+	private static final String FIELD_BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
+
+	private final MongoOperations mongoOperations;
 
 	@Override
 	public List<Build> findBuildList(Map<String, List<String>> mapOfFilters, Set<ObjectId> projectBasicConfigIds,
@@ -53,14 +61,14 @@ public class BuildRepositoryImpl implements BuildRepositoryCustom {
 		if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
 			long startDateUTC = new DateTime(startDate, DateTimeZone.UTC).toDate().getTime();
 			long endDateUTC = new DateTime(endDate, DateTimeZone.UTC).toDate().getTime();
-			criteria = criteria.and("startTime").gte(startDateUTC).and("endTime").lte(endDateUTC);
+			criteria = criteria.and(FIELD_START_TIME).gte(startDateUTC).and(FIELD_END_TIME).lte(endDateUTC);
 		}
 
-		criteria.and("basicProjectConfigId").in(projectBasicConfigIds);
+		criteria.and(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectBasicConfigIds);
 
 		Query query = new Query(criteria);
 
-		return operations.find(query, Build.class);
+		return mongoOperations.find(query, Build.class);
 	}
 
 	private Criteria getCommonFiltersCriteria(Map<String, List<String>> mapOfFilters, Criteria criteria) {

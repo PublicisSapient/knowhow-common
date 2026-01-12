@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 
@@ -33,26 +32,49 @@ import com.mongodb.client.MongoCursor;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfigProcessorItem;
 import com.publicissapient.kpidashboard.common.model.application.Tool;
 
-/** An implementation of {@link ProjectToolConfigRepositoryCustom} */
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Implementation of {@link ProjectToolConfigRepositoryCustom} that provides
+ * custom repository operations for project tool configurations.
+ */
+@RequiredArgsConstructor
 public class ProjectToolConfigRepositoryImpl implements ProjectToolConfigRepositoryCustom {
 
-	@Autowired
-	private MongoOperations operations;
+	private static final String LOOKUP_OPERATOR = "$lookup";
+	private static final String FROM_FIELD = "from";
+	private static final String CONNECTIONS_COLLECTION = "connections";
+	private static final String PROCESSOR_ITEMS_COLLECTION = "processor_items";
+	private static final String PROJECT_TOOL_CONFIGS_COLLECTION = "project_tool_configs";
+	private static final String CONNECTION_ID_FIELD = "connectionId";
+	private static final String ID_FIELD = "_id";
+	private static final String TOOL_CONFIG_ID_FIELD = "toolConfigId";
+	private static final String LOCAL_FIELD = "localField";
+	private static final String FOREIGN_FIELD = "foreignField";
+	private static final String AS_FIELD = "as";
+	private static final String CONNECTION_AS = "connection";
+	private static final String PROCESSOR_ITEM_LIST_AS = "processorItemList";
+
+	private final MongoOperations mongoOperations;
 
 	@Override
 	public List<Tool> getToolList() {
-		BasicDBObject connectionObj = new BasicDBObject("$lookup", new BasicDBObject("from", "connections")
-				.append("localField", "connectionId").append("foreignField", "_id").append("as", "connection"));
+		BasicDBObject connectionObj = new BasicDBObject(LOOKUP_OPERATOR,
+				new BasicDBObject(FROM_FIELD, CONNECTIONS_COLLECTION).append(LOCAL_FIELD, CONNECTION_ID_FIELD)
+						.append(FOREIGN_FIELD, ID_FIELD).append(AS_FIELD, CONNECTION_AS));
 
-		BasicDBObject processorItemObj = new BasicDBObject("$lookup", new BasicDBObject("from", "processor_items")
-				.append("localField", "_id").append("foreignField", "toolConfigId").append("as", "processorItemList"));
+		BasicDBObject processorItemObj = new BasicDBObject(LOOKUP_OPERATOR,
+				new BasicDBObject(FROM_FIELD, PROCESSOR_ITEMS_COLLECTION).append(LOCAL_FIELD, ID_FIELD)
+						.append(FOREIGN_FIELD, TOOL_CONFIG_ID_FIELD).append(AS_FIELD, PROCESSOR_ITEM_LIST_AS));
+
 		List<BasicDBObject> pipeline = Lists.newArrayList(connectionObj, processorItemObj);
-		AggregateIterable<Document> cursor = operations.getCollection("project_tool_configs").aggregate(pipeline);
+		AggregateIterable<Document> cursor = mongoOperations.getCollection(PROJECT_TOOL_CONFIGS_COLLECTION)
+				.aggregate(pipeline);
 		MongoCursor<Document> itr = cursor.iterator();
 		List<ProjectToolConfigProcessorItem> returnList = new ArrayList<>();
 		while (itr.hasNext()) {
 			Document obj = itr.next();
-			MongoConverter converter = operations.getConverter();
+			MongoConverter converter = mongoOperations.getConverter();
 			ProjectToolConfigProcessorItem item = converter.read(ProjectToolConfigProcessorItem.class, obj);
 			returnList.add(item);
 		}

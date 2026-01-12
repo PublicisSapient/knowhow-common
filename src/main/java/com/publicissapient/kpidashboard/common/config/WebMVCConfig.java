@@ -41,10 +41,8 @@ import com.publicissapient.kpidashboard.common.converter.ZonedDateTimeWriteConve
 import com.publicissapient.kpidashboard.common.mapper.CustomObjectMapper;
 
 /**
- * An extension of {@link WebMvcConfigurer} to provide project specific web mvc
- * configuration.
- *
- * @author anisingh4
+ * Web MVC configuration for KPI Dashboard. Configures JSON serialization,
+ * pagination, resource handlers, and custom converters.
  */
 @Configuration
 @EnableWebMvc
@@ -57,18 +55,19 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		MappingJackson2HttpMessageConverter jackson = new MappingJackson2HttpMessageConverter();
-
-		jackson.setObjectMapper(new CustomObjectMapper());
-		jackson.getObjectMapper().disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
-				.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-				.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		jackson.getObjectMapper().registerModule(new JavaTimeModule());
-
-		converters.add(jackson);
-
-		// Add the ByteArray message converter
+		converters.add(createJacksonConverter());
 		converters.add(new ByteArrayHttpMessageConverter());
+	}
+
+	private MappingJackson2HttpMessageConverter createJacksonConverter() {
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setObjectMapper(new CustomObjectMapper());
+
+		converter.getObjectMapper().disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
+				.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+				.setSerializationInclusion(JsonInclude.Include.NON_NULL).registerModule(new JavaTimeModule());
+
+		return converter;
 	}
 
 	@Override
@@ -78,9 +77,6 @@ public class WebMVCConfig implements WebMvcConfigurer {
 		argumentResolvers.add(resolver);
 	}
 
-	/*
-	 * Added for Swagger
-	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/swagger-ui/**")
