@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -35,6 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class PropertyUtils {
+
+	// private PropertyUtils() {
+	// // Utility class - private constructor
+	// }
 
 	/**
 	 * Trim props.
@@ -163,7 +166,7 @@ public class PropertyUtils {
 	private Collection<String> trimCollection(Object obj) {
 		if (null != obj) {
 			Collection<String> list = (Collection<String>) obj;
-			return list.stream().map(String::trim).collect(Collectors.toList());
+			return list.stream().map(String::trim).toList();
 		}
 		return null; // NOSONAR
 	}
