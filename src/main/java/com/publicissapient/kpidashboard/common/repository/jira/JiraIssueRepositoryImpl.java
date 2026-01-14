@@ -31,14 +31,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -49,8 +44,11 @@ import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.ReleaseWisePI;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 
+import lombok.RequiredArgsConstructor;
+
 /** Repository for {@link JiraIssue} with custom method's implementation. */
 @Service
+@RequiredArgsConstructor
 public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // NOPMD
 	// to avoid tooManyMethods
 
@@ -102,8 +100,8 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 	private static final String ADDITIONAL_FILTER = "additionalFilters";
 	public static final String QUERY_LABELS = "labels";
 	public static final String SEVERITY = "severity";
-	@Autowired
-	private MongoTemplate operations;
+
+	private final MongoTemplate operations;
 
 	@SuppressWarnings(UNCHECKED)
 	@Override
@@ -364,11 +362,12 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		Criteria criteria = new Criteria();
 		Criteria orCriteria = new Criteria();
 		List<Criteria> filter = new ArrayList<>();
-		for (String val : mapOfFilters.keySet()) {
+		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
 			Criteria expression = new Criteria();
-			expression.and(val).is(mapOfFilters.get(val));
+			expression.and(entry.getKey()).is(entry.getValue());
 			filter.add(expression);
 		}
+
 		orCriteria.orOperator(filter.toArray(filter.toArray(new Criteria[filter.size()])));
 		criteria.and(JIRA_UPDATED_DATE).gte(startDate).lte(endDate);
 		criteria.orOperator(
@@ -703,7 +702,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 
 		if (CollectionUtils.isNotEmpty(fieldsToUnset)) {
 			Update update = new Update();
-			fieldsToUnset.stream().forEach(field -> update.unset(field));
+			fieldsToUnset.stream().forEach(update::unset);
 
 			operations.updateMulti(query, update, JiraIssue.class);
 		}
@@ -842,7 +841,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		query.fields().include(PRIORITY);
 		query.fields().include(SEVERITY);
 		query.fields().include(QUERY_LABELS);
-		query.fields().include("defectStoryID");
+		query.fields().include(DEFECT_STORY_ID);
 		return new ArrayList<>(operations.find(query, JiraIssue.class));
 	}
 
