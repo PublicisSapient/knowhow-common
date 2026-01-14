@@ -18,6 +18,7 @@ package com.publicissapient.kpidashboard.common.service.recommendation;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.PromptKeys;
@@ -37,8 +38,9 @@ public class PromptService {
 	public static final String KPI_CORRELATION_REPORT_PLACEHOLDER = "KPI_CORRELATION_REPORT_PLACEHOLDER";
 	public static final String KPI_DATA_BY_PROJECT_PLACEHOLDER = "KPI_DATA_BY_PROJECT_PLACEHOLDER";
 	public static final String PERSONA_PLACEHOLDER = "Persona_PLACEHOLDER";
+    public static final String KPI_DATA_PLACEHOLDER = "KPI_DATA_PLACEHOLDER";
 
-	private final PromptDetailsRepository promptDetailsRepository;
+    private final PromptDetailsRepository promptDetailsRepository;
 
 	/**
 	 * Retrieves prompt template from MongoDB by key.
@@ -66,10 +68,10 @@ public class PromptService {
 	 *          User persona
 	 * @return Generated prompt string
 	 */
-	public String getKpiRecommendationPrompt(Map<String, Object> kpiDataByProject, Persona persona) {
+	public String getBatchProjectLevelPrompt(Map<Pair<String, String>, Object> kpiDataByProject, Persona persona) {
 		try {
 			PromptDetails kpiCorrelationReport = getPromptDetails(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT);
-			PromptDetails batchRecommendationPrompt = getPromptDetails(PromptKeys.BATCH_RECOMMENDATION_PROMPT);
+			PromptDetails batchRecommendationPrompt = getPromptDetails(PromptKeys.BATCH_PROJECT_LEVEL_RECOMMENDATION_PROMPT);
 
 			return batchRecommendationPrompt.toString()
 					.replace(KPI_CORRELATION_REPORT_PLACEHOLDER, kpiCorrelationReport.toString())
@@ -78,6 +80,34 @@ public class PromptService {
 		} catch (Exception e) {
 			log.error("Error building KPI recommendation prompt: {}", e.getMessage(), e);
 			throw new RuntimeException("Failed to generate prompt", e);
+		}
+	}
+
+	/**
+	 * Generates KPI-specific recommendation prompt for a single KPI.
+	 *
+	 * @param singleKpiData
+	 *          Map containing single KPI's data (with any key type)
+	 * @param persona
+	 *          User persona
+	 * @param kpiId
+	 *          The specific KPI ID
+	 * @return Generated KPI-specific prompt string
+	 */
+	public String getBatchKpiLevelPrompt(Map<Pair<String, String>, Object> singleKpiData, Persona persona, String kpiId) {
+		try {
+			PromptDetails kpiCorrelationReport = getPromptDetails(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT);
+			PromptDetails kpiLevelRecommendationPrompt = getPromptDetails(PromptKeys.BATCH_KPI_LEVEL_RECOMMENDATION_PROMPT);
+
+			// Build prompt focused on single KPI
+			return kpiLevelRecommendationPrompt.toString()
+					.replace(KPI_CORRELATION_REPORT_PLACEHOLDER, kpiCorrelationReport.toString())
+					.replace(KPI_DATA_PLACEHOLDER,
+							String.format("{\"kpiId\": \"%s\", \"data\": %s}", kpiId, singleKpiData.toString()))
+					.replace(PERSONA_PLACEHOLDER, persona.getDisplayName());
+		} catch (Exception e) {
+			log.error("Error building KPI-specific prompt for KPI {}: {}", kpiId, e.getMessage(), e);
+			throw new RuntimeException("Failed to generate KPI-specific prompt", e);
 		}
 	}
 }
