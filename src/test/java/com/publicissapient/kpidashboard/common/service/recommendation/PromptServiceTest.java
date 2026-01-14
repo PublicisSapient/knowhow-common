@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +29,10 @@ class PromptServiceTest {
 
 	private PromptDetails promptDetails;
 	private PromptDetails correlationPrompt;
-	private PromptDetails batchPrompt;
+	private PromptDetails projectLevelPrompt;
+	private PromptDetails kpiLevelPrompt;
 	private Persona persona;
-	private Map<String, Object> kpiData;
+	private Map<Pair<String, String>, Object> kpiData;
 
 	@BeforeEach
 	void setUp() {
@@ -43,12 +45,17 @@ class PromptServiceTest {
 		correlationPrompt.setContext("KPI correlation analysis");
 		correlationPrompt.setTask("Analyze KPI correlations");
 
-		batchPrompt = new PromptDetails();
-		batchPrompt.setContext("Batch recommendation context");
-		batchPrompt.setTask(
+		projectLevelPrompt = new PromptDetails();
+		projectLevelPrompt.setContext("Batch recommendation context");
+		projectLevelPrompt.setTask(
 				"Generate recommendations with KPI_CORRELATION_REPORT_PLACEHOLDER and KPI_DATA_BY_PROJECT_PLACEHOLDER for Persona_PLACEHOLDER");
 
-		kpiData = Map.of("project1", "data1", "project2", "data2");
+		kpiLevelPrompt = new PromptDetails();
+		kpiLevelPrompt.setContext("KPI level recommendation context");
+		kpiLevelPrompt.setTask(
+				"Generate KPI recommendations with KPI_CORRELATION_REPORT_PLACEHOLDER and KPI_DATA_PLACEHOLDER for Persona_PLACEHOLDER");
+
+		kpiData = Map.of(Pair.of("project1", "metric1"), "data1", Pair.of("project2", "metric2"), "data2");
 	}
 
 	@Test
@@ -79,20 +86,20 @@ class PromptServiceTest {
 	}
 
 	@Test
-	void testGetKpiRecommendationPrompt_Success() {
+	void testGetBatchProjectLevelPrompt_Success() {
 		// Given
 		persona = mock(Persona.class);
 		when(persona.getDisplayName()).thenReturn("Developer");
 		when(promptDetailsRepository.findByKey(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT)).thenReturn(correlationPrompt);
-		when(promptDetailsRepository.findByKey(PromptKeys.BATCH_RECOMMENDATION_PROMPT)).thenReturn(batchPrompt);
+		when(promptDetailsRepository.findByKey(PromptKeys.BATCH_PROJECT_LEVEL_RECOMMENDATION_PROMPT))
+				.thenReturn(projectLevelPrompt);
 
 		// When
-		String result = promptService.getKpiRecommendationPrompt(kpiData, persona);
+		String result = promptService.getBatchProjectLevelPrompt(kpiData, persona);
 
 		// Then
 		assertNotNull(result);
 		assertTrue(result.contains("KPI correlation analysis"));
-		assertTrue(result.contains(kpiData.toString()));
 		assertTrue(result.contains("Developer"));
 		assertFalse(result.contains("KPI_CORRELATION_REPORT_PLACEHOLDER"));
 		assertFalse(result.contains("KPI_DATA_BY_PROJECT_PLACEHOLDER"));
@@ -100,20 +107,44 @@ class PromptServiceTest {
 	}
 
 	@Test
-	void testGetKpiRecommendationPrompt_EmptyKpiData() {
+	void testGetBatchProjectLevelPrompt_EmptyKpiData() {
 		// Given
 		persona = mock(Persona.class);
 		when(persona.getDisplayName()).thenReturn("Developer");
-		Map<String, Object> emptyData = Collections.emptyMap();
+		Map<Pair<String, String>, Object> emptyData = Collections.emptyMap();
 		when(promptDetailsRepository.findByKey(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT)).thenReturn(correlationPrompt);
-		when(promptDetailsRepository.findByKey(PromptKeys.BATCH_RECOMMENDATION_PROMPT)).thenReturn(batchPrompt);
+		when(promptDetailsRepository.findByKey(PromptKeys.BATCH_PROJECT_LEVEL_RECOMMENDATION_PROMPT))
+				.thenReturn(projectLevelPrompt);
 
 		// When
-		String result = promptService.getKpiRecommendationPrompt(emptyData, persona);
+		String result = promptService.getBatchProjectLevelPrompt(emptyData, persona);
 
 		// Then
 		assertNotNull(result);
 		assertTrue(result.contains("{}"));
 		assertTrue(result.contains("Developer"));
+	}
+
+	@Test
+	void testGetBatchKpiLevelPrompt_Success() {
+		// Given
+		persona = mock(Persona.class);
+		when(persona.getDisplayName()).thenReturn("Developer");
+		String kpiId = "kpi1";
+		when(promptDetailsRepository.findByKey(PromptKeys.KPI_CORRELATION_ANALYSIS_REPORT)).thenReturn(correlationPrompt);
+		when(promptDetailsRepository.findByKey(PromptKeys.BATCH_KPI_LEVEL_RECOMMENDATION_PROMPT))
+				.thenReturn(kpiLevelPrompt);
+
+		// When
+		String result = promptService.getBatchKpiLevelPrompt(kpiData, persona, kpiId);
+
+		// Then
+		assertNotNull(result);
+		assertTrue(result.contains("KPI correlation analysis"));
+		assertTrue(result.contains("kpi1"));
+		assertTrue(result.contains("Developer"));
+		assertFalse(result.contains("KPI_CORRELATION_REPORT_PLACEHOLDER"));
+		assertFalse(result.contains("KPI_DATA_PLACEHOLDER"));
+		assertFalse(result.contains("Persona_PLACEHOLDER"));
 	}
 }

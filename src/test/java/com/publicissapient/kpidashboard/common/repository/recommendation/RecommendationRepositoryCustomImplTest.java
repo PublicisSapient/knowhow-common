@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationLevel;
 import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationsActionPlan;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +51,8 @@ class RecommendationRepositoryCustomImplTest {
 
 		// When
 		List<RecommendationsActionPlan> result =
-				repository.findLatestRecommendationsByProjectIds(projectIds, 5);
+				repository.findLatestRecommendationsByProjectIds(
+						projectIds, 5, RecommendationLevel.PROJECT_LEVEL);
 
 		// Then
 		assertNotNull(result);
@@ -70,7 +72,7 @@ class RecommendationRepositoryCustomImplTest {
 
 		// When & Then
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> repository.findLatestRecommendationsByProjectIds(emptyProjectIds, 5));
+				() -> repository.findLatestRecommendationsByProjectIds(emptyProjectIds, 5, RecommendationLevel.PROJECT_LEVEL));
 		assertEquals("Project IDs list must not be null or empty", exception.getMessage());
 		verifyNoInteractions(operations);
 	}
@@ -79,7 +81,7 @@ class RecommendationRepositoryCustomImplTest {
 	void testFindLatestRecommendationsByProjectIds_NullProjectIds() {
 		// When & Then
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> repository.findLatestRecommendationsByProjectIds(null, 5));
+				() -> repository.findLatestRecommendationsByProjectIds(null, 5, RecommendationLevel.PROJECT_LEVEL));
 		assertEquals("Project IDs list must not be null or empty", exception.getMessage());
 		verifyNoInteractions(operations);
 	}
@@ -88,7 +90,7 @@ class RecommendationRepositoryCustomImplTest {
 	void testFindLatestRecommendationsByProjectIds_InvalidLimit() {
 		// When & Then
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> repository.findLatestRecommendationsByProjectIds(projectIds, 0));
+				() -> repository.findLatestRecommendationsByProjectIds(projectIds, 0, RecommendationLevel.PROJECT_LEVEL));
 		assertEquals("Limit must be greater than 0, got: 0", exception.getMessage());
 		verifyNoInteractions(operations);
 	}
@@ -97,7 +99,7 @@ class RecommendationRepositoryCustomImplTest {
 	void testFindLatestRecommendationsByProjectIds_NegativeLimit() {
 		// When & Then
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> repository.findLatestRecommendationsByProjectIds(projectIds, -1));
+				() -> repository.findLatestRecommendationsByProjectIds(projectIds, -1, RecommendationLevel.PROJECT_LEVEL));
 		assertEquals("Limit must be greater than 0, got: -1", exception.getMessage());
 		verifyNoInteractions(operations);
 	}
@@ -114,7 +116,8 @@ class RecommendationRepositoryCustomImplTest {
 
 		// When
 		List<RecommendationsActionPlan> result =
-				repository.findLatestRecommendationsByProjectIds(projectIds, 5);
+				repository.findLatestRecommendationsByProjectIds(
+						projectIds, 5, RecommendationLevel.PROJECT_LEVEL);
 
 		// Then
 		assertNotNull(result);
@@ -136,7 +139,8 @@ class RecommendationRepositoryCustomImplTest {
 		when(aggregationResults.getMappedResults()).thenReturn(singleRecommendation);
 
 		// When
-		List<RecommendationsActionPlan> result = repository.findLatestRecommendationsByProjectIds(singleProject, 1);
+		List<RecommendationsActionPlan> result = repository.findLatestRecommendationsByProjectIds(singleProject, 1,
+				RecommendationLevel.PROJECT_LEVEL);
 
 		// Then
 		assertNotNull(result);

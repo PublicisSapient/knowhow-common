@@ -46,6 +46,7 @@ public class RecommendationsActionPlan extends BasicModel {
 	private String projectName;
 	private Persona persona;
 	private RecommendationLevel level;
+	private String kpiId; // null for PROJECT_LEVEL, populated for KPI_LEVEL
 	private Recommendation recommendations;
 	private RecommendationMetadata metadata;
 	private Instant createdAt;
