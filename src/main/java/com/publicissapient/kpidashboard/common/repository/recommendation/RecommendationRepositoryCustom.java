@@ -33,21 +33,24 @@ public interface RecommendationRepositoryCustom {
 	 * (CRITICAL→LOW) then creation date (latest first).
 	 *
 	 * <p>
-	 * <b>Pipeline:</b> $match → $match (level, conditional) → $addFields (severityPriority) → $sort → $group →
-	 * $slice → $unwind → $replaceRoot → $sort (final cross-project sorting)
+	 * <b>Pipeline:</b> $match → $match (level, conditional) → $addFields
+	 * (severityPriority) → $sort → $group → $slice → $unwind → $replaceRoot → $sort
+	 * (final cross-project sorting)
 	 *
 	 * @param projectIds
 	 *          list of project identifiers (must not be null or empty)
 	 * @param limit
 	 *          number of recommendations per project (must be > 0)
 	 * @param level
-	 *          optional recommendation level filter (PROJECT_LEVEL or KPI_LEVEL); null returns all levels
+	 *          optional recommendation level filter (PROJECT_LEVEL or KPI_LEVEL);
+	 *          null returns all levels
 	 * @return list of recommendations sorted by severity priority across all
 	 *         projects
 	 * @throws IllegalArgumentException
 	 *           if projectIds is null/empty or limit <= 0
 	 */
-	List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit, RecommendationLevel level);
+	List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit,
+			RecommendationLevel level);
 
 	/**
 	 * Find latest recommendation by project ID and KPI ID.
@@ -60,7 +63,6 @@ public interface RecommendationRepositoryCustom {
 	 *          Recommendation level (typically KPI_LEVEL)
 	 * @return Latest recommendation or null if not found
 	 */
-	RecommendationsActionPlan findLatestRecommendationByProjectAndKpi(
-			String basicProjectConfigId, String kpiId, RecommendationLevel level);
-
+	RecommendationsActionPlan findLatestRecommendationByProjectAndKpi(String basicProjectConfigId, String kpiId,
+			RecommendationLevel level);
 }

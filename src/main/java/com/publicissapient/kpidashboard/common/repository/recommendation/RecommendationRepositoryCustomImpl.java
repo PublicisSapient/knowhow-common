@@ -20,7 +20,6 @@ package com.publicissapient.kpidashboard.common.repository.recommendation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationLevel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -34,6 +33,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationLevel;
 import com.publicissapient.kpidashboard.common.model.recommendation.batch.RecommendationsActionPlan;
 import com.publicissapient.kpidashboard.common.model.recommendation.batch.Severity;
 
@@ -49,23 +49,25 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RecommendationRepositoryCustomImpl implements RecommendationRepositoryCustom {
 
-    private static final String COLLECTION_NAME = "recommendations_action_plan";
+	private static final String COLLECTION_NAME = "recommendations_action_plan";
 	private static final String FIELD_BASIC_PROJECT_CONFIG_ID = "basicProjectConfigId";
 	private static final String FIELD_CREATED_AT = "createdAt";
 	private static final String FIELD_RECOMMENDATIONS = "recommendations";
 	private static final String FIELD_SEVERITY = "recommendations.severity";
 	private static final String FIELD_SEVERITY_PRIORITY = "severityPriority";
-    public static final String KPI_ID = "kpiId";
-    public static final String LEVEL = "level";
+	public static final String KPI_ID = "kpiId";
+	public static final String LEVEL = "level";
 
-    private final MongoOperations operations;
+	private final MongoOperations operations;
 
 	@Override
-	public List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit, RecommendationLevel level) {
+	public List<RecommendationsActionPlan> findLatestRecommendationsByProjectIds(List<String> projectIds, int limit,
+			RecommendationLevel level) {
 		validateInputParameters(projectIds, limit);
 
-		log.debug("Executing aggregation pipeline to fetch {} latest recommendation(s) for {} projects with level filter: {}", limit,
-				projectIds.size(), level);
+		log.debug(
+				"Executing aggregation pipeline to fetch {} latest recommendation(s) for {} projects with level filter: {}",
+				limit, projectIds.size(), level);
 
 		Aggregation aggregation = buildAggregation(projectIds, limit, level);
 		List<RecommendationsActionPlan> recommendations = operations
@@ -77,34 +79,29 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	}
 
 	@Override
-	public RecommendationsActionPlan findLatestRecommendationByProjectAndKpi(
-			String basicProjectConfigId, String kpiId, RecommendationLevel level) {
+	public RecommendationsActionPlan findLatestRecommendationByProjectAndKpi(String basicProjectConfigId, String kpiId,
+			RecommendationLevel level) {
 
 		if (basicProjectConfigId == null || kpiId == null || level == null) {
-			log.warn("Invalid parameters: basicProjectConfigId={}, kpiId={}, level={}",
-					basicProjectConfigId, kpiId, level);
+			log.warn("Invalid parameters: basicProjectConfigId={}, kpiId={}, level={}", basicProjectConfigId, kpiId, level);
 			return null;
 		}
 
-		log.debug("Fetching latest {} recommendation for project {} and KPI {}",
-				level, basicProjectConfigId, kpiId);
+		log.debug("Fetching latest {} recommendation for project {} and KPI {}", level, basicProjectConfigId, kpiId);
 
-		Criteria criteria = Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).is(basicProjectConfigId)
-				.and(KPI_ID).is(kpiId)
+		Criteria criteria = Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).is(basicProjectConfigId).and(KPI_ID).is(kpiId)
 				.and(LEVEL).is(level);
 
-		Query query = new Query(criteria)
-				.with(Sort.by(Sort.Direction.DESC, FIELD_CREATED_AT))
-				.limit(1);
+		Query query = new Query(criteria).with(Sort.by(Sort.Direction.DESC, FIELD_CREATED_AT)).limit(1);
 
-		RecommendationsActionPlan recommendation = operations.findOne(query, RecommendationsActionPlan.class, COLLECTION_NAME);
+		RecommendationsActionPlan recommendation = operations.findOne(query, RecommendationsActionPlan.class,
+				COLLECTION_NAME);
 
 		if (recommendation != null) {
-			log.debug("Found recommendation with ID {} for project {} and KPI {}",
-					recommendation.getId(), basicProjectConfigId, kpiId);
+			log.debug("Found recommendation with ID {} for project {} and KPI {}", recommendation.getId(),
+					basicProjectConfigId, kpiId);
 		} else {
-			log.debug("No {} recommendation found for project {} and KPI {}",
-					level, basicProjectConfigId, kpiId);
+			log.debug("No {} recommendation found for project {} and KPI {}", level, basicProjectConfigId, kpiId);
 		}
 
 		return recommendation;
@@ -133,12 +130,13 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 	}
 
 	/**
-	 * Builds MongoDB aggregation pipeline with severity-based sorting and optional level filtering.
-	 * Pipeline stages: match (projectIds) → match (level, conditional) → addFields → sort → group → slice → unwind → replaceRoot → sort
+	 * Builds MongoDB aggregation pipeline with severity-based sorting and optional
+	 * level filtering. Pipeline stages: match (projectIds) → match (level,
+	 * conditional) → addFields → sort → group → slice → unwind → replaceRoot → sort
 	 */
 	private Aggregation buildAggregation(List<String> projectIds, int limit, RecommendationLevel level) {
 		List<AggregationOperation> stages = new ArrayList<>();
-		
+
 		// Stage 1: Match documents by project IDs
 		stages.add(Aggregation.match(Criteria.where(FIELD_BASIC_PROJECT_CONFIG_ID).in(projectIds)));
 
@@ -148,10 +146,13 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 			log.debug("Added level filter stage for: {}", level);
 		}
 
-		// Stage 3: Add computed field for severity priority (CRITICAL=1, HIGH=2, MEDIUM=3, LOW=4)
+		// Stage 3: Add computed field for severity priority (CRITICAL=1, HIGH=2,
+		// MEDIUM=3, LOW=4)
 		stages.add(buildSeverityPriorityMapping());
 
-		// Stage 4: Sort by severity priority ASC (CRITICAL first), then createdAt DESC (latest first) - within each project
+		// Stage 4: Sort by severity priority ASC (CRITICAL first), then createdAt DESC
+		// (latest first) -
+		// within each project
 		stages.add(Aggregation.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT))));
 
 		// Stage 5: Group by project and push all documents into array
@@ -166,7 +167,8 @@ public class RecommendationRepositoryCustomImpl implements RecommendationReposit
 		// Stage 8: Replace root to return clean recommendation documents
 		stages.add(Aggregation.replaceRoot(FIELD_RECOMMENDATIONS));
 
-		// Stage 9: Final sort across all projects by severity priority (CRITICAL projects first)
+		// Stage 9: Final sort across all projects by severity priority (CRITICAL
+		// projects first)
 		stages.add(Aggregation.sort(Sort.by(Sort.Order.asc(FIELD_SEVERITY_PRIORITY), Sort.Order.desc(FIELD_CREATED_AT))));
 
 		return Aggregation.newAggregation(stages);

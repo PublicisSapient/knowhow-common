@@ -38,9 +38,9 @@ public class PromptService {
 	public static final String KPI_CORRELATION_REPORT_PLACEHOLDER = "KPI_CORRELATION_REPORT_PLACEHOLDER";
 	public static final String KPI_DATA_BY_PROJECT_PLACEHOLDER = "KPI_DATA_BY_PROJECT_PLACEHOLDER";
 	public static final String PERSONA_PLACEHOLDER = "Persona_PLACEHOLDER";
-    public static final String KPI_DATA_PLACEHOLDER = "KPI_DATA_PLACEHOLDER";
+	public static final String KPI_DATA_PLACEHOLDER = "KPI_DATA_PLACEHOLDER";
 
-    private final PromptDetailsRepository promptDetailsRepository;
+	private final PromptDetailsRepository promptDetailsRepository;
 
 	/**
 	 * Retrieves prompt template from MongoDB by key.
