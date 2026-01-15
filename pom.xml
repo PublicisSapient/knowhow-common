@@ -533,6 +533,9 @@
                 <exclude>eclipse-formatter-config.xml</exclude>
                 <exclude>pom.xml</exclude>
                 <exclude>**/.idea/**</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/.git/**</exclude>
               </excludes>
               <indent>
                 <spaces>true</spaces>
