@@ -14,25 +14,8 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.model.productivity.calculation;
+package com.publicissapient.kpidashboard.common.shared.enums;
 
-import java.util.List;
-
-import com.publicissapient.kpidashboard.common.shared.enums.TrendDirection;
-
-import lombok.Builder;
-import lombok.Data;
-
-@Data
-@Builder
-public class KPIData {
-	private String kpiId;
-	private String name;
-	private String category;
-
-	private Double variationPercentage;
-
-	private TrendDirection desiredTrend;
-
-	private List<KpiDataPoint> dataPoints;
+public enum TrendDirection {
+	ASCENDING, DESCENDING
 }
