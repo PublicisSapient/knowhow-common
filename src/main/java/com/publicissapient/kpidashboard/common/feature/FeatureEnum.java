@@ -32,8 +32,7 @@ public enum FeatureEnum implements Feature {
 
 	@EnabledByDefault
 	@Label("Google Analytics")
-	GOOGLE_ANALYTICS,
-
+	GOOGLE_ANALYTICS, @EnabledByDefault
 	@Label("Recommendations")
 	RECOMMENDATIONS,
 

@@ -16,23 +16,13 @@
 
 package com.publicissapient.kpidashboard.common.model.productivity.calculation;
 
-import java.util.List;
-
-import com.publicissapient.kpidashboard.common.shared.enums.TrendDirection;
-
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class KPIData {
-	private String kpiId;
-	private String name;
-	private String category;
+public class KpiDataPoint {
+	private int index;
 
-	private Double variationPercentage;
-
-	private TrendDirection desiredTrend;
-
-	private List<KpiDataPoint> dataPoints;
+	private double value;
 }
