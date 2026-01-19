@@ -16,11 +16,15 @@
 
 package com.publicissapient.kpidashboard.common.model.kpibenchmark;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BenchmarkPercentiles {
 	private String filter;
 	private double seventyPercentile;
