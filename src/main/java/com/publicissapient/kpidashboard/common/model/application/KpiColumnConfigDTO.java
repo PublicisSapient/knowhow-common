@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,10 +35,20 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "KPI Column Configuration Data Transfer Object")
 public class KpiColumnConfigDTO {
+	@Schema(description = "Unique Identifier", example = "64b7f8f5e1d2c3a4b5c6d7e8")
 	private ObjectId id;
+
+	@Schema(description = "Basic Project Configuration Identifier", example = "64b7f8f5e1d2c3a4b5c6d7e9")
 	private ObjectId basicProjectConfigId;
+
+	@Schema(description = "KPI Identifier", example = "kpi12345")
 	private String kpiId;
+
+	@Schema(description = "List of KPI Column Details", implementation = KpiColumnDetails.class)
 	private List<KpiColumnDetails> kpiColumnDetails;
+
+	@Schema(description = "Save Flag", example = "true")
 	private boolean saveFlag;
 }

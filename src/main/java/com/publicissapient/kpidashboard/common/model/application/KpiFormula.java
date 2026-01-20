@@ -19,17 +19,28 @@ package com.publicissapient.kpidashboard.common.model.application;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
  * @author yasbano
  */
 @Data
+@Schema(description = "KPI Formula details")
 public class KpiFormula {
 
+	@Schema(description = "Type of the KPI formula", example = "BINARY")
 	private String type;
+
+	@Schema(description = "Left hand side of the formula", example = "kpi1")
 	private String lhs;
+
+	@Schema(description = "Right hand side of the formula", example = "kpi2")
 	private String rhs;
+
+	@Schema(description = "Operator used in the formula", example = "+")
 	private String operator;
+
+	@Schema(description = "List of operands involved in the formula", example = "[\"kpi1\", \"kpi2\"]")
 	private List<String> operands;
 }
