@@ -16,6 +16,8 @@
 
 package com.publicissapient.kpidashboard.common.model.kpibenchmark;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BenchmarkPercentiles {
+public class BenchmarkPercentiles implements Serializable {
 	private String filter;
 	private double seventyPercentile;
 	private double eightyPercentile;
