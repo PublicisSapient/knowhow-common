@@ -53,17 +53,6 @@ public interface JobExecutionTraceLogRepository extends MongoRepository<JobExecu
 			Pageable pageable);
 
 	/**
-	 * Find all execution trace logs by processor and job name.
-	 *
-	 * @param processorName
-	 *          the processor name (e.g., "ai-data", "jira")
-	 * @param jobName
-	 *          the job name (e.g., "calculate-kpi-maturity")
-	 * @return list of execution trace logs
-	 */
-	List<JobExecutionTraceLog> findByProcessorNameAndJobName(String processorName, String jobName);
-
-	/**
 	 * Find execution trace log by ID.
 	 *
 	 * @param id
