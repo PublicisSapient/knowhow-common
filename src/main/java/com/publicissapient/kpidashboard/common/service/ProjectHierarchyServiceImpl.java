@@ -26,7 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
@@ -35,11 +34,13 @@ import com.publicissapient.kpidashboard.common.model.application.ProjectBasicCon
 import com.publicissapient.kpidashboard.common.model.application.ProjectHierarchy;
 import com.publicissapient.kpidashboard.common.repository.application.ProjectHierarchyRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ProjectHierarchyServiceImpl implements ProjectHierarchyService {
 
-	@Autowired
-	ProjectHierarchyRepository projectHierarchyRepository;
+	private final ProjectHierarchyRepository projectHierarchyRepository;
 
 	@Override
 	public List<ProjectHierarchy> findAll() {

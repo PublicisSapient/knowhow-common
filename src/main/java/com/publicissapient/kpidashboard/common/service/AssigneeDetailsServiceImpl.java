@@ -18,20 +18,21 @@
 
 package com.publicissapient.kpidashboard.common.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.jira.AssigneeDetails;
 import com.publicissapient.kpidashboard.common.repository.jira.AssigneeDetailsRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author kunkambl Service for AssigneeDetialsRepository
  */
 @Service
+@RequiredArgsConstructor
 public class AssigneeDetailsServiceImpl implements AssigneeDetailsService {
 
-	@Autowired
-	AssigneeDetailsRepository assigneeDetailsRepository;
+	private final AssigneeDetailsRepository assigneeDetailsRepository;
 
 	/**
 	 * Finds the AssigneeDetails by the given basicProjectConfigId.

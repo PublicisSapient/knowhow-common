@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,24 +31,54 @@ import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Repository for {@link TestCaseDetails} with custom methods implementation.
  */
 @Service
+@RequiredArgsConstructor
 public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryCustom {
 
 	private static final String BASIC_PROJ_CONF_ID = "basicProjectConfigId";
 	private static final String NIN = "nin";
 	private static final String TEST_CASE_STATUS = "testCaseStatus";
-	@Autowired
-	private MongoTemplate operations;
 
-	/**
-	 * @param mapOfFilters
-	 * @param criteria
-	 * @return
-	 */
-	private Criteria getCommonFiltersCriteria(Map<String, List<String>> mapOfFilters, Criteria criteria) {
+	private final MongoTemplate operations;
+
+	@Override
+	public List<TestCaseDetails> findTestDetails(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap, String mapStatusCriteria) {
+		Criteria criteria = new Criteria();
+		// map of common filters Project and Sprint
+		criteria = buildCommonFiltersCriteria(mapOfFilters, criteria);
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = buildProjectLevelStoryTypeFilterCriteria(uniqueProjectMap, mapStatusCriteria);
+		Query query = new Query(criteria);
+		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
+			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+
+			query = new Query(criteriaProjectLevelAdded);
+		}
+		return operations.find(query, TestCaseDetails.class);
+	}
+
+	public List<TestCaseDetails> findNonRegressionTestDetails(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap, String mapStatusCriteria) {
+		Criteria criteria = new Criteria();
+		criteria = buildCommonFiltersCriteria(mapOfFilters, criteria);
+		List<Criteria> projectCriteriaList = buildProjectLevelCriteria(uniqueProjectMap, mapStatusCriteria);
+
+		Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+				.andOperator(projectCriteriaList.toArray(new Criteria[0]));
+		Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+		Query query = new Query(criteriaProjectLevelAdded);
+		return operations.find(query, TestCaseDetails.class);
+	}
+
+	private Criteria buildCommonFiltersCriteria(Map<String, List<String>> mapOfFilters, Criteria criteria) {
 		Criteria theCriteria = criteria;
 		for (Map.Entry<String, List<String>> entry : mapOfFilters.entrySet()) {
 			if (CollectionUtils.isNotEmpty(entry.getValue())) {
@@ -59,12 +88,8 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 		return theCriteria;
 	}
 
-	public List<TestCaseDetails> findNonRegressionTestDetails(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, String mapStatusCriteria) {
-		Criteria criteria = new Criteria();
-
-		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
-		// Project level storyType filters
+	private List<Criteria> buildProjectLevelCriteria(Map<String, Map<String, Object>> uniqueProjectMap,
+			String mapStatusCriteria) {
 		List<Criteria> projectCriteriaList = new ArrayList<>();
 		uniqueProjectMap.forEach((project, filterMap) -> {
 			Criteria projectCriteria = new Criteria();
@@ -80,22 +105,11 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 			});
 			projectCriteriaList.add(projectCriteria);
 		});
-
-		Criteria criteriaAggregatedAtProjectLevel = new Criteria()
-				.andOperator(projectCriteriaList.toArray(new Criteria[0]));
-		Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
-		Query query = new Query(criteriaProjectLevelAdded);
-
-		return operations.find(query, TestCaseDetails.class);
+		return projectCriteriaList;
 	}
 
-	@Override
-	public List<TestCaseDetails> findTestDetails(Map<String, List<String>> mapOfFilters,
-			Map<String, Map<String, Object>> uniqueProjectMap, String mapStatusCriteria) {
-		Criteria criteria = new Criteria();
-
-		// map of common filters Project and Sprint
-		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
+	private List<Criteria> buildProjectLevelStoryTypeFilterCriteria(Map<String, Map<String, Object>> uniqueProjectMap,
+			String mapStatusCriteria) {
 		// Project level storyType filters
 		List<Criteria> projectCriteriaList = new ArrayList<>();
 		uniqueProjectMap.forEach((project, filterMap) -> {
@@ -110,16 +124,6 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 			});
 			projectCriteriaList.add(projectCriteria);
 		});
-
-		Query query = new Query(criteria);
-		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
-			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
-					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
-			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
-
-			query = new Query(criteriaProjectLevelAdded);
-		}
-
-		return operations.find(query, TestCaseDetails.class);
+		return projectCriteriaList;
 	}
 }

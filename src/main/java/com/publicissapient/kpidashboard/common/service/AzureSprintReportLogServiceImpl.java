@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.application.dto.SprintRefreshLogDTO;
@@ -32,16 +31,18 @@ import com.publicissapient.kpidashboard.common.model.azure.RefreshAuditDetails;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.common.repository.azure.AzureSprintReportLogRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service class for Azure Sprint Report Log
  *
  * @author shunaray
  */
 @Service
+@RequiredArgsConstructor
 public class AzureSprintReportLogServiceImpl implements AzureSprintReportLogService {
 
-	@Autowired
-	private AzureSprintReportLogRepository azureSprintReportLogRepository;
+	private final AzureSprintReportLogRepository azureSprintReportLogRepository;
 
 	/**
 	 * Save Sprint Refresh Log

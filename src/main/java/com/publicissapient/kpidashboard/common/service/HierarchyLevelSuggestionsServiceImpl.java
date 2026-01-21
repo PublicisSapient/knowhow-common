@@ -6,17 +6,18 @@ import java.util.TreeSet;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.application.HierarchyLevelSuggestion;
 import com.publicissapient.kpidashboard.common.repository.application.HierarchyLevelSuggestionRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class HierarchyLevelSuggestionsServiceImpl implements HierarchyLevelSuggestionsService {
 
-	@Autowired
-	private HierarchyLevelSuggestionRepository hierarchyLevelSuggestionRepository;
+	private final HierarchyLevelSuggestionRepository hierarchyLevelSuggestionRepository;
 
 	@Override
 	public List<HierarchyLevelSuggestion> getSuggestions() {
