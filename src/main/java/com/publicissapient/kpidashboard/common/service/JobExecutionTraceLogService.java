@@ -88,12 +88,16 @@ public interface JobExecutionTraceLogService {
 	boolean isJobCurrentlyRunning(String processorName, String jobName);
 
 	/**
-	 * This method is used for setting to {@code false} the {@code JobExecutionTraceLog.ongoingExecution} parameter
-	 * for all received job names. This operation currently happens only during the ai-data-processor microservice
-	 * start-up to ensure that all jobs are ready to be run afterward
+	 * This method is used for setting to {@code false} the {@code
+	 * JobExecutionTraceLog.ongoingExecution} parameter for all received job names.
+	 * This operation currently happens only during the ai-data-processor
+	 * microservice start-up to ensure that all jobs are ready to be run afterward
 	 *
-	 * @param jobNames set of strings representing the name of the jobs which are taken into account
-	 * @param processorName string representing the name of the processor containing the jobs
+	 * @param jobNames
+	 *          set of strings representing the name of the jobs which are taken
+	 *          into account
+	 * @param processorName
+	 *          string representing the name of the processor containing the jobs
 	 */
 	void resetOngoingExecutions(Set<String> jobNames, String processorName);
 }
