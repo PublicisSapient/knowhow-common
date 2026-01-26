@@ -170,6 +170,7 @@ public class ProductivityCustomRepositoryImpl implements ProductivityCustomRepos
 		List<ProductivityTemporalGrouping> productivityTemporalGroupings =
 				mapResponseToProductivityTemporalGroupingList(response, temporalAggregationUnit);
 
+		// Reversing is required to have the data in an ASC order (oldest -> latest)
 		Collections.reverse(productivityTemporalGroupings);
 		return productivityTemporalGroupings;
 	}
