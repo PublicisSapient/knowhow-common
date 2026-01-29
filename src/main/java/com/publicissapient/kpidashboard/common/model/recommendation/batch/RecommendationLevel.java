@@ -16,6 +16,7 @@
 
 package com.publicissapient.kpidashboard.common.model.recommendation.batch;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,5 +26,6 @@ import lombok.RequiredArgsConstructor;
 public enum RecommendationLevel {
 	PROJECT_LEVEL("project"), KPI_LEVEL("kpi");
 
+	@Schema(description = "Display name of the recommendation level", example = "project")
 	private final String displayName;
 }

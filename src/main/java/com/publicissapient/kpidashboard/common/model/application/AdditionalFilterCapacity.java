@@ -19,6 +19,7 @@ package com.publicissapient.kpidashboard.common.model.application;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -28,7 +29,11 @@ import lombok.Data;
  *         node
  */
 @Data
+@Schema(description = "Additional Filter Capacity Details")
 public class AdditionalFilterCapacity {
+	@Schema(description = "Filter ID", example = "filter123")
 	private String filterId;
+
+	@Schema(description = "List of Leaf Node Capacities")
 	private List<LeafNodeCapacity> nodeCapacityList;
 }
