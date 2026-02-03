@@ -19,6 +19,7 @@ package com.publicissapient.kpidashboard.common.model.userboardconfig;
 
 import com.publicissapient.kpidashboard.common.model.application.KpiMaster;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -27,13 +28,27 @@ import lombok.Data;
  * @author narsingh9
  */
 @Data
+@Schema(description = "Data Transfer Object representing the configuration of KPIs on a user board.")
 public class BoardKpisDTO {
+	@Schema(description = "Unique identifier of the KPI", example = "kpi123")
 	private String kpiId;
+
+	@Schema(description = "Name of the KPI", example = "Velocity")
 	private String kpiName;
+
+	@Schema(description = "Indicates if the KPI is enabled", example = "true")
 	private boolean isEnabled;
+
+	@Schema(description = "Indicates if the KPI is shown", example = "true")
 	private boolean isShown;
+
+	@Schema(description = "Order of the KPI", example = "1")
 	private int order;
+
+	@Schema(description = "Category of the board", example = "Agile")
 	private String subCategoryBoard;
+
+	@Schema(description = "Details of the KPI", implementation = KpiMaster.class)
 	private KpiMaster kpiDetail;
 
 	/**

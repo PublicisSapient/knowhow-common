@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -29,11 +30,23 @@ import lombok.Data;
  * @author yasbano
  */
 @Data
+@Schema(description = "Data Transfer Object representing User Board Configuration")
 public class UserBoardConfigDTO {
+	@Schema(description = "Unique identifier of the User Board Config", example = "60d5ec49f8d2e30f8c8b4567")
 	private ObjectId id;
+
+	@Schema(description = "Username of the user", example = "john.doe")
 	private String username;
+
+	@Schema(description = "Level of configuration", example = "PROJECT")
 	private String basicProjectConfigId;
+
+	@Schema(description = "List of Scrum boards associated with the user", implementation = BoardDTO.class)
 	private List<BoardDTO> scrum;
+
+	@Schema(description = "List of Kanban boards associated with the user", implementation = BoardDTO.class)
 	private List<BoardDTO> kanban;
+
+	@Schema(description = "List of other boards associated with the user", implementation = BoardDTO.class)
 	private List<BoardDTO> others;
 }
