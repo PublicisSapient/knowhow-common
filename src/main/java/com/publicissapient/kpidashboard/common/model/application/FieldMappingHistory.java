@@ -568,11 +568,10 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyaiUsageTypeJiraCustomFieldKPI198;
 	private List<ConfigurationHistoryChangeLog> historyaiEfficiencyGainJiraCustomFieldKPI198;
 
-    private List<ConfigurationHistoryChangeLog> historypriorityP1;
-    private List<ConfigurationHistoryChangeLog> historypriorityP2;
-    private List<ConfigurationHistoryChangeLog> historypriorityP3;
-    private List<ConfigurationHistoryChangeLog> historypriorityP4;
-    private List<ConfigurationHistoryChangeLog> historypriorityP5;
-    private List<ConfigurationHistoryChangeLog> historypriorityMisc;
-
+	private List<ConfigurationHistoryChangeLog> historypriorityP1;
+	private List<ConfigurationHistoryChangeLog> historypriorityP2;
+	private List<ConfigurationHistoryChangeLog> historypriorityP3;
+	private List<ConfigurationHistoryChangeLog> historypriorityP4;
+	private List<ConfigurationHistoryChangeLog> historypriorityP5;
+	private List<ConfigurationHistoryChangeLog> historypriorityMisc;
 }
