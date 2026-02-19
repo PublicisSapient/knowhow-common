@@ -27,14 +27,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -51,14 +50,14 @@ author @shi6
 @ExtendWith(SpringExtension.class)
 public class KanbanJiraIssueRepositoryImplTest {
 	@Mock
-	private MongoOperations mongoOperations;
+	private MongoOperations operations;
 
-	@InjectMocks
 	private KanbanJiraIssueRepositoryImpl kanbanJiraIssueRepository;
 
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
+		kanbanJiraIssueRepository = new KanbanJiraIssueRepositoryImpl(operations);
 	}
 
 	@Test
@@ -69,12 +68,13 @@ public class KanbanJiraIssueRepositoryImplTest {
 		String dateTo = "2022-01-10";
 
 		// Act
-		when(mongoOperations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
+		when(operations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
 				KanbanJiraIssue.builder().issueId("issue1").projectID("projectId1").changeDate("2022-01-05").build(),
 				KanbanJiraIssue.builder().issueId("issue2").projectID("projectId2").changeDate("2022-01-08").build()));
 
-		List<KanbanJiraIssue> result = kanbanJiraIssueRepository
-				.findIssuesByType(Collections.singletonMap("projectId", projectIds), dateFrom, dateTo);
+		Map<String, List<String>> mapOfFilters = new HashMap<>();
+		mapOfFilters.put("basicProjectConfigId", projectIds);
+		List<KanbanJiraIssue> result = kanbanJiraIssueRepository.findIssuesByType(mapOfFilters, dateFrom, dateTo);
 
 		// Assert
 		assertEquals(2, result.size());
@@ -85,48 +85,48 @@ public class KanbanJiraIssueRepositoryImplTest {
 	public void testFindIssuesByDateAndType() {
 		// Arrange
 		List<String> projectIds = Arrays.asList("projectId1", "projectId2");
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("projectId1",
-				Collections.singletonMap("typeName", Arrays.asList(Pattern.compile("Bug"), Pattern.compile("Story"))));
-		String dateFrom = "2022-01-01";
-		String dateTo = "2022-01-10";
-		String dateCriteria = "range";
+		Map<String, List<String>> mapOfFilters = new HashMap<>();
+		mapOfFilters.put("basicProjectConfigId", projectIds);
+
+		Map<String, Object> projectConfig = new HashMap<>();
+		projectConfig.put("typeName", Arrays.asList("Bug", "Story"));
+		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		uniqueProjectMap.put("projectId1", projectConfig);
 
 		// Act
-		when(mongoOperations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
+		when(operations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
 				KanbanJiraIssue.builder().issueId("issue1").projectID("projectId1").changeDate("2022-01-05").build(),
 				KanbanJiraIssue.builder().issueId("issue2").projectID("projectId2").changeDate("2022-01-08").build()));
 
-		List<KanbanJiraIssue> result = kanbanJiraIssueRepository.findIssuesByDateAndType(
-				Collections.singletonMap("projectId", projectIds), uniqueProjectMap, dateFrom, dateTo, dateCriteria);
+		List<KanbanJiraIssue> result = kanbanJiraIssueRepository.findIssuesByDateAndType(mapOfFilters, uniqueProjectMap,
+				"2022-01-01", "2022-01-10", "range");
 
 		// Assert
 		assertEquals(2, result.size());
-		// Add more assertions based on your expectations
 	}
 
 	@Test
 	public void testFindIssuesByDateAndTypeAndStatus() {
 		// Arrange
 		List<String> projectIds = Arrays.asList("projectId1", "projectId2");
-		Map<String, Map<String, Object>> uniqueProjectMap = Collections.singletonMap("projectId1",
-				Collections.singletonMap("typeName", Arrays.asList(Pattern.compile("Bug"), Pattern.compile("Story"))));
-		String dateFrom = "2022-01-01";
-		String dateTo = "2022-01-10";
-		String dateCriteria = "range";
-		String mapStatusCriteria = "nin";
+		Map<String, List<String>> mapOfFilters = new HashMap<>();
+		mapOfFilters.put("basicProjectConfigId", projectIds);
+
+		Map<String, Object> projectConfig = new HashMap<>();
+		projectConfig.put("typeName", Arrays.asList("Bug", "Story"));
+		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		uniqueProjectMap.put("projectId1", projectConfig);
 
 		// Act
-		when(mongoOperations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
+		when(operations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
 				KanbanJiraIssue.builder().issueId("issue1").projectID("projectId1").changeDate("2022-01-05").build(),
 				KanbanJiraIssue.builder().issueId("issue2").projectID("projectId2").changeDate("2022-01-08").build()));
 
-		List<KanbanJiraIssue> result = kanbanJiraIssueRepository.findIssuesByDateAndTypeAndStatus(
-				Collections.singletonMap("projectId", projectIds), uniqueProjectMap, dateFrom, dateTo, dateCriteria,
-				mapStatusCriteria);
+		List<KanbanJiraIssue> result = kanbanJiraIssueRepository.findIssuesByDateAndTypeAndStatus(mapOfFilters,
+				uniqueProjectMap, "2022-01-01", "2022-01-10", "range", "nin");
 
 		// Assert
 		assertEquals(2, result.size());
-		// Add more assertions based on your expectations
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public class KanbanJiraIssueRepositoryImplTest {
 		Map<String, List<String>> mapOfFilters = Collections.singletonMap("typeName", Arrays.asList("Bug", "Story"));
 
 		// Act
-		when(mongoOperations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
+		when(operations.find(any(Query.class), eq(KanbanJiraIssue.class))).thenReturn(Arrays.asList(
 				KanbanJiraIssue.builder().issueId("issue1").projectID("projectId1").changeDate("2022-01-05").build(),
 				KanbanJiraIssue.builder().issueId("issue2").projectID("projectId2").changeDate("2022-01-08").build()));
 
@@ -154,7 +154,7 @@ public class KanbanJiraIssueRepositoryImplTest {
 
 		UpdateResult mock = mock(UpdateResult.class);
 		// Act
-		doReturn(mock).when(mongoOperations).updateMulti(any(Query.class), any(Update.class), eq(KanbanJiraIssue.class));
+		doReturn(mock).when(operations).updateMulti(any(Query.class), any(Update.class), eq(KanbanJiraIssue.class));
 		kanbanJiraIssueRepository.updateByBasicProjectConfigId(basicProjectConfigId, fieldsToUnset);
 	}
 }

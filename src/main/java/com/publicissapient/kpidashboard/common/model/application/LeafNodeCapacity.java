@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.common.model.application; // NOPMD
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +36,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Leaf Node Capacity Details")
 public class LeafNodeCapacity {
+	@Schema(description = "Additional Filter ID", example = "leafFilter123")
 	private String additionalFilterId;
+
+	@Schema(description = "Additional Filter Capacity", example = "75.5")
 	private Double additionalFilterCapacity;
 }

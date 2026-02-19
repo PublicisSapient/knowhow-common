@@ -21,17 +21,18 @@ package com.publicissapient.kpidashboard.common.service;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.jira.ConfigurationTemplateDocument;
 import com.publicissapient.kpidashboard.common.repository.jira.ConfigurationTemplateRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
 
-	@Autowired
-	private ConfigurationTemplateRepository configurationTemplateRepository;
+	private final ConfigurationTemplateRepository configurationTemplateRepository;
 
 	@Override
 	public List<ConfigurationTemplateDocument> getConfigurationTemplate() {

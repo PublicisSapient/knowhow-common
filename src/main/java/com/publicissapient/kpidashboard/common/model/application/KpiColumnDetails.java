@@ -17,6 +17,7 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,10 +25,18 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "KPI Column Details")
 public class KpiColumnDetails {
+	@Schema(description = "Column Name", example = "Velocity")
 	private String columnName;
+
+	@Schema(description = "Order of the Column", example = "1")
 	private int order;
+
+	@Schema(description = "Is the KPI Shown Flag", example = "true")
 	private boolean isShown;
+
+	@Schema(description = "Is the KPI Default Flag", example = "false")
 	private boolean isDefault;
 
 	public boolean getIsShown() {

@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.mongodb.BasicDBList;
@@ -34,6 +33,9 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
 import com.publicissapient.kpidashboard.common.model.scm.CommitDetails;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class CommitRepositoryCustomImpl implements CommitRepositoryCustom {
 
 	private static final String IDENT_SCM_COMMIT_TIMESTAMP = "$commitTimestamp";
@@ -44,16 +46,26 @@ public class CommitRepositoryCustomImpl implements CommitRepositoryCustom {
 	private static final String ID = "_id";
 	private static final String DATE = "date";
 
-	@Autowired
-	private MongoOperations operations;
+	private final MongoOperations operations;
 
-	// currently used for fetching commits list
 	@Override
 	public List<CommitDetails> findCommitList(List<ObjectId> collectorItemIdList, Long startDate, Long endDate,
 			BasicDBList filterList) {
-		List<BasicDBObject> pipeline;
+		List<BasicDBObject> pipeline = buildPipeline(filterList, startDate, endDate);
+		AggregateIterable<Document> cursor = operations.getCollection("commit_details").aggregate(pipeline);
+		MongoCursor<Document> itr = cursor.iterator();
+		List<CommitDetails> returnList = new ArrayList<>();
+		while (itr.hasNext()) {
+			Document obj = itr.next();
+			CommitDetails commitList = operations.getConverter().read(CommitDetails.class, obj);
+			returnList.add(commitList);
+		}
+		return returnList;
+	}
+
+	private List<BasicDBObject> buildPipeline(BasicDBList filterList, Long startDate, Long endDate) {
 		Object[] array = {new Date(0), IDENT_SCM_COMMIT_TIMESTAMP};
-		pipeline = Arrays.asList(
+		return Arrays.asList(
 				new BasicDBObject("$match",
 						new BasicDBObject("$or", filterList).append(SCM_COMMIT_TIMESTAMP,
 								new BasicDBObject("$gte", startDate).append("$lte", endDate))),
@@ -69,14 +81,5 @@ public class CommitRepositoryCustomImpl implements CommitRepositoryCustom {
 				new BasicDBObject(IDENT_PROJECT, new BasicDBObject(ID, 0).append(DATE, "$_id.date")
 						.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1)),
 				new BasicDBObject("$sort", new BasicDBObject(DATE, 1)));
-		AggregateIterable<Document> cursor = operations.getCollection("commit_details").aggregate(pipeline);
-		MongoCursor<Document> itr = cursor.iterator();
-		List<CommitDetails> returnList = new ArrayList<>();
-		while (itr.hasNext()) {
-			Document obj = itr.next();
-			CommitDetails commitList = operations.getConverter().read(CommitDetails.class, obj);
-			returnList.add(commitList);
-		}
-		return returnList;
 	}
 }

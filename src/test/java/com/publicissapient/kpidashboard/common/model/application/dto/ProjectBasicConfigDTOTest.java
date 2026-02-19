@@ -122,7 +122,7 @@ public class ProjectBasicConfigDTOTest {
 		ObjectId id = ObjectId.get();
 		ProjectBasicConfigDTO actualProjectBasicConfigDTO = new ProjectBasicConfigDTO(id, "projectUniqueId", "Project Name",
 				"Project Display Name", "Jan 1, 2020 8:00am GMT+0100", "", "2020-03-01", "", "Jan 1, 2020 8:00am GMT+0100",
-				true, new ArrayList<>(), true, true, false, new ObjectId());
+				true, new ArrayList<>(), true, true, false, 5, new ObjectId());
 		actualProjectBasicConfigDTO.setConsumerCreatedOn("Jan 1, 2020 8:00am GMT+0100");
 		actualProjectBasicConfigDTO.setCreatedAt("Jan 1, 2020 8:00am GMT+0100");
 		ArrayList<HierarchyValueDTO> hierarchyValueDTOList = new ArrayList<>();
@@ -206,7 +206,7 @@ public class ProjectBasicConfigDTOTest {
 		ObjectId id = ObjectId.get();
 		ProjectBasicConfigDTO projectBasicConfigDTO = new ProjectBasicConfigDTO(id, "projectUniqueId", "Project Name",
 				"Project Display Name", "Jan 1, 2020 8:00am GMT+0100", "user1", "2020-03-01", "user1",
-				"Jan 1, 2020 8:00am GMT+0100", true, new ArrayList<>(), true, true, true, new ObjectId());
+				"Jan 1, 2020 8:00am GMT+0100", true, new ArrayList<>(), true, true, true, 5, new ObjectId());
 		assertNotEquals(projectBasicConfigDTO, new ProjectBasicConfigDTO());
 	}
 

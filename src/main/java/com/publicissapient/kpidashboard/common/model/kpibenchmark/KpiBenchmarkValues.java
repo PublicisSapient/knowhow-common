@@ -19,7 +19,6 @@ package com.publicissapient.kpidashboard.common.model.kpibenchmark;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;

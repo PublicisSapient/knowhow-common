@@ -20,10 +20,10 @@ package com.publicissapient.kpidashboard.common.feature;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.togglz.core.manager.FeatureManager;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,10 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class FeaturesAspect {
 
-	@Autowired
-	FeatureManager manager;
+	private final FeatureManager manager;
 
 	@Around("@within(featureAssociation) || @annotation(featureAssociation)")
 	public Object checkAspect(ProceedingJoinPoint joinPoint, FeatureAssociation featureAssociation) throws Throwable {

@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
@@ -22,6 +21,9 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
 import com.publicissapient.kpidashboard.common.model.scm.MergeRequests;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class MergeRequestRepositoryCustomImpl implements MergeRequestRepositoryCustom {
 
 	private static final String IDENT_CREATED_DATE = "$createdDate";
@@ -32,33 +34,14 @@ public class MergeRequestRepositoryCustomImpl implements MergeRequestRepositoryC
 	private static final String ID = "_id";
 	private static final String DATE = "date";
 	private static final String SCM_MERGED_TIMESTAMP = "closedDate";
-
 	private static final String MERGE_REQUESTS = "merge_requests";
-	@Autowired
-	private MongoOperations operations;
+
+	private final MongoOperations operations;
 
 	@Override
 	public List<MergeRequests> findMergeList(List<ObjectId> collectorItemIdList, Long startDate, Long endDate,
 			BasicDBList filterList) {
-		List<BasicDBObject> pipeline;
-		Object[] array = {new Date(0), IDENT_CREATED_DATE};
-		pipeline = Arrays.asList(
-				new BasicDBObject("$match",
-						new BasicDBObject("$or", filterList).append(SCM_CREATED_DATE,
-								new BasicDBObject("$gte", startDate).append("$lte", endDate))),
-				new BasicDBObject(IDENT_PROJECT,
-						new BasicDBObject(SCM_CREATED_DATE, new BasicDBObject("$add", array)).append(PROCESSOR_ITEM_ID, 1)),
-				new BasicDBObject("$group",
-						new BasicDBObject(ID,
-								new BasicDBObject(DATE,
-										new BasicDBObject("$dateToString",
-												new BasicDBObject("format", "%Y-%m-%d").append(DATE, IDENT_CREATED_DATE)))
-										.append(PROCESSOR_ITEM_ID, "$processorItemId"))
-								.append(COUNT, new BasicDBObject("$sum", 1))),
-				new BasicDBObject(IDENT_PROJECT, new BasicDBObject(ID, 0).append(DATE, "$_id.date")
-						.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1)),
-				new BasicDBObject("$sort", new BasicDBObject(DATE, 1)));
-
+		List<BasicDBObject> pipeline = buildPipeline(filterList, startDate, endDate);
 		AggregateIterable<Document> cursor = operations.getCollection(MERGE_REQUESTS).aggregate(pipeline);
 		MongoCursor<Document> itr = cursor.iterator();
 		List<MergeRequests> returnList = new ArrayList<>();
@@ -118,5 +101,25 @@ public class MergeRequestRepositoryCustomImpl implements MergeRequestRepositoryC
 
 		return operations.aggregate(aggregation, MERGE_REQUESTS, MergeRequests.class).getMappedResults();
 		// add to index
+	}
+
+	private List<BasicDBObject> buildPipeline(BasicDBList filterList, Long startDate, Long endDate) {
+		Object[] array = {new Date(0), IDENT_CREATED_DATE};
+		return Arrays.asList(
+				new BasicDBObject("$match",
+						new BasicDBObject("$or", filterList).append(SCM_CREATED_DATE,
+								new BasicDBObject("$gte", startDate).append("$lte", endDate))),
+				new BasicDBObject(IDENT_PROJECT,
+						new BasicDBObject(SCM_CREATED_DATE, new BasicDBObject("$add", array)).append(PROCESSOR_ITEM_ID, 1)),
+				new BasicDBObject("$group",
+						new BasicDBObject(ID,
+								new BasicDBObject(DATE,
+										new BasicDBObject("$dateToString",
+												new BasicDBObject("format", "%Y-%m-%d").append(DATE, IDENT_CREATED_DATE)))
+										.append(PROCESSOR_ITEM_ID, "$processorItemId"))
+								.append(COUNT, new BasicDBObject("$sum", 1))),
+				new BasicDBObject(IDENT_PROJECT, new BasicDBObject(ID, 0).append(DATE, "$_id.date")
+						.append(PROCESSOR_ITEM_ID, "$_id.processorItemId").append(COUNT, 1)),
+				new BasicDBObject("$sort", new BasicDBObject(DATE, 1)));
 	}
 }

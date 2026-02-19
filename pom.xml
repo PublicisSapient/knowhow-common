@@ -19,7 +19,7 @@
   </parent>
   <groupId>com.publicissapient.kpidashboard</groupId>
   <artifactId>common</artifactId>
-  <version>15.1.0-SNAPSHOT</version>
+  <version>16.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Common package used by all microservices</description>
   <scm>
@@ -436,6 +436,12 @@
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations-jakarta</artifactId>
+      <version>2.2.19</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>
@@ -521,6 +527,12 @@
                 <include>**/*.yml</include>
                 <include>**/*.yaml</include>
               </includes>
+              <excludes>
+                <exclude>**/target/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/.git/**</exclude>
+                <exclude>.github/workflows/**</exclude>
+              </excludes>
               <prettier>
                 <configFile>${project.basedir}/.prettierrc</configFile>
               </prettier>
@@ -533,6 +545,9 @@
                 <exclude>eclipse-formatter-config.xml</exclude>
                 <exclude>pom.xml</exclude>
                 <exclude>**/.idea/**</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/.git/**</exclude>
               </excludes>
               <indent>
                 <spaces>true</spaces>
