@@ -31,6 +31,18 @@ public enum FeatureEnum implements Feature {
 	DAILY_STANDUP,
 
 	@EnabledByDefault
+	@Label("Home Tab")
+	HOME_TAB,
+
+	@EnabledByDefault
+	@Label("Potential Economic Benifits")
+	PEB,
+
+	@EnabledByDefault
+	@Label("Ask Me")
+	ASK_ME,
+
+	@EnabledByDefault
 	@Label("Google Analytics")
 	GOOGLE_ANALYTICS, @EnabledByDefault
 	@Label("Recommendations")
