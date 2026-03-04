@@ -46,7 +46,7 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	 *          the userEmail
 	 * @return the UserInfo
 	 */
-	UserInfo findByUserEmail(String userEmail);
+	UserInfo findByEmailAddress(String userEmail);
 
 	/**
 	 * Finds by username and auth type.
