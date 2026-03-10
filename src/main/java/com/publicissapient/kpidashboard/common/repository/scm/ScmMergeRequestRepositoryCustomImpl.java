@@ -20,6 +20,7 @@ package com.publicissapient.kpidashboard.common.repository.scm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -50,6 +51,20 @@ public class ScmMergeRequestRepositoryCustomImpl implements ScmMergeRequestRepos
 		List<BasicDBObject> pipeline = buildPipeline(filterList, startDate, endDate);
 
 		try (MongoCursor<Document> cursor = operations.getCollection(SCM_MERGE_REQUESTS_COLLECTION).aggregate(pipeline)
+				.iterator()) {
+			return mapMergeRequests(cursor);
+		}
+	}
+
+	@Override
+	public List<ScmMergeRequests> findMergeRequestListBasedOnBasicProjectConfigId(BasicDBList filterList,
+			List<Pattern> fromBranches, String toBranch) {
+
+		List<BasicDBObject> buildPipeline = List.of(new BasicDBObject("$match",
+				new BasicDBObject("$or", filterList).append("fromBranch", new BasicDBObject("$in", fromBranches))
+						.append("toBranch", new BasicDBObject("$eq", toBranch))
+						.append("state", new BasicDBObject("$eq", "MERGED"))));
+		try (MongoCursor<Document> cursor = operations.getCollection(SCM_MERGE_REQUESTS_COLLECTION).aggregate(buildPipeline)
 				.iterator()) {
 			return mapMergeRequests(cursor);
 		}

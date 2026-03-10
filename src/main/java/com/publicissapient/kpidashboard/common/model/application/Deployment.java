@@ -1,5 +1,6 @@
 package com.publicissapient.kpidashboard.common.model.application;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.bson.types.ObjectId;
@@ -40,6 +41,8 @@ public class Deployment extends BasicModel {
 	private String number;
 	private String createdAt;
 	private String updatedTime;
+	private List<String> changeSets;
+	private String tool;
 
 	@Override
 	public boolean equals(Object o) {
