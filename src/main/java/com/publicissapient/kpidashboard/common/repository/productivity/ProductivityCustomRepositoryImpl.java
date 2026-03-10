@@ -124,51 +124,30 @@ public class ProductivityCustomRepositoryImpl implements ProductivityCustomRepos
 	@Override
 	public List<ProductivityTemporalGrouping> getProductivitiesGroupedByTemporalUnit(Set<String> hierarchyNodeIds,
 			TemporalAggregationUnit temporalAggregationUnit, int limit) {
-		ProjectionOperation projectOperation = Aggregation.project(
-				"_id",
-				CALCULATION_DATE_FIELD_NAME,
-				HIERARCHY_ENTITY_NODE_ID_FIELD_NAME,
-				"categoryScores"
-		).andExpression(
-				"{ $dateTrunc: { date: '$calculationDate', unit: '"
-						+ temporalAggregationUnit.getUnit()
-						+ "', timezone: 'UTC' } }"
-		).as("truncatedDate");
+		ProjectionOperation projectOperation = Aggregation
+				.project("_id", CALCULATION_DATE_FIELD_NAME, HIERARCHY_ENTITY_NODE_ID_FIELD_NAME, "categoryScores")
+				.andExpression("{ $dateTrunc: { date: '$calculationDate', unit: '" + temporalAggregationUnit
+						.getUnit() + "', timezone: 'UTC' } }")
+				.as("truncatedDate");
 
 		AggregationOperation groupOperation = context -> new Document("$group",
-				new Document("_id",
-						new Document(temporalAggregationUnit.getUnit(), "$truncatedDate")
-				).append(ENTRIES,
+				new Document("_id", new Document(temporalAggregationUnit.getUnit(), "$truncatedDate")).append(ENTRIES,
 						new Document("$push",
-								new Document(CALCULATION_DATE_FIELD_NAME, "$calculationDate")
-										.append("_id", "$_id")
+								new Document(CALCULATION_DATE_FIELD_NAME, "$calculationDate").append("_id", "$_id")
 										.append(HIERARCHY_ENTITY_NODE_ID_FIELD_NAME, "$" + HIERARCHY_ENTITY_NODE_ID_FIELD_NAME)
-										.append("categoryScores", "$categoryScores")
-						)
-				)
-		);
+										.append("categoryScores", "$categoryScores"))));
 
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(
-						Criteria.where(HIERARCHY_ENTITY_NODE_ID_FIELD_NAME).in(hierarchyNodeIds)
-				),
-				projectOperation,
-				groupOperation,
-				Aggregation.sort(
-						Sort.Direction.DESC,
-						"_id." + temporalAggregationUnit.getUnit()
-				),
-				Aggregation.limit(limit)
-		).withOptions(AggregationOptions.builder()
-				.allowDiskUse(true)
-				.build());
+		Aggregation aggregation = Aggregation
+				.newAggregation(Aggregation.match(Criteria.where(HIERARCHY_ENTITY_NODE_ID_FIELD_NAME).in(hierarchyNodeIds)),
+						projectOperation, groupOperation,
+						Aggregation.sort(Sort.Direction.DESC, "_id." + temporalAggregationUnit.getUnit()), Aggregation.limit(limit))
+				.withOptions(AggregationOptions.builder().allowDiskUse(true).build());
 
-		List<Map> response = mongoTemplate
-				.aggregate(aggregation, COLLECTION_NAME_PRODUCTIVITY, Map.class)
+		List<Map> response = mongoTemplate.aggregate(aggregation, COLLECTION_NAME_PRODUCTIVITY, Map.class)
 				.getMappedResults();
 
-		List<ProductivityTemporalGrouping> productivityTemporalGroupings =
-				mapResponseToProductivityTemporalGroupingList(response, temporalAggregationUnit);
+		List<ProductivityTemporalGrouping> productivityTemporalGroupings = mapResponseToProductivityTemporalGroupingList(
+				response, temporalAggregationUnit);
 
 		// Reversing is required to have the data in an ASC order (oldest -> latest)
 		Collections.reverse(productivityTemporalGroupings);
