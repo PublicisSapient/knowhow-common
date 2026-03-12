@@ -359,13 +359,17 @@ public class DateUtil {
 	public static String convertDoubleToDaysAndHoursString(double valueInDays) {
 		// Extract the integer part as days
 		String result = "";
-		if (valueInDays > 0) {
+		if (valueInDays >= 0) {
 			int daysPart = (int) valueInDays;
 
 			// Calculate the remaining fractional part as hours and minutes
 			double fractionalPart = (valueInDays - daysPart) * 8;
 			int hoursPart = (int) fractionalPart;
-			int minutesPart = (int) ((fractionalPart - hoursPart) * 60);
+			double minutes = (fractionalPart - hoursPart) * 60;
+			int minutesPart = (int) minutes;
+			if (minutes - minutesPart > 0) {
+				minutesPart++;
+			}
 
 			if (daysPart > 0) {
 				result = daysPart + " Days ";
