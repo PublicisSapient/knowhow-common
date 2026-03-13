@@ -353,6 +353,31 @@ public class DateUtil {
 	}
 
 	/**
+	 * @param minutes
+	 * @return
+	 */
+	public static String convertMinutesToDaysAndHoursString(long minutes) {
+		if (minutes < 0) {
+			return " ";
+		}
+		long days = minutes / 1440;
+		long hours = (minutes % 1440) / 60;
+		long mins = minutes % 60;
+
+		String result = "";
+		if (days > 0) {
+			result = days + " Days ";
+		}
+		if (hours > 0) {
+			result += hours + " Hours ";
+		}
+		if (mins > 0 && days == 0) {
+			result += mins + " Min";
+		}
+		return result.isEmpty() ? "0 Min" : result;
+	}
+
+	/**
 	 * @param valueInDays
 	 * @return
 	 */
