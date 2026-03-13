@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 Sapient Corporation
+ *  Copyright 2024 <Sapient Corporation>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  *  License.
  */
 
-package com.publicissapient.kpidashboard.common.model.recommendation.batch;
+package com.publicissapient.kpidashboard.common.repository.tracelog;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import java.util.Set;
 
-/** Defines whether recommendations are at project or KPI level. */
-@Getter
-@RequiredArgsConstructor
-public enum RecommendationLevel {
-	PROJECT_LEVEL("project"), KPI_LEVEL("kpi");
+public interface JobExecutionTraceLogCustomRepository {
 
-	@Schema(description = "Display name of the recommendation level", example = "project")
-	private final String displayName;
+	void updateJobExecutionOngoing(Set<String> jobNames, String processorName, boolean executionOngoing);
 }

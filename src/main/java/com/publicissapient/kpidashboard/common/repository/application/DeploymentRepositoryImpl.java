@@ -72,7 +72,7 @@ public class DeploymentRepositoryImpl implements DeploymentRepositoryCustom {
 			return criteria;
 		}
 		for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
-			if (CollectionUtils.isNotEmpty(entry.getValue())) {
+			if (!FIELD_BASIC_PROJECT_CONFIG_ID.equals(entry.getKey()) && CollectionUtils.isNotEmpty(entry.getValue())) {
 				criteria = criteria.and(entry.getKey()).in(entry.getValue());
 			}
 		}

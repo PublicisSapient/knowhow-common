@@ -585,6 +585,14 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String aiEfficiencyGainJiraCustomFieldKPI198;
 	private String aiUsageTypeJiraCustomFieldKPI198;
 
+	// Priority Mapping Fields
+	private List<String> priorityP1;
+	private List<String> priorityP2;
+	private List<String> priorityP3;
+	private List<String> priorityP4;
+	private List<String> priorityP5;
+	private List<String> priorityMisc;
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *

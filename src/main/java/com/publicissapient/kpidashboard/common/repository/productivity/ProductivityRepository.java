@@ -16,12 +16,30 @@
 
 package com.publicissapient.kpidashboard.common.repository.productivity;
 
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.productivity.calculation.Productivity;
 
 @Repository
 public interface ProductivityRepository extends MongoRepository<Productivity, ObjectId> {
+	List<Productivity> findByHierarchyEntityName(String entityName);
+
+	@Query(value = "{'hierarchyEntityName': ?0}", fields = "{'hierarchyEntityName': 1, 'hierarchyLevelId': 1, 'categoryScores': 1}")
+	List<Productivity> findCategoryScoresByHierarchyEntityName(String hierarchyEntity);
+
+	@Query(value = "{'hierarchyEntityName': ?0}", fields = "{'hierarchyEntityName': 1, 'hierarchyLevelId': 1, 'kpis': 1, 'calculationDate': 1}")
+	List<Productivity> findKpiDataPointsByHierarchyEntityName(String hierarchyEntity);
+
+	@Query(value = "{'hierarchyEntityName': ?0}", fields = "{'hierarchyEntityName': 1, 'hierarchyLevelId': 1, 'kpis': 1, 'calculationDate': 1}", sort = "{'calculationDate': -1}")
+	Productivity findLatestKpiDataPointsByHierarchyEntityName(String hierarchyEntity);
+
+	@Query(value = "{'hierarchyEntityName': ?0}", fields = "{'hierarchyEntityName': 1, 'hierarchyLevelId': 1, 'categoryScores': 1}", sort = "{'calculationDate': -1}")
+	Productivity findLatestCategoryScoresByHierarchyEntityName(String hierarchyEntity);
+
+	Productivity findFirstByHierarchyEntityNameOrderByCalculationDateDesc(String hierarchyEntity);
 }

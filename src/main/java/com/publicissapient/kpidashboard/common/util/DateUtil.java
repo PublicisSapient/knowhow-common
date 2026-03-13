@@ -353,19 +353,48 @@ public class DateUtil {
 	}
 
 	/**
+	 * @param minutes
+	 * @return
+	 */
+	public static String convertMinutesToDaysAndHoursString(long minutes) {
+		if (minutes < 0) {
+			return " ";
+		}
+		long days = minutes / 1440;
+		long hours = (minutes % 1440) / 60;
+		long mins = minutes % 60;
+
+		String result = "";
+		if (days > 0) {
+			result = days + " Days ";
+		}
+		if (hours > 0) {
+			result += hours + " Hours ";
+		}
+		if (mins > 0 && days == 0) {
+			result += mins + " Min";
+		}
+		return result.isEmpty() ? "0 Min" : result;
+	}
+
+	/**
 	 * @param valueInDays
 	 * @return
 	 */
 	public static String convertDoubleToDaysAndHoursString(double valueInDays) {
 		// Extract the integer part as days
 		String result = "";
-		if (valueInDays > 0) {
+		if (valueInDays >= 0) {
 			int daysPart = (int) valueInDays;
 
 			// Calculate the remaining fractional part as hours and minutes
 			double fractionalPart = (valueInDays - daysPart) * 8;
 			int hoursPart = (int) fractionalPart;
-			int minutesPart = (int) ((fractionalPart - hoursPart) * 60);
+			double minutes = (fractionalPart - hoursPart) * 60;
+			int minutesPart = (int) minutes;
+			if (minutes - minutesPart > 0) {
+				minutesPart++;
+			}
 
 			if (daysPart > 0) {
 				result = daysPart + " Days ";

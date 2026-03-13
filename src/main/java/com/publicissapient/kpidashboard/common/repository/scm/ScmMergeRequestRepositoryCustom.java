@@ -18,6 +18,7 @@
 package com.publicissapient.kpidashboard.common.repository.scm;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.mongodb.BasicDBList;
 import com.publicissapient.kpidashboard.common.model.scm.ScmMergeRequests;
@@ -42,4 +43,7 @@ public interface ScmMergeRequestRepositoryCustom {
 	 * @return A list of {@link ScmMergeRequests} matching the specified criteria.
 	 */
 	List<ScmMergeRequests> findMergeList(Long startDate, Long endDate, BasicDBList filterList);
+
+	List<ScmMergeRequests> findMergeRequestListBasedOnBasicProjectConfigId(BasicDBList filterList,
+			List<Pattern> fromBranches, String toBranch);
 }

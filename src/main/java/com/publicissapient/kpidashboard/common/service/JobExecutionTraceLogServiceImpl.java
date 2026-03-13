@@ -20,6 +20,7 @@ package com.publicissapient.kpidashboard.common.service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.common.model.tracelog.JobExecutionTraceLog;
+import com.publicissapient.kpidashboard.common.repository.tracelog.JobExecutionTraceLogCustomRepositoryImpl;
 import com.publicissapient.kpidashboard.common.repository.tracelog.JobExecutionTraceLogRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogService {
 
 	private final JobExecutionTraceLogRepository jobExecutionTraceLogRepository;
+	private final JobExecutionTraceLogCustomRepositoryImpl jobExecutionTraceLogCustomRepository;
 
 	@Override
 	public JobExecutionTraceLog createProcessorJobExecution(String processorName, String jobName) {
@@ -78,5 +81,10 @@ public class JobExecutionTraceLogServiceImpl implements JobExecutionTraceLogServ
 	public boolean isJobCurrentlyRunning(String processorName, String jobName) {
 		List<JobExecutionTraceLog> executionTraceLogs = findLastExecutionsByProcessorAndJobName(processorName, jobName, 1);
 		return CollectionUtils.isNotEmpty(executionTraceLogs) && executionTraceLogs.get(0).isExecutionOngoing();
+	}
+
+	@Override
+	public void resetOngoingExecutions(Set<String> jobNames, String processorName) {
+		this.jobExecutionTraceLogCustomRepository.updateJobExecutionOngoing(jobNames, processorName, false);
 	}
 }
