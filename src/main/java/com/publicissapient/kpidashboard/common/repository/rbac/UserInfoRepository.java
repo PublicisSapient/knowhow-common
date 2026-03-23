@@ -90,8 +90,6 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	 */
 	void deleteByUsername(String userName);
 
-	void deleteByUsernameAndEmailAddress(String username, String emailAddress);
-
 	/**
 	 * Find by authType and authorities in
 	 *
