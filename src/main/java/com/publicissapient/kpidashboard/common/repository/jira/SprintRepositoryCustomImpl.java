@@ -78,8 +78,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
 
-		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage, unwindStage,
-				replaceRootStage);
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage);
 
 		return operations.aggregate(aggregation, SPRINT_DETAILS, SprintDetails.class).getMappedResults();
 	}
@@ -87,8 +87,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	@Override
 	public List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(List<ObjectId> basicProjectConfigIds,
 			int limit) {
-		MatchOperation matchStage = Aggregation.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds)
-				.and(COMPLETE_DATE).ne(null));
+		MatchOperation matchStage = Aggregation
+				.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(COMPLETE_DATE).ne(null));
 
 		ProjectionOperation projectFields = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
 				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE, ADDED_ISSUES,
@@ -104,8 +104,8 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
 
-		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage, unwindStage,
-				replaceRootStage);
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage);
 
 		return operations.aggregate(aggregation, SPRINT_DETAILS, SprintDetails.class).getMappedResults();
 	}

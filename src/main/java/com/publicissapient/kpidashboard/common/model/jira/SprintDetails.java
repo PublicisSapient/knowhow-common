@@ -43,9 +43,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Document(collection = "sprint_details")
 @CompoundIndexes({
-	@CompoundIndex(name = "project_complete_date_idx", def = "{'basicProjectConfigId': 1, 'completeDate': -1}"),
-	@CompoundIndex(name = "project_state_end_date_idx", def = "{'basicProjectConfigId': 1, 'state': 1, 'endDate': -1}")
-})
+		@CompoundIndex(name = "project_complete_date_idx", def = "{'basicProjectConfigId': 1, 'completeDate': -1}"),
+		@CompoundIndex(name = "project_state_end_date_idx", def = "{'basicProjectConfigId': 1, 'state': 1, 'endDate': -1}")})
 public class SprintDetails extends BasicModel implements Cloneable, Serializable {
 
 	public static final String SPRINT_STATE_CLOSED = "CLOSED";
