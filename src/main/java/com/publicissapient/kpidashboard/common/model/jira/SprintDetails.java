@@ -27,6 +27,8 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -40,6 +42,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "sprint_details")
+@CompoundIndexes({
+	@CompoundIndex(name = "project_complete_date_idx", def = "{'basicProjectConfigId': 1, 'completeDate': -1}"),
+	@CompoundIndex(name = "project_state_end_date_idx", def = "{'basicProjectConfigId': 1, 'state': 1, 'endDate': -1}")
+})
 public class SprintDetails extends BasicModel implements Cloneable, Serializable {
 
 	public static final String SPRINT_STATE_CLOSED = "CLOSED";
