@@ -43,6 +43,7 @@ public class Deployment extends BasicModel {
 	private String updatedTime;
 	private List<String> changeSets;
 	private String tool;
+	private String repoUrl;
 
 	@Override
 	public boolean equals(Object o) {
