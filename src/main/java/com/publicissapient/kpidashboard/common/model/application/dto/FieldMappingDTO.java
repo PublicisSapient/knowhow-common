@@ -561,6 +561,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 
 	private List<String> issueTypesToConsiderKpi113;
 	private List<String> closedIssueStatusToConsiderKpi113;
+	private List<String> closedIssueStatusToConsiderKpi114;
 
 	private boolean includeActiveSprintInBacklogKPI;
 
