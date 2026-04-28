@@ -272,7 +272,12 @@ public class ScmCommits extends BasicModel {
 	}
 
 	public Integer getChangedLines() {
-		return this.addedLines + this.removedLines;
+		int total = 0;
+		if (addedLines != null)
+			total += addedLines;
+		if (removedLines != null)
+			total += removedLines;
+		return total;
 	}
 
 	public void setChangedLines(Integer changedLines) {
