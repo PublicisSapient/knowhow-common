@@ -18,22 +18,23 @@
 
 package com.publicissapient.kpidashboard.common.repository.excel;
 
-import java.util.List;
-import java.util.Map;
-
+import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
+import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
-import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
-
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /** Repository implementation for Kanban capacity operations. */
 @RequiredArgsConstructor
@@ -73,7 +74,12 @@ public class KanbanCapacityRepositoryImpl implements KanbanCapacityRepoCustom {
 			String key = entry.getKey();
 			if (ObjectUtils.isNotEmpty(entry.getValue()) && !key.equalsIgnoreCase(ADDITIONAL_FILTER_NODE_ID) && !key
 					.equalsIgnoreCase(ADDITIONAL_FILTER_ID)) {
-				criteria = criteria.and(key).in(entry.getValue());
+				Object value = entry.getValue();
+				if (value instanceof Collection<?> col) {
+					criteria = criteria.and(key).in(col);
+				} else {
+					criteria = criteria.and(key).is(value);
+				}
 			}
 		}
 		return criteria;
@@ -89,14 +95,19 @@ public class KanbanCapacityRepositoryImpl implements KanbanCapacityRepoCustom {
 	}
 
 	private Criteria applyDateRangeFilter(Criteria criteria, String dateFrom, String dateTo) {
-		DateTime startDateTime = DateTimeFormat.forPattern(DATE_PATTERN).parseDateTime(dateFrom).withTime(0, 0, 0, 0);
-		DateTime endDateTime = DateTimeFormat.forPattern(DATE_PATTERN).parseDateTime(dateTo).withTime(0, 0, 0, 0);
-		return criteria.and(START_DATE).lte(endDateTime).and(END_DATE).gte(startDateTime);
+		Date startDate = toUtcMidnightDate(dateFrom);
+		Date endDate = toUtcMidnightDate(dateTo);
+		return criteria.and(START_DATE).lte(endDate).and(END_DATE).gte(startDate);
 	}
 
 	private Criteria applySingleDateFilter(Criteria criteria, String dateFrom) {
-		DateTime startDateTime = DateTimeFormat.forPattern(DATE_PATTERN).parseDateTime(dateFrom).withTime(0, 0, 0, 0);
-		return criteria.and(START_DATE).lte(startDateTime).and(END_DATE).gte(startDateTime);
+		Date date = toUtcMidnightDate(dateFrom);
+		return criteria.and(START_DATE).lte(date).and(END_DATE).gte(date);
+	}
+
+	private Date toUtcMidnightDate(String dateStr) {
+		return Date.from(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_PATTERN))
+				.atStartOfDay(ZoneOffset.UTC).toInstant());
 	}
 
 	private void processAdditionalFilters(List<KanbanCapacity> kanbanCapacityList, Map<String, Object> filters) {

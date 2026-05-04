@@ -57,4 +57,7 @@ public interface KanbanJiraIssueHistoryRepository
 	void deleteByBasicProjectConfigId(String projectID);
 
 	List<KanbanIssueCustomHistory> findByBasicProjectConfigId(String basicProjectConfigId);
+
+	List<KanbanIssueCustomHistory> findByStoryIDInAndBasicProjectConfigIdIn(List<String> storyID,
+			List<String> basicProjectConfigId);
 }

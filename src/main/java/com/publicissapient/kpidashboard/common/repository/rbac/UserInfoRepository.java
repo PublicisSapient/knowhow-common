@@ -50,6 +50,30 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	UserInfo findByEmailAddress(String userEmail);
 
 	/**
+	 * Find by username and email address nd authType UserInfo.
+	 *
+	 * @param username
+	 *          the username
+	 * @param userEmail
+	 *          the userEmail
+	 * @param authType
+	 *          the authType
+	 * @return the UserInfo
+	 */
+	UserInfo findByUsernameAndEmailAddressAndAuthType(String username, String userEmail, String authType);
+
+	/**
+	 * Find by username and email address UserInfo.
+	 *
+	 * @param username
+	 *          the username
+	 * @param userEmail
+	 *          the userEmail
+	 * @return the UserInfo
+	 */
+	UserInfo findByUsernameAndEmailAddress(String username, String userEmail);
+
+	/**
 	 * Finds by username and auth type.
 	 *
 	 * @param username
@@ -89,6 +113,8 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	 * @param userName
 	 */
 	void deleteByUsername(String userName);
+
+	void deleteByUsernameAndEmailAddress(String username, String emailAddress);
 
 	/**
 	 * Find by authType and authorities in

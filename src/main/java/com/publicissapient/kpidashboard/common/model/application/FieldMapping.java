@@ -565,6 +565,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> issueTypesToConsiderKpi113;
 	private List<String> closedIssueStatusToConsiderKpi113;
+	private List<String> closedIssueStatusToConsiderKpi114;
 
 	// production defect ageing status to consider
 	private List<String> jiraStatusToConsiderKPI127;

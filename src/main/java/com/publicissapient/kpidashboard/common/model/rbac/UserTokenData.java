@@ -40,6 +40,7 @@ import lombok.Setter;
 public class UserTokenData extends BasicModel {
 
 	private String userName;
+	private String email;
 	private String userToken;
 	private String expiryDate;
 }

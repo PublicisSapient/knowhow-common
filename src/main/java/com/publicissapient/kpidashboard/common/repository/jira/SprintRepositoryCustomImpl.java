@@ -65,6 +65,9 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 		MatchOperation matchStage = Aggregation
 				.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(STATE).in(sprintStatusList));
 
+		ProjectionOperation projectFields = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
+				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE);
+
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, END_DATE);
 
 		GroupOperation groupStage = Aggregation.group(BASIC_PROJECT_CONFIG_ID).push("$$ROOT").as(SPRINTS);
@@ -74,11 +77,9 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 		UnwindOperation unwindStage = Aggregation.unwind(SPRINTS);
 
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
-		ProjectionOperation projectStage = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
-				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE);
 
-		Aggregation aggregation = Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage,
-				replaceRootStage, projectStage);
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage);
 
 		return operations.aggregate(aggregation, SPRINT_DETAILS, SprintDetails.class).getMappedResults();
 	}
@@ -86,7 +87,12 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 	@Override
 	public List<SprintDetails> findByBasicProjectConfigIdInOrderByCompletedDateDesc(List<ObjectId> basicProjectConfigIds,
 			int limit) {
-		MatchOperation matchStage = Aggregation.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds));
+		MatchOperation matchStage = Aggregation
+				.match(Criteria.where(BASIC_PROJECT_CONFIG_ID).in(basicProjectConfigIds).and(COMPLETE_DATE).ne(null));
+
+		ProjectionOperation projectFields = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
+				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE, ADDED_ISSUES,
+				PUNTED_ISSUES);
 
 		SortOperation sortStage = Aggregation.sort(Sort.Direction.DESC, COMPLETE_DATE);
 
@@ -97,12 +103,9 @@ public class SprintRepositoryCustomImpl implements SprintRepositoryCustom {
 		UnwindOperation unwindStage = Aggregation.unwind(SPRINTS);
 
 		ReplaceRootOperation replaceRootStage = Aggregation.replaceRoot(SPRINTS);
-		ProjectionOperation projectStage = Aggregation.project(SPRINT_ID, BASIC_PROJECT_CONFIG_ID, NOT_COMPLETED_ISSUES,
-				COMPLETED_ISSUES, SPRINT_NAME, START_DATE, END_DATE, COMPLETE_DATE, TOTAL_ISSUES, STATE, ADDED_ISSUES,
-				PUNTED_ISSUES);
 
-		Aggregation aggregation = Aggregation.newAggregation(matchStage, sortStage, groupStage, sliceStage, unwindStage,
-				replaceRootStage, projectStage);
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, projectFields, sortStage, groupStage, sliceStage,
+				unwindStage, replaceRootStage);
 
 		return operations.aggregate(aggregation, SPRINT_DETAILS, SprintDetails.class).getMappedResults();
 	}

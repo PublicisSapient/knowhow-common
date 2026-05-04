@@ -35,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -476,11 +477,10 @@ public class DateUtil {
 		if (nullValue.contains(utcTime)) {
 			return utcTime;
 		}
-		if (StringUtils.isNotEmpty(utcTime)) {
-			LocalDateTime ldt = LocalDateTime.parse(utcTime);
-			return tranformUTCLocalTimeToZFormat(ldt);
-		}
-		return utcTime;
+		LocalDateTime ldt = utcTime.length() == 10
+				? LocalDate.parse(utcTime, DateTimeFormatter.ofPattern(DATE_FORMAT)).atStartOfDay()
+				: LocalDateTime.parse(utcTime);
+		return tranformUTCLocalTimeToZFormat(ldt);
 	}
 
 	public static LocalDate getTodayDate() {
@@ -537,5 +537,12 @@ public class DateUtil {
 			return "-";
 		}
 		return DateUtil.dateTimeConverter(time, DateUtil.HOUR_MINUTE, MONTH_YEAR);
+	}
+
+	public static String convertDate(String input) {
+		LocalDate date = LocalDate.parse(input); // parses yyyy-MM-dd
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(DISPLAY_DATE_FORMAT, Locale.ENGLISH);
+
+		return date.format(outputFormatter);
 	}
 }
