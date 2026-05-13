@@ -21,6 +21,7 @@ package com.publicissapient.kpidashboard.common.model.application; // NOPMD
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -610,6 +611,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> priorityP4;
 	private List<String> priorityP5;
 	private List<String> priorityMisc;
+
+	private LinkedHashMap<String, List<String>> jiraIssueStatusGroupByCategoryKPI200;
+	private List<String> jiraIssueTypeKPI200;
 
 	/**
 	 * Get jira issue type names string [ ].
