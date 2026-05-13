@@ -19,6 +19,7 @@
 package com.publicissapient.kpidashboard.common.model.application; // NOPMD
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
@@ -575,4 +576,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historypriorityP4;
 	private List<ConfigurationHistoryChangeLog> historypriorityP5;
 	private List<ConfigurationHistoryChangeLog> historypriorityMisc;
+
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueStatusGroupByCategoryKPI202;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI202;
 }
