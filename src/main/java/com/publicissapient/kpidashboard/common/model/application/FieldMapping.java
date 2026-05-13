@@ -612,8 +612,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> priorityP5;
 	private List<String> priorityMisc;
 
-	private LinkedHashMap<String, List<String>> jiraIssueStatusGroupByCategoryKPI200;
-	private List<String> jiraIssueTypeKPI200;
+	private LinkedHashMap<String, List<String>> jiraIssueStatusGroupByCategoryKPI202;
+	private List<String> jiraIssueTypeKPI202;
 
 	/**
 	 * Get jira issue type names string [ ].
