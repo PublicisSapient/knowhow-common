@@ -19,7 +19,6 @@
 package com.publicissapient.kpidashboard.common.model.application; // NOPMD
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
