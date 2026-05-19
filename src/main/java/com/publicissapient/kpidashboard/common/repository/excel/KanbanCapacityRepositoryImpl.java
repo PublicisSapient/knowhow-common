@@ -18,16 +18,6 @@
 
 package com.publicissapient.kpidashboard.common.repository.excel;
 
-import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
-import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +25,18 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import com.publicissapient.kpidashboard.common.model.application.LeafNodeCapacity;
+import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
+
+import lombok.RequiredArgsConstructor;
 
 /** Repository implementation for Kanban capacity operations. */
 @RequiredArgsConstructor
@@ -106,8 +108,8 @@ public class KanbanCapacityRepositoryImpl implements KanbanCapacityRepoCustom {
 	}
 
 	private Date toUtcMidnightDate(String dateStr) {
-		return Date.from(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_PATTERN))
-				.atStartOfDay(ZoneOffset.UTC).toInstant());
+		return Date.from(
+				LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_PATTERN)).atStartOfDay(ZoneOffset.UTC).toInstant());
 	}
 
 	private void processAdditionalFilters(List<KanbanCapacity> kanbanCapacityList, Map<String, Object> filters) {
