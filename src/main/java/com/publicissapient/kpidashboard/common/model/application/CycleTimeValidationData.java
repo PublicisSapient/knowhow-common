@@ -18,6 +18,8 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
+import java.util.LinkedHashMap;
+
 import org.joda.time.DateTime;
 
 import lombok.AllArgsConstructor;
@@ -49,4 +51,5 @@ public class CycleTimeValidationData {
 	private Long intakeTime;
 	private Long dorTime;
 	private Long dodTime;
+	private LinkedHashMap<String, String> groupMap;
 }
