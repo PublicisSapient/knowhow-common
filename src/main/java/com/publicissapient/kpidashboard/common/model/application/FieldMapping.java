@@ -529,6 +529,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI159;
 	private String thresholdValueKPI184;
 	private String thresholdValueKPI183;
+	private String thresholdValueKPI203;
 
 	/** kanban kpi threshold fields ends * */
 
@@ -614,6 +615,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<CycleTimeGroup> jiraIssueStatusGroupByCategoryKPI202;
 	private List<String> jiraIssueTypeKPI202;
+
+	private List<String> jiraIssueWaitStateKPI203;
+	private List<String> jiraIssueClosedStateKPI203;
 
 	/**
 	 * Get jira issue type names string [ ].
