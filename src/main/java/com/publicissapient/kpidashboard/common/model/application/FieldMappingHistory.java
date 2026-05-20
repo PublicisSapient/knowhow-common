@@ -580,6 +580,6 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI202;
 	private String historythresholdValueKPI203;
 
-	private List<String> historyjiraIssueWaitStateKPI203;
-	private List<String> historyjiraIssueClosedStateKPI203;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueWaitStateKPI203;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueClosedStateKPI203;
 }
