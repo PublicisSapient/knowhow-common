@@ -51,5 +51,6 @@ public class CycleTimeValidationData {
 	private Long intakeTime;
 	private Long dorTime;
 	private Long dodTime;
+	private String sprintName;
 	private LinkedHashMap<String, String> groupMap;
 }

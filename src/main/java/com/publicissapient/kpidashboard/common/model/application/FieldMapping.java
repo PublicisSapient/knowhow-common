@@ -620,6 +620,10 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraIssueWaitStateKPI203;
 	private List<String> jiraIssueClosedStateKPI203;
 
+	private String thresholdValueKPI205;
+	private List<String> jiraIterationIssueTypeKPI205;
+	private List<String> jiraIterationCompletionStatusKPI205;
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *
