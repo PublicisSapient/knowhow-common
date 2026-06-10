@@ -59,6 +59,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueDependencyTypeKPI176;
 	private List<ConfigurationHistoryChangeLog> historystoryFirstStatus;
 	private List<ConfigurationHistoryChangeLog> historystoryFirstStatusKPI148;
+	private List<ConfigurationHistoryChangeLog> historystoryFirstStatusKPI206;
 	private List<ConfigurationHistoryChangeLog> historyrootCause;
 	private List<ConfigurationHistoryChangeLog> historyrootCauseValues;
 	private List<ConfigurationHistoryChangeLog> historyrootCauseIdentifier;
@@ -68,6 +69,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForDevelopmentKPI135;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForQa;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForQaKPI148;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForQaKPI206;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForQaKPI135;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForQaKPI82;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectInjectionIssueType;
@@ -271,6 +273,7 @@ public class FieldMappingHistory extends BasicModel {
 	// field for In Progress status
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgress;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI148;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI206;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI122;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI145;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI125;
@@ -403,6 +406,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI161;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI146;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI148;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI206;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI151;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI152;
 
