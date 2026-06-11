@@ -431,6 +431,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> jiraIssueTypeNamesKPI161;
 	private List<String> jiraIssueTypeNamesKPI146;
+	private List<String> jiraIssueTypeNamesKPI207;
 	private List<String> jiraIssueTypeNamesKPI148;
 	private List<String> jiraIssueTypeNamesKPI151;
 	private List<String> jiraIssueTypeNamesKPI152;
@@ -443,6 +444,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraLabelsKPI133;
 	private List<String> jiraIssueWaitStateKPI170;
 	private List<String> jiraIssueClosedStateKPI170;
+	private List<String> jiraIssueClosedStateKPI207;
 
 	@Builder.Default
 	private String leadTimeConfigRepoTool = CommonConstant.JIRA;
