@@ -71,6 +71,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraIssueDependencyTypeKPI176;
 	private String storyFirstStatus;
 	private String storyFirstStatusKPI148;
+	private String storyFirstStatusKPI206;
 	private String rootCause;
 	private List<String> rootCauseValues;
 	private String rootCauseIdentifier;
@@ -84,6 +85,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	@Builder.Default
 	private List<String> jiraStatusForQaKPI148 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
+
+	@Builder.Default
+	private List<String> jiraStatusForQaKPI206 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
 
 	@Builder.Default
 	private List<String> jiraStatusForQaKPI135 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
@@ -298,6 +302,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	// field for In Progress status
 	private List<String> jiraStatusForInProgress;
 	private List<String> jiraStatusForInProgressKPI148;
+	private List<String> jiraStatusForInProgressKPI206;
 	private List<String> jiraStatusForInProgressKPI122;
 	private List<String> jiraStatusForInProgressKPI145;
 	private List<String> jiraStatusForInProgressKPI125;
@@ -431,7 +436,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> jiraIssueTypeNamesKPI161;
 	private List<String> jiraIssueTypeNamesKPI146;
+	private List<String> jiraIssueTypeNamesKPI207;
 	private List<String> jiraIssueTypeNamesKPI148;
+	private List<String> jiraIssueTypeNamesKPI206;
 	private List<String> jiraIssueTypeNamesKPI151;
 	private List<String> jiraIssueTypeNamesKPI152;
 
@@ -443,6 +450,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraLabelsKPI133;
 	private List<String> jiraIssueWaitStateKPI170;
 	private List<String> jiraIssueClosedStateKPI170;
+	private List<String> jiraIssueClosedStateKPI207;
 
 	@Builder.Default
 	private String leadTimeConfigRepoTool = CommonConstant.JIRA;
