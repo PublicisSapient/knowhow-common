@@ -402,6 +402,7 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI161;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI146;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI207;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI148;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI151;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeNamesKPI152;
@@ -414,6 +415,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraLabelsKPI133;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueWaitStateKPI170;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueClosedStateKPI170;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueClosedStateKPI207;
 
 	private List<ConfigurationHistoryChangeLog> historyleadTimeConfigRepoTool;
 
