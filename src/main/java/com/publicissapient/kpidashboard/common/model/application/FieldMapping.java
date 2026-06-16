@@ -71,7 +71,6 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraIssueDependencyTypeKPI176;
 	private String storyFirstStatus;
 	private String storyFirstStatusKPI148;
-	private String storyFirstStatusKPI206;
 	private String rootCause;
 	private List<String> rootCauseValues;
 	private String rootCauseIdentifier;
@@ -85,9 +84,6 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	@Builder.Default
 	private List<String> jiraStatusForQaKPI148 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
-
-	@Builder.Default
-	private List<String> jiraStatusForQaKPI206 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
 
 	@Builder.Default
 	private List<String> jiraStatusForQaKPI135 = Arrays.asList(READY_FOR_TESTING, IN_TESTING);
@@ -302,7 +298,6 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	// field for In Progress status
 	private List<String> jiraStatusForInProgress;
 	private List<String> jiraStatusForInProgressKPI148;
-	private List<String> jiraStatusForInProgressKPI206;
 	private List<String> jiraStatusForInProgressKPI122;
 	private List<String> jiraStatusForInProgressKPI145;
 	private List<String> jiraStatusForInProgressKPI125;
@@ -631,6 +626,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI205;
 	private List<String> jiraIterationIssueTypeKPI205;
 	private List<String> jiraIterationCompletionStatusKPI205;
+
+	private List<CycleTimeGroup> jiraIssueStatusGroupByCategoryKPI206;
 
 	/**
 	 * Get jira issue type names string [ ].
