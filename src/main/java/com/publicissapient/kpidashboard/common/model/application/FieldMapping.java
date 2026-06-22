@@ -535,6 +535,7 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI203;
 	private String thresholdValueKPI202;
 	private String thresholdValueKPI208;
+	private String thresholdValueKPI209;
 
 	/** kanban kpi threshold fields ends * */
 
