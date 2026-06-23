@@ -503,6 +503,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI183;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI208;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI209;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI210;
 
 	/** kanban kpi threshold fields history ends * */
 
