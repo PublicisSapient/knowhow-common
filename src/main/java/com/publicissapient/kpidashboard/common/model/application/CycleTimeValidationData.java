@@ -43,6 +43,7 @@ public class CycleTimeValidationData {
 	private String url;
 	private String issueDesc;
 	private String issueType;
+	private String status;
 	private DateTime intakeDate;
 	private DateTime dorDate;
 	private DateTime dodDate;
