@@ -502,6 +502,8 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI184;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI183;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI208;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI209;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI210;
 
 	/** kanban kpi threshold fields history ends * */
 
@@ -592,6 +594,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI205;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationIssueTypeKPI205;
 	private List<ConfigurationHistoryChangeLog> historyjiraIterationCompletionStatusKPI205;
+	private List<ConfigurationHistoryChangeLog> historyweeklyDataStartDateKPI205;
 
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueStatusGroupByCategoryKPI206;
 }
