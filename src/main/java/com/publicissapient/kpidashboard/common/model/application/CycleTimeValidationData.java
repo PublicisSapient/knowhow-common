@@ -43,6 +43,7 @@ public class CycleTimeValidationData {
 	private String url;
 	private String issueDesc;
 	private String issueType;
+	private String status;
 	private DateTime intakeDate;
 	private DateTime dorDate;
 	private DateTime dodDate;
@@ -53,4 +54,5 @@ public class CycleTimeValidationData {
 	private Long dodTime;
 	private String sprintName;
 	private LinkedHashMap<String, String> groupMap;
+	private String totalFlowTime;
 }

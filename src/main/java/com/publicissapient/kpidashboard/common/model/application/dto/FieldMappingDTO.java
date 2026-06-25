@@ -520,6 +520,7 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String thresholdValueKPI184;
 	private String thresholdValueKPI183;
 	private String thresholdValueKPI195;
+	private String thresholdValueKPI209;
 
 	/** kanban kpi threshold fields ends * */
 	private String jiraProductionIncidentIdentification;
