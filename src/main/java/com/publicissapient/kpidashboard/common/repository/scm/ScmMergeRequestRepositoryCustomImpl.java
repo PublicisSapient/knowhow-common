@@ -17,8 +17,11 @@
 
 package com.publicissapient.kpidashboard.common.repository.scm;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -39,6 +42,7 @@ public class ScmMergeRequestRepositoryCustomImpl implements ScmMergeRequestRepos
 
 	private static final String SCM_MERGE_REQUESTS_COLLECTION = "scm_merge_requests";
 	private static final String UPDATED_DATE = "updatedDate";
+	private static final String MERGED_AT = "mergedAt";
 
 	private final MongoOperations operations;
 
@@ -73,6 +77,21 @@ public class ScmMergeRequestRepositoryCustomImpl implements ScmMergeRequestRepos
 	private List<BasicDBObject> buildPipeline(BasicDBList filterList, Long startDate, Long endDate) {
 		return List.of(new BasicDBObject("$match", new BasicDBObject("$or", filterList).append(UPDATED_DATE,
 				new BasicDBObject("$gte", startDate).append("$lte", endDate))));
+	}
+
+	@Override
+	public List<ScmMergeRequests> findMergedList(LocalDateTime startDate, LocalDateTime endDate, BasicDBList filterList) {
+		if (filterList == null || filterList.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Date start = Date.from(startDate.toInstant(ZoneOffset.UTC));
+		Date end = Date.from(endDate.toInstant(ZoneOffset.UTC));
+		List<BasicDBObject> pipeline = List.of(new BasicDBObject("$match",
+				new BasicDBObject("$or", filterList).append(MERGED_AT, new BasicDBObject("$gte", start).append("$lte", end))));
+		try (MongoCursor<Document> cursor = operations.getCollection(SCM_MERGE_REQUESTS_COLLECTION).aggregate(pipeline)
+				.iterator()) {
+			return mapMergeRequests(cursor);
+		}
 	}
 
 	private List<ScmMergeRequests> mapMergeRequests(MongoCursor<Document> cursor) {
