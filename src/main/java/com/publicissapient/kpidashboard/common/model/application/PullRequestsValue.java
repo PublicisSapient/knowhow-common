@@ -39,5 +39,5 @@ public class PullRequestsValue implements Serializable {
 	private String label;
 	private String size;
 	private String prUrl;
-	private transient Map<String, Object> hoverValue;
+	private Map<String, Object> hoverValue;
 }

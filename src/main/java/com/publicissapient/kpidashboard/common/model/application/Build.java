@@ -53,4 +53,5 @@ public class Build extends BasicModel {
 	private String startedBy;
 	private String log;
 	private String updatedTime;
+	private String buildBranch;
 }
