@@ -440,6 +440,12 @@ public class FieldMappingDTO extends FieldMappingHistory {
 
 	@Builder.Default
 	private String toBranchForMRKPI156 = "master";
+
+	// Lead Time For Change (Slingshot / DORA speed) - kpi214
+	@Builder.Default
+	private String productionBranchKPI214 = "master";
+
+	private String thresholdValueKPI214;
 	private Map<String, Integer> startDateCountKPI150;
 	private List<String> jiraDevDoneStatusKPI150;
 	private boolean populateByDevDoneKPI150;
