@@ -636,6 +636,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private String thresholdValueKPI212;
 
+	private String thresholdValueKPI213;
+
 	// Lead Time For Change (Slingshot / DORA speed) - kpi214
 	@Builder.Default
 	private String productionBranchKPI214 = "master";
