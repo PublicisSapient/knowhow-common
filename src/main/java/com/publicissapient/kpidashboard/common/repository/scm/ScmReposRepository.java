@@ -31,4 +31,6 @@ public interface ScmReposRepository extends MongoRepository<ScmRepos, ObjectId> 
 	List<ScmRepos> findAllByConnectionId(ObjectId connectionId);
 
 	Optional<ScmRepos> findByConnectionIdAndRepositoryName(ObjectId connectionId, String repositoryName);
+
+	Optional<ScmRepos> findFirstByConnectionIdAndUrl(ObjectId connectionId, String url);
 }
