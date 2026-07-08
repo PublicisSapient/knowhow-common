@@ -343,6 +343,16 @@ public class DateUtil {
 		return monday.format(dateTimeFormatter) + " - " + sunday.format(dateTimeFormatter);
 	}
 
+	public static String getWeekDaysRangeUsingDateTime(LocalDateTime currentDateTime) {
+		// Set to start of day to mimic original DateTime behavior
+		LocalDateTime monday = currentDateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toLocalDate()
+				.atStartOfDay();
+		LocalDateTime sunday = currentDateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toLocalDate()
+				.atStartOfDay();
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DISPLAY_DATE_FORMAT);
+		return monday.format(dateTimeFormatter) + " to " + sunday.format(dateTimeFormatter);
+	}
+
 	public static String getWeekRangeUsingDateTime(DateTime currentDate) {
 		DateTime monday = currentDate.withDayOfWeek(DateTimeConstants.MONDAY);
 		DateTime sunday = currentDate.withDayOfWeek(DateTimeConstants.SUNDAY);
