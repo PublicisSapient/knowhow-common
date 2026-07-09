@@ -21,6 +21,7 @@ import lombok.Setter;
 
 @Document(collection = "scm_merge_requests")
 @CompoundIndex(def = "{'processorItemId': 1, 'externalId': 1}", unique = true)
+@CompoundIndex(def = "{'processorItemId': 1, 'mergedAt': 1}", name = "processorItemId_1_mergedAt_1")
 @Data
 @Builder
 @NoArgsConstructor
