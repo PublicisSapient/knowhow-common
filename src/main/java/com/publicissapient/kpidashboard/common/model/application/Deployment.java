@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.publicissapient.kpidashboard.common.constant.DeploymentStatus;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "deployments")
+@CompoundIndex(def = "{'basicProjectConfigId': 1, 'startTime': 1}", name = "basicProjectConfigId_1_startTime_1")
 public class Deployment extends BasicModel {
 
 	private ObjectId processorId;
