@@ -642,6 +642,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	@Builder.Default
 	private String productionBranchKPI214 = "master";
 
+	private String productionJobNameKPI214;
+
 	private String thresholdValueKPI214;
 
 	/**
