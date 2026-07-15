@@ -45,6 +45,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historydefectPriority;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI135;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI35;
+	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI216;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI14;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityQAKPI111;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI82;
@@ -98,6 +99,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI28;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI37;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI35;
+	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI216;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI82;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI135;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRejectionStatusKPI133;
@@ -113,6 +115,7 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectSeepageIssueType;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI35;
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI216;
 
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalStatus;
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectRemovalStatusKPI34;
@@ -219,6 +222,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyincludeRCAForQAKPI111;
 	private List<ConfigurationHistoryChangeLog> historyincludeRCAForKPI133;
 	private List<ConfigurationHistoryChangeLog> historyincludeRCAForKPI35;
+	private List<ConfigurationHistoryChangeLog> historyincludeRCAForKPI216;
 	private List<ConfigurationHistoryChangeLog> historyincludeRCAForKPI34;
 	private List<ConfigurationHistoryChangeLog> historyincludedDefectRootCausesKPI195;
 
@@ -232,6 +236,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI28;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI37;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI35;
+	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI216;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI82;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI135;
 	private List<ConfigurationHistoryChangeLog> historyresolutionTypeForRejectionKPI191;
@@ -425,6 +430,7 @@ public class FieldMappingHistory extends BasicModel {
 	// Lead Time For Change (Slingshot / DORA speed) - kpi214
 	private List<ConfigurationHistoryChangeLog> historyproductionBranchKPI214;
 	private List<ConfigurationHistoryChangeLog> historyproductionJobNameKPI214;
+	private List<ConfigurationHistoryChangeLog> historycalculationStrategyKPI214;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI214;
 	private List<ConfigurationHistoryChangeLog> historystartDateCountKPI150;
 	private List<ConfigurationHistoryChangeLog> historyjiraDevDoneStatusKPI150;
@@ -437,6 +443,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI82;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI111;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI35;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI216;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI34;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI37;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI28;
@@ -606,4 +613,5 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI212;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI213;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI215;
 }
