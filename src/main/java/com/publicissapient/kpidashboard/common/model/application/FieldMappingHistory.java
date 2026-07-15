@@ -605,4 +605,5 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI212;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI213;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI215;
 }
