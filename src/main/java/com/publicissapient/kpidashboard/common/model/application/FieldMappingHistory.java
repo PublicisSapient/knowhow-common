@@ -430,6 +430,7 @@ public class FieldMappingHistory extends BasicModel {
 	// Lead Time For Change (Slingshot / DORA speed) - kpi214
 	private List<ConfigurationHistoryChangeLog> historyproductionBranchKPI214;
 	private List<ConfigurationHistoryChangeLog> historyproductionJobNameKPI214;
+	private List<ConfigurationHistoryChangeLog> historycalculationStrategyKPI214;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI214;
 	private List<ConfigurationHistoryChangeLog> historystartDateCountKPI150;
 	private List<ConfigurationHistoryChangeLog> historyjiraDevDoneStatusKPI150;
