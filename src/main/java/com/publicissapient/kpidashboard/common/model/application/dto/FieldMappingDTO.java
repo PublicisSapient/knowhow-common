@@ -445,6 +445,9 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	@Builder.Default
 	private String productionBranchKPI214 = "master";
 
+	@Builder.Default
+	private String calculationStrategyKPI214 = "DEPLOYMENT";
+
 	private String thresholdValueKPI214;
 	private Map<String, Integer> startDateCountKPI150;
 	private List<String> jiraDevDoneStatusKPI150;
