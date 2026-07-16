@@ -644,6 +644,8 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private String thresholdValueKPI214;
 
+	private String thresholdValueKPI215;
+
 	private List<CycleTimeGroup> jiraFieldsSelectionKPI215;
 
 	/**
