@@ -533,6 +533,22 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		return operations.find(query, JiraIssue.class);
 	}
 
+	@Override
+	public List<JiraIssue> findIssuesByDateAndFilters(Map<String, List<String>> mapOfFilters, String dateFrom,
+			String dateTo) {
+		String startDate = dateFrom + START_TIME;
+		String endDate = dateTo + END_TIME;
+
+		Criteria criteria = new Criteria();
+		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
+		criteria = criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+
+		Query query = new Query(criteria);
+		query.fields().include(NUMBER);
+
+		return operations.find(query, JiraIssue.class);
+	}
+
 	/**
 	 * Find defects without story link.
 	 *
