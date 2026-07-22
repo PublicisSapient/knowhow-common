@@ -555,6 +555,12 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<String> jiraStoryIdentificationKPI166;
 	private List<String> jiraDodKPI166;
+
+	// KPI217 — Mean Time to Recover (Slingshot) — decoupled from KPI166
+	private List<String> jiraStoryIdentificationKPI217;
+	private String jiraProductionIncidentIdentificationKPI217;
+	private List<String> jiraDodKPI217;
+	private String thresholdValueKPI217;
 	private List<String> storyFirstStatusKPI154;
 	private List<String> jiraStatusForInProgressKPI154;
 	private List<String> jiraDevDoneStatusKPI154;
@@ -657,9 +663,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private String thresholdValueKPI215;
 
-	private String thresholdValueKPI217;
+	private String thresholdValueKPI218;
 
-	private List<CycleTimeGroup> jiraFieldsSelectionKPI217;
+	private List<CycleTimeGroup> jiraFieldsSelectionKPI218;
 
 	/**
 	 * Get jira issue type names string [ ].
