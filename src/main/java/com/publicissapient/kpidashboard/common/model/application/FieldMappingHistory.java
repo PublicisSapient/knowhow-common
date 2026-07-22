@@ -113,6 +113,10 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByValue;
 	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByCustomField;
 
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByIdentificationKPI216;
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByValueKPI216;
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByCustomFieldKPI216;
+
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectSeepageIssueType;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI35;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI216;

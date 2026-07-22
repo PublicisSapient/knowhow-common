@@ -136,6 +136,10 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraBugRaisedByValue;
 	private String jiraBugRaisedByCustomField;
 
+	private String jiraBugRaisedByIdentificationKPI216;
+	private List<String> jiraBugRaisedByValueKPI216;
+	private String jiraBugRaisedByCustomFieldKPI216;
+
 	private List<String> jiraDefectSeepageIssueType;
 	private List<String> jiraIssueTypeKPI35;
 	private List<String> jiraIssueTypeKPI216;
