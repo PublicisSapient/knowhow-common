@@ -1,10 +1,9 @@
 package com.publicissapient.kpidashboard.common.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -63,18 +62,16 @@ public class E2EBranchResolver {
 			return Set.of();
 		}
 
-		String configured = StringUtils.trimToEmpty(fieldMapping.getE2eTestBranchKPI218());
-		if (StringUtils.isNotBlank(configured)) {
-			return Arrays.stream(configured.split(",")).map(String::trim).filter(StringUtils::isNotBlank)
-					.collect(Collectors.toCollection(LinkedHashSet::new));
+		List<String> configured = fieldMapping.getE2eTestBranchKPI218();
+		if (configured != null && !configured.isEmpty()) {
+			return new LinkedHashSet<>(configured);
 		}
 
 		Set<String> discovered = discoverScmBranches(projectConfigId);
 		if (!discovered.isEmpty()) {
-			String joined = String.join(",", discovered);
-			fieldMapping.setE2eTestBranchKPI218(joined);
+			fieldMapping.setE2eTestBranchKPI218(new ArrayList<>(discovered));
 			fieldMappingRepository.save(fieldMapping);
-			log.info("KPI218: auto-populated e2eTestBranchKPI218='{}' from SCM connections for project {}", joined,
+			log.info("KPI218: auto-populated e2eTestBranchKPI218={} from SCM connections for project {}", discovered,
 					projectConfigId);
 		}
 		return discovered;

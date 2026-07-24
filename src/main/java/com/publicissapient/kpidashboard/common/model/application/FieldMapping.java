@@ -668,9 +668,14 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI215;
 
 	// E2E Test Pass Rate (Slingshot / Quality) - kpi218
-	private String e2eTestBranchKPI218;
+	private List<String> e2eTestBranchKPI218;
 
 	private String thresholdValueKPI218;
+
+	// Mean Time to Test Feedback (Slingshot / Quality) - kpi219
+	private List<String> e2eTestBranchKPI219;
+
+	private String thresholdValueKPI219;
 
 	/**
 	 * Get jira issue type names string [ ].
