@@ -292,4 +292,19 @@ public interface JiraIssueRepositoryCustom { // NOPMD
 	 */
 	List<JiraIssue> findIssueByNumberOrParentStoryIdAndType(Set<String> storyNumber,
 			Map<String, Map<String, Object>> uniqueProjectMap, String findBy);
+
+	/**
+	 * Find issues by date range and a flat map of filters (each key is a field,
+	 * each value is a list for an {@code $in} match). Returns only the issue number
+	 * field.
+	 *
+	 * @param mapOfFilters
+	 *          filters, e.g. basicProjectConfigId + labels
+	 * @param dateFrom
+	 *          start date (yyyy-MM-dd)
+	 * @param dateTo
+	 *          end date (yyyy-MM-dd)
+	 * @return list of matching JiraIssues (number field populated)
+	 */
+	List<JiraIssue> findIssuesByDateAndFilters(Map<String, List<String>> mapOfFilters, String dateFrom, String dateTo);
 }
