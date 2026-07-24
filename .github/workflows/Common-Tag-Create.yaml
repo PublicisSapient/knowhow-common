@@ -1,0 +1,68 @@
+name: Create Release Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Release Version (Example: 1.8.0)"
+        required: true
+        type: string
+
+      next_development_version:
+        description: "Next Development Version (Example: 1.8.1-SNAPSHOT)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.KNOWHOW_ADMIN_PAT }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Set Release Version
+        run: |
+          mvn -B versions:set \
+            -DnewVersion=${{ github.event.inputs.release_version }} \
+            -DgenerateBackupPoms=false
+
+      - name: Commit Release Version
+        run: |
+          git add pom.xml
+          git commit -m "Release ${{ github.event.inputs.release_version }}" || echo "Nothing to commit"
+
+      - name: Push Release Commit
+        run: git push origin master
+
+      - name: Create Git Tag
+        run: |
+          git tag -a ${{ github.event.inputs.release_version }} \
+            -m "Release ${{ github.event.inputs.release_version }}"
+          git push origin ${{ github.event.inputs.release_version }}
+
+      - name: Set Next Development Version
+        run: |
+          mvn -B versions:set \
+            -DnewVersion=${{ github.event.inputs.next_development_version }} \
+            -DgenerateBackupPoms=false
+
+      - name: Commit Next Development Version
+        run: |
+          git add pom.xml
+          git commit -m "Prepare for next development iteration ${{ github.event.inputs.next_development_version }}" || echo "Nothing to commit"
+
+      - name: Push Development Version
+        run: git push origin master
