@@ -113,6 +113,10 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByValue;
 	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByCustomField;
 
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByIdentificationKPI216;
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByValueKPI216;
+	private List<ConfigurationHistoryChangeLog> historyjiraBugRaisedByCustomFieldKPI216;
+
 	private List<ConfigurationHistoryChangeLog> historyjiraDefectSeepageIssueType;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI35;
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI216;
@@ -613,12 +617,17 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI212;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI213;
-	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI218;
-	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI218;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI311;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI311;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI215;
 
 	// KPI217 — Mean Time to Recover (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI217;
 	private List<ConfigurationHistoryChangeLog> historyjiraProductionIncidentIdentificationKPI217;
 	private List<ConfigurationHistoryChangeLog> historyjiraDodKPI217;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI217;
+
+	// KPI218 — E2E Test Pass Rate (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI218;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI218;
 }

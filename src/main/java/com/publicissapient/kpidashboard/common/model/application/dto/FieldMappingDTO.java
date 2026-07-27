@@ -124,10 +124,14 @@ public class FieldMappingDTO extends FieldMappingHistory {
 
 	private String jiraBugRaisedByIdentification;
 	private List<String> jiraBugRaisedByValue;
+	private String jiraBugRaisedByCustomField;
+
+	private String jiraBugRaisedByIdentificationKPI216;
+	private List<String> jiraBugRaisedByValueKPI216;
+	private String jiraBugRaisedByCustomFieldKPI216;
 
 	private List<String> jiraDefectSeepageIssueType;
 	private List<String> jiraIssueTypeKPI35;
-	private String jiraBugRaisedByCustomField;
 	private List<String> jiraDefectRemovalStatus;
 	private List<String> jiraDefectRemovalStatusKPI34;
 	private List<String> jiraDefectRemovalIssueType;
