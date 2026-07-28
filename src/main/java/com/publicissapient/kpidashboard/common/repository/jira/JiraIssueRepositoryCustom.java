@@ -310,10 +310,9 @@ public interface JiraIssueRepositoryCustom { // NOPMD
 
 	/**
 	 * Finds Jira issues by sprint IDs and project, returning only the specified
-	 * subset of fields via a Mongo projection. Intended for callers (e.g. the
-	 * Project Hygiene KPI) that only need a handful of columns so we don't ship
-	 * the whole JiraIssue document over the wire and, downstream, into the LLM
-	 * prompt.
+	 * subset of fields via a Mongo projection. Intended for callers (e.g. the Story
+	 * Hygiene KPI) that only need a handful of columns so we don't ship the whole
+	 * JiraIssue document over the wire and, downstream, into the LLM prompt.
 	 *
 	 * @param sprintIDs
 	 *          set of sprint identifiers to match against {@code sprintID}

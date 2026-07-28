@@ -15,7 +15,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.2.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
   <groupId>com.publicissapient.kpidashboard</groupId>
   <artifactId>common</artifactId>
@@ -497,7 +497,7 @@
               <include>src/main/java/**/*.java</include>
               <include>src/test/java/**/*.java</include>
             </includes>
-            <googleJavaFormat />
+            <googleJavaFormat/>
             <eclipse>
               <file>${project.basedir}/eclipse-formatter-config.xml</file>
             </eclipse>
@@ -508,7 +508,7 @@
             <importOrder>
               <order>java|javax,org,com</order>
             </importOrder>
-            <removeUnusedImports />
+            <removeUnusedImports/>
           </java>
           <pom>
             <includes>
