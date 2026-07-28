@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -58,20 +60,32 @@ public class E2EBranchResolver {
 	 *         occur
 	 */
 	public Set<String> resolveAndPersist(FieldMapping fieldMapping, ObjectId projectConfigId) {
+		return resolveAndPersistInternal(fieldMapping, projectConfigId, FieldMapping::getE2eTestBranchKPI218,
+				FieldMapping::setE2eTestBranchKPI218, "KPI218", "e2eTestBranchKPI218");
+	}
+
+	public Set<String> resolveAndPersistKPI219(FieldMapping fieldMapping, ObjectId projectConfigId) {
+		return resolveAndPersistInternal(fieldMapping, projectConfigId, FieldMapping::getE2eTestBranchKPI219,
+				FieldMapping::setE2eTestBranchKPI219, "KPI219", "e2eTestBranchKPI219");
+	}
+
+	private Set<String> resolveAndPersistInternal(FieldMapping fieldMapping, ObjectId projectConfigId,
+			Function<FieldMapping, List<String>> getter, BiConsumer<FieldMapping, List<String>> setter, String kpiId,
+			String fieldName) {
 		if (fieldMapping == null) {
 			return Set.of();
 		}
 
-		List<String> configured = fieldMapping.getE2eTestBranchKPI218();
+		List<String> configured = getter.apply(fieldMapping);
 		if (configured != null && !configured.isEmpty()) {
 			return new LinkedHashSet<>(configured);
 		}
 
 		Set<String> discovered = discoverScmBranches(projectConfigId);
 		if (!discovered.isEmpty()) {
-			fieldMapping.setE2eTestBranchKPI218(new ArrayList<>(discovered));
+			setter.accept(fieldMapping, new ArrayList<>(discovered));
 			fieldMappingRepository.save(fieldMapping);
-			log.info("KPI218: auto-populated e2eTestBranchKPI218={} from SCM connections for project {}", discovered,
+			log.info("{}: auto-populated {}={} from SCM connections for project {}", kpiId, fieldName, discovered,
 					projectConfigId);
 		}
 		return discovered;
