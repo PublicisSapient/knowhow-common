@@ -630,4 +630,8 @@ public class FieldMappingHistory extends BasicModel {
 	// KPI218 — E2E Test Pass Rate (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI218;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI218;
+
+	// KPI219 — Mean Time to Test Feedback (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI219;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI219;
 }
