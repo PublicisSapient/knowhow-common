@@ -26,6 +26,7 @@ public final class PromptKeys {
 	public static final String BATCH_KPI_LEVEL_RECOMMENDATION_PROMPT = "batch-kpi-level-recommendation";
 	public static final String KPI_SEARCH = "kpi-search";
 	public static final String KPI_DATA = "kpi-data";
+	public static final String PROJECT_HYGIENE_PROMPT = "project-hygiene";
 
 	private PromptKeys() {
 		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
