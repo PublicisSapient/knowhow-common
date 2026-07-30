@@ -8,6 +8,7 @@ import lombok.Data;
 public class CycleTimeGroup {
 	private String label;
 	private String fieldName;
+	private Integer weightage;
 	private String prompt;
 	private List<String> statuses;
 }
