@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +41,76 @@ import lombok.extern.slf4j.Slf4j;
 public class HygienePromptBuilder {
 
 	/**
+	 * Matches the optional {@code [weight]:} prefix a configured rule prompt may
+	 * carry, e.g. {@code
+	 * [10]: Acceptance criteria must be present} or
+	 * {@code [null]: Priority must be set}. DOTALL so multi-line criteria survive.
+	 */
+	private static final Pattern WEIGHT_PREFIX = Pattern.compile("^\\s*\\[\\s*([^\\]]*?)\\s*\\]\\s*:\\s*(.*)$",
+			Pattern.DOTALL);
+
+	/**
+	 * Weight applied when a rule declares {@code [null]}, omits the prefix, or
+	 * declares an unusable value - the rule then simply counts once, exactly like
+	 * every other unweighted rule.
+	 */
+	public static final double DEFAULT_RULE_WEIGHT = 1d;
+
+	/**
+	 * A rule prompt split into its weight and its criteria text.
+	 *
+	 * @param weight
+	 *          the effective weight - always positive, defaulted when not declared
+	 * @param criteria
+	 *          the criteria text with the {@code [weight]:} prefix stripped
+	 * @param explicit
+	 *          {@code true} when a usable weight was actually declared
+	 */
+	public record WeightedCriteria(double weight, String criteria, boolean explicit) {
+	}
+
+	/**
+	 * Splits a configured prompt of the form {@code [10]: criteria text} into its
+	 * weight and criteria parts.
+	 *
+	 * <p>
+	 * {@code [null]}, a missing prefix, or a non-numeric / non-positive value all
+	 * mean "no explicit weight" and fall back to {@link #DEFAULT_RULE_WEIGHT}, so
+	 * mixing weighted and unweighted rules is safe.
+	 */
+	public static WeightedCriteria parseWeightedCriteria(String prompt) {
+		String raw = prompt == null ? "" : prompt.trim();
+		Matcher matcher = WEIGHT_PREFIX.matcher(raw);
+		if (!matcher.matches()) {
+			// No prefix at all - the whole prompt is the criteria.
+			return new WeightedCriteria(DEFAULT_RULE_WEIGHT, raw, false);
+		}
+
+		String weightToken = matcher.group(1).trim();
+		String criteria = matcher.group(2).trim();
+
+		if (weightToken.isEmpty() || "null".equalsIgnoreCase(weightToken)) {
+			return new WeightedCriteria(DEFAULT_RULE_WEIGHT, criteria, false);
+		}
+		try {
+			double weight = Double.parseDouble(weightToken);
+			if (weight <= 0) {
+				log.warn("kpi311: rule weight '{}' is not positive - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
+				return new WeightedCriteria(DEFAULT_RULE_WEIGHT, criteria, false);
+			}
+			return new WeightedCriteria(weight, criteria, true);
+		} catch (NumberFormatException e) {
+			log.warn("kpi311: rule weight '{}' is not a number - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
+			return new WeightedCriteria(DEFAULT_RULE_WEIGHT, criteria, false);
+		}
+	}
+
+	/** Renders a weight without a pointless trailing {@code .0}. */
+	private static String formatWeight(double weight) {
+		return weight == Math.rint(weight) ? String.valueOf((long) weight) : String.valueOf(weight);
+	}
+
+	/**
 	 * Renders the configured KPI311 rule sets as a numbered, plain-text listing.
 	 *
 	 * <p>
@@ -54,6 +126,14 @@ public class HygienePromptBuilder {
 	 * name and would otherwise collapse. A field carrying a single rule keeps its
 	 * plain label; a field carrying several is suffixed {@code (1)}, {@code (2)},
 	 * ... in declaration order.
+	 *
+	 * <p>
+	 * Each prompt may carry a {@code [weight]:} prefix declaring how much the rule
+	 * contributes to the issue's hygiene score - {@code [10]: ...} weights the rule
+	 * ten times as heavily as an unweighted one, while {@code [null]: ...} (or no
+	 * prefix) falls back to {@link #DEFAULT_RULE_WEIGHT}. The prefix is stripped
+	 * here so the LLM only ever sees clean criteria text plus an explicit
+	 * {@code weight} line.
 	 *
 	 * <p>
 	 * Plain text (rather than JSON) is used deliberately so user-authored criteria
@@ -85,10 +165,11 @@ public class HygienePromptBuilder {
 			String label = ctg.getLabel();
 			int occurrence = seenPerLabel.merge(label, 1, Integer::sum);
 			String ruleName = totalPerLabel.get(label) > 1 ? label + " (" + occurrence + ")" : label;
+			WeightedCriteria weighted = parseWeightedCriteria(ctg.getPrompt());
 
 			renderedRules.add("Rule " + (renderedRules
-					.size() + 1) + "\n" + "  ruleName: " + ruleName + "\n" + "  field: " + label + "\n" + "  criteria: " + ctg
-							.getPrompt().trim());
+					.size() + 1) + "\n" + "  ruleName: " + ruleName + "\n" + "  field: " + label + "\n" + "  weight: " + formatWeight(
+							weighted.weight()) + "\n" + "  criteria: " + weighted.criteria());
 		}
 		return String.join("\n\n", renderedRules);
 	}

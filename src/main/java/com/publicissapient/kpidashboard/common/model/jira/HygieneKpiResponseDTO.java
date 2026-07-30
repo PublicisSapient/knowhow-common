@@ -74,5 +74,11 @@ public class HygieneKpiResponseDTO {
 		private String observed;
 		private String status;
 		private String reason;
+
+		/**
+		 * Weight the rule carried when the issue was scored, echoed back by the LLM.
+		 * Null for responses produced before weighted scoring existed.
+		 */
+		private Double weight;
 	}
 }
