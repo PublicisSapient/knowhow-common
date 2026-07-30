@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CycleTimeGroup {
 	private String label;
+	private String fieldName;
 	private String prompt;
 	private List<String> statuses;
 }

@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,9 +46,6 @@ public class HygienePromptBuilder {
 			verdict criteria. Apply every rule independently, in the order given,
 			using ONLY the named field.
 			%1$s
-
-			=== Jira Issues (JSON array) ===
-			%2$s
 
 			=== Per-Rule Verdict Vocabulary ===
 			- "Passed"  → rule is fully satisfied by explicit evidence
@@ -120,27 +116,27 @@ public class HygienePromptBuilder {
 			- reason MUST cite the exact field name and value observed.
 			- Never invent field values that are not present in the input JSON.
 			- Return the JSON array and nothing else.
+
+			=== Jira Issues (JSON array) ===
+			%2$s
 			""";
 
 	/**
 	 * Builds the LLM prompt for a list of Jira issues in a single sprint.
 	 *
-	 * @param prompts
-	 *          rule-name → evaluation-criteria map (from field mapping)
+	 * @param cycleTimeGroups
+	 *          configured hygiene rules (label, fieldName, prompt per rule)
 	 * @param issueNodes
 	 *          serialisable ObjectNode list, one per issue
-	 * @param labelToFieldName
-	 *          rule-name → Jira field name map; used to inject the field name into
-	 *          the rules section so the criteria text itself need not mention it
 	 * @param objectMapper
 	 *          Jackson mapper for serializing the issue array
 	 * @return formatted prompt string ready to send to the AI Gateway
 	 */
-	public static String buildPrompt(Map<String, String> prompts, List<ObjectNode> issueNodes,
-			Map<String, String> labelToFieldName, ObjectMapper objectMapper) {
+	public static String buildPrompt(List<CycleTimeGroup> cycleTimeGroups, List<ObjectNode> issueNodes,
+			ObjectMapper objectMapper) {
 		try {
 			String issuesJson = objectMapper.writeValueAsString(issueNodes);
-			String rulesSection = buildRulesSection(prompts, labelToFieldName);
+			String rulesSection = buildRulesSection(cycleTimeGroups);
 			return String.format(FINAL_HYGIENE_PROMPT, rulesSection, issuesJson);
 		} catch (JsonProcessingException e) {
 			log.error("Failed to serialize issue nodes for hygiene prompt: {}", e.getMessage());
@@ -148,17 +144,18 @@ public class HygienePromptBuilder {
 		}
 	}
 
-	private static String buildRulesSection(Map<String, String> prompts, Map<String, String> labelToFieldName) {
+	private static String buildRulesSection(List<CycleTimeGroup> cycleTimeGroups) {
 		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<String, String> entry : prompts.entrySet()) {
-			String label = entry.getKey();
-			String criteria = entry.getValue();
-			String fieldName = labelToFieldName != null ? labelToFieldName.get(label) : null;
-			sb.append("- ").append(label);
-			if (fieldName != null) {
-				sb.append(" (field: ").append(fieldName).append(")");
+		if (cycleTimeGroups == null)
+			return sb.toString();
+		for (CycleTimeGroup ctg : cycleTimeGroups) {
+			if (ctg == null || ctg.getLabel() == null || ctg.getPrompt() == null)
+				continue;
+			sb.append("- ").append(ctg.getLabel());
+			if (ctg.getFieldName() != null) {
+				sb.append(" (field: ").append(ctg.getFieldName()).append(")");
 			}
-			sb.append(": ").append(criteria).append("\n");
+			sb.append(": ").append(ctg.getPrompt()).append("\n");
 		}
 		return sb.toString();
 	}
@@ -169,7 +166,7 @@ public class HygienePromptBuilder {
 	 * fields follow, skipping duplicates.
 	 */
 	public static ObjectNode buildIssueNode(JiraIssue ji, List<String> anchorFieldNames,
-			List<CycleTimeGroup> configuredFields, Map<String, String> labelToFieldName, ObjectMapper objectMapper) {
+			List<CycleTimeGroup> configuredFields, ObjectMapper objectMapper) {
 		ObjectNode node = objectMapper.createObjectNode();
 		Set<String> writtenFields = new HashSet<>();
 
@@ -185,15 +182,14 @@ public class HygienePromptBuilder {
 
 		if (configuredFields != null) {
 			for (CycleTimeGroup ctg : configuredFields) {
-				if (ctg == null || ctg.getLabel() == null)
+				if (ctg == null || ctg.getLabel() == null || ctg.getFieldName() == null)
 					continue;
-				String fieldName = labelToFieldName != null ? labelToFieldName.get(ctg.getLabel()) : null;
-				if (fieldName == null || writtenFields.contains(fieldName))
+				if (writtenFields.contains(ctg.getFieldName()))
 					continue;
-				Object value = getFieldValue(ji, fieldName);
+				Object value = getFieldValue(ji, ctg.getFieldName());
 				if (value != null) {
 					node.set(ctg.getLabel(), objectMapper.valueToTree(value));
-					writtenFields.add(fieldName);
+					writtenFields.add(ctg.getFieldName());
 				}
 			}
 		}
