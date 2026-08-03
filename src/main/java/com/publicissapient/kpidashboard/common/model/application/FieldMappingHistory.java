@@ -617,6 +617,8 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI212;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI213;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI311;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI311;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI215;
 
 	// KPI217 — Mean Time to Recover (Slingshot)

@@ -549,6 +549,17 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		return operations.find(query, JiraIssue.class);
 	}
 
+	@Override
+	public List<JiraIssue> findBySprintIDInAndBasicProjectConfigIdWithFields(Set<String> sprintIDs,
+			String basicProjectConfigId, Set<String> includeFields) {
+		Criteria criteria = Criteria.where(SPRINT_ID).in(sprintIDs).and(CONFIG_ID).is(basicProjectConfigId);
+		Query query = new Query(criteria);
+		if (CollectionUtils.isNotEmpty(includeFields)) {
+			includeFields.forEach(field -> query.fields().include(field));
+		}
+		return operations.find(query, JiraIssue.class);
+	}
+
 	/**
 	 * Find defects without story link.
 	 *
