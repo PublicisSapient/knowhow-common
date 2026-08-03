@@ -44,6 +44,7 @@ import lombok.ToString;
 public class HygieneKpiResponseDTO {
 
 	private String issueKey;
+	private String issueUrl;
 	private String issueType;
 	private String sprintId;
 	private String assignee;

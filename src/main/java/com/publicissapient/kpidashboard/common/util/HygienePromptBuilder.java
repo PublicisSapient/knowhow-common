@@ -27,14 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  * Shared utilities for building KPI311 Story Hygiene LLM prompts. Used by both
  * the API service (on-demand, sync path) and the data-processor batch job
  * (scheduled pre-compute path).
- *
- * <p>
- * The prompt template itself is NOT defined here - it lives in the
- * {@code prompt_details} collection under the {@code project-hygiene} key and
- * is hydrated by {@code
- * PromptService#getProjectHygienePrompt}. This class only builds the two
- * payloads substituted into that template: the hygiene rules section and the
- * Jira issues JSON.
  */
 @Slf4j
 @UtilityClass
@@ -194,7 +186,7 @@ public class HygienePromptBuilder {
 	 * fields follow, skipping duplicates.
 	 */
 	public static ObjectNode buildIssueNode(JiraIssue ji, List<String> anchorFieldNames,
-			List<CycleTimeGroup> configuredFields, Map<String, String> labelToFieldName, ObjectMapper objectMapper) {
+			List<CycleTimeGroup> configuredFields, ObjectMapper objectMapper) {
 		ObjectNode node = objectMapper.createObjectNode();
 		Set<String> writtenFields = new HashSet<>();
 
@@ -210,15 +202,14 @@ public class HygienePromptBuilder {
 
 		if (configuredFields != null) {
 			for (CycleTimeGroup ctg : configuredFields) {
-				if (ctg == null || ctg.getLabel() == null)
+				if (ctg == null || ctg.getLabel() == null || ctg.getFieldName() == null)
 					continue;
-				String fieldName = labelToFieldName != null ? labelToFieldName.get(ctg.getLabel()) : null;
-				if (fieldName == null || writtenFields.contains(fieldName))
+				if (writtenFields.contains(ctg.getFieldName()))
 					continue;
-				Object value = getFieldValue(ji, fieldName);
+				Object value = getFieldValue(ji, ctg.getFieldName());
 				if (value != null) {
 					node.set(ctg.getLabel(), objectMapper.valueToTree(value));
-					writtenFields.add(fieldName);
+					writtenFields.add(ctg.getFieldName());
 				}
 			}
 		}
