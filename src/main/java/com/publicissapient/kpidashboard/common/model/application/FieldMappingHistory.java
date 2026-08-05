@@ -634,4 +634,8 @@ public class FieldMappingHistory extends BasicModel {
 	// KPI219 — Mean Time to Test Feedback (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI219;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI219;
+
+	// KPI312 — Epic Hygiene (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI312;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI312;
 }

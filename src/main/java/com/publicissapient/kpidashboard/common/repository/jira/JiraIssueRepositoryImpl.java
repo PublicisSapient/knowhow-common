@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -553,6 +554,25 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 	public List<JiraIssue> findBySprintIDInAndBasicProjectConfigIdWithFields(Set<String> sprintIDs,
 			String basicProjectConfigId, Set<String> includeFields) {
 		Criteria criteria = Criteria.where(SPRINT_ID).in(sprintIDs).and(CONFIG_ID).is(basicProjectConfigId);
+		Query query = new Query(criteria);
+		if (CollectionUtils.isNotEmpty(includeFields)) {
+			includeFields.forEach(field -> query.fields().include(field));
+		}
+		return operations.find(query, JiraIssue.class);
+	}
+
+	@Override
+	public List<JiraIssue> findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(Set<String> typeNames,
+			String basicProjectConfigId, String startDate, String endDate, Set<String> includeFields) {
+		List<Pattern> typePatterns = CollectionUtils.emptyIfNull(typeNames).stream().filter(StringUtils::isNotBlank)
+				.map(type -> Pattern.compile("^" + Pattern.quote(type.trim()) + "$", Pattern.CASE_INSENSITIVE)).toList();
+
+		Criteria criteria = Criteria.where(CONFIG_ID).is(basicProjectConfigId);
+		if (CollectionUtils.isNotEmpty(typePatterns)) {
+			criteria = criteria.and(TYPE_NAME).in(typePatterns);
+		}
+		criteria = criteria.and(TICKET_CREATED_DATE_FIELD).gte(startDate).lte(endDate);
+
 		Query query = new Query(criteria);
 		if (CollectionUtils.isNotEmpty(includeFields)) {
 			includeFields.forEach(field -> query.fields().include(field));
