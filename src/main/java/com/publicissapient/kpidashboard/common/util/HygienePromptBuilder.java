@@ -42,9 +42,9 @@ public class HygienePromptBuilder {
 	/**
 	 * Matches the legacy {@code [weight]:} prefix an older configured prompt may
 	 * still carry, e.g. {@code [10]: Acceptance criteria must be present}. Weights
-	 * now live in {@link CycleTimeGroup#getWeightage()}; this pattern only exists so
-	 * prompts authored before that field existed keep working. DOTALL so multi-line
-	 * criteria survive.
+	 * now live in {@link CycleTimeGroup#getWeightage()}; this pattern only exists
+	 * so prompts authored before that field existed keep working. DOTALL so
+	 * multi-line criteria survive.
 	 */
 	private static final Pattern WEIGHT_PREFIX = Pattern.compile("^\\s*\\[\\s*([^\\]]*?)\\s*\\]\\s*:\\s*(.*)$",
 			Pattern.DOTALL);
@@ -69,8 +69,8 @@ public class HygienePromptBuilder {
 	}
 
 	/**
-	 * Splits a legacy prompt of the form {@code [10]: criteria text} into its weight
-	 * and criteria parts.
+	 * Splits a legacy prompt of the form {@code [10]: criteria text} into its
+	 * weight and criteria parts.
 	 *
 	 * <p>
 	 * <b>Deprecated authoring style.</b> New configuration should set
@@ -137,8 +137,8 @@ public class HygienePromptBuilder {
 	 * {@link CycleTimeGroup#getWeightage()} - a weightage of 10 moves the score ten
 	 * times as much as a rule of weightage 1. Null, zero or negative values fall
 	 * back to {@link #DEFAULT_RULE_WEIGHT}. For prompts authored before that field
-	 * existed a leading {@code [weight]:} prefix is still honoured, but only when no
-	 * weightage is set; the prefix is stripped either way so the LLM sees clean
+	 * existed a leading {@code [weight]:} prefix is still honoured, but only when
+	 * no weightage is set; the prefix is stripped either way so the LLM sees clean
 	 * criteria text plus an explicit {@code weight} line.
 	 *
 	 * <p>
@@ -187,8 +187,8 @@ public class HygienePromptBuilder {
 
 	/**
 	 * Resolves the weight for one rule. {@code weightage} from field mapping is the
-	 * source of truth; null, zero or negative values are treated as "not configured"
-	 * and fall back to the legacy prompt-prefix weight (which is itself
+	 * source of truth; null, zero or negative values are treated as "not
+	 * configured" and fall back to the legacy prompt-prefix weight (which is itself
 	 * {@link #DEFAULT_RULE_WEIGHT} unless an old {@code [n]:} prefix was present).
 	 */
 	private static double resolveWeight(Integer weightage, double legacyPromptWeight) {
@@ -196,8 +196,7 @@ public class HygienePromptBuilder {
 			return legacyPromptWeight;
 		}
 		if (weightage <= 0) {
-			log.warn("hygiene rules: weightage '{}' is not positive - defaulting to {}", weightage,
-					DEFAULT_RULE_WEIGHT);
+			log.warn("hygiene rules: weightage '{}' is not positive - defaulting to {}", weightage, DEFAULT_RULE_WEIGHT);
 			return DEFAULT_RULE_WEIGHT;
 		}
 		return weightage.doubleValue();
