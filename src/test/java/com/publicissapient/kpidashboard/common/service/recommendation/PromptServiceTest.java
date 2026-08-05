@@ -147,4 +147,53 @@ class PromptServiceTest {
 		assertFalse(result.contains("KPI_DATA_PLACEHOLDER"));
 		assertFalse(result.contains("Persona_PLACEHOLDER"));
 	}
+
+	@Test
+	void testGetEpicHygienePrompt_ResolvesBothPlaceholders() {
+		// Given
+		PromptDetails epicHygienePrompt = new PromptDetails();
+		epicHygienePrompt.setContext("Epic readiness analyzer");
+		epicHygienePrompt.setTask("Dimensions: HYGIENE_RULES_PLACEHOLDER and Epics: JIRA_ISSUES_PLACEHOLDER");
+		when(promptDetailsRepository.findByKey(PromptKeys.EPIC_HYGIENE_PROMPT)).thenReturn(epicHygienePrompt);
+
+		// When
+		String result = promptService.getEpicHygienePrompt("Rule 1 Business Clarity", "[{\"number\":\"EPIC-1\"}]");
+
+		// Then
+		assertNotNull(result);
+		assertTrue(result.contains("Epic readiness analyzer"));
+		assertTrue(result.contains("Rule 1 Business Clarity"));
+		assertTrue(result.contains("EPIC-1"));
+		assertFalse(result.contains("HYGIENE_RULES_PLACEHOLDER"));
+		assertFalse(result.contains("JIRA_ISSUES_PLACEHOLDER"));
+	}
+
+	@Test
+	void testGetEpicHygienePrompt_NullArgumentsAreRenderedSafely() {
+		// Given
+		PromptDetails epicHygienePrompt = new PromptDetails();
+		epicHygienePrompt.setTask("HYGIENE_RULES_PLACEHOLDER | JIRA_ISSUES_PLACEHOLDER");
+		when(promptDetailsRepository.findByKey(PromptKeys.EPIC_HYGIENE_PROMPT)).thenReturn(epicHygienePrompt);
+
+		// When
+		String result = promptService.getEpicHygienePrompt(null, null);
+
+		// Then
+		assertNotNull(result);
+		assertFalse(result.contains("HYGIENE_RULES_PLACEHOLDER"));
+		assertFalse(result.contains("JIRA_ISSUES_PLACEHOLDER"));
+		assertTrue(result.contains("null"));
+	}
+
+	@Test
+	void testGetEpicHygienePrompt_MissingTemplate_Throws() {
+		// Given
+		when(promptDetailsRepository.findByKey(PromptKeys.EPIC_HYGIENE_PROMPT)).thenReturn(null);
+
+		// When & Then
+		RuntimeException exception =
+				assertThrows(
+						RuntimeException.class, () -> promptService.getEpicHygienePrompt("rules", "epics"));
+		assertEquals("Failed to generate epic hygiene prompt", exception.getMessage());
+	}
 }

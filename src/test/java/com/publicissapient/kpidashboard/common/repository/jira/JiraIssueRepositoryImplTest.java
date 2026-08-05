@@ -19,6 +19,9 @@
 package com.publicissapient.kpidashboard.common.repository.jira;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -33,6 +36,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -822,5 +826,84 @@ public class JiraIssueRepositoryImplTest {
 
 		// Then
 		assertEquals(Collections.emptyList(), result);
+	}
+
+	// ---------------------------------------------------------------------
+	// Epic Hygiene (kpi312) - typed, date bounded, projected lookup
+	// ---------------------------------------------------------------------
+
+	@Test
+	void
+			testFindByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields_buildsProjectedQuery() {
+		// Given
+		when(operations.find(any(Query.class), eq(JiraIssue.class)))
+				.thenReturn(Collections.emptyList());
+
+		// When
+		List<JiraIssue> result =
+				jiraIssueRepository.findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(
+						new HashSet<>(List.of("Epic")),
+						"6335363749794a18e8a4479b",
+						"2026-02-03T00:00:00",
+						"2026-08-03T00:00:00",
+						new LinkedHashSet<>(Arrays.asList("number", "description")));
+
+		// Then
+		assertEquals(Collections.emptyList(), result);
+
+		ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
+		Query query = queryCaptor.getValue();
+
+		String criteria = query.getQueryObject().toJson();
+		assertTrue(criteria.contains("basicProjectConfigId"));
+		assertTrue(criteria.contains("typeName"));
+		assertTrue(criteria.contains("createdDate"));
+		// Only the requested fields are projected
+		assertEquals(1, query.getFieldsObject().getInteger("number"));
+		assertEquals(1, query.getFieldsObject().getInteger("description"));
+		assertNull(query.getFieldsObject().get("summary"));
+	}
+
+	@Test
+	void
+			testFindByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields_noFieldsReturnsWholeDocument() {
+		// Given
+		when(operations.find(any(Query.class), eq(JiraIssue.class)))
+				.thenReturn(Collections.emptyList());
+
+		// When
+		jiraIssueRepository.findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(
+				new HashSet<>(List.of("Epic")),
+				"6335363749794a18e8a4479b",
+				"2026-02-03T00:00:00",
+				"2026-08-03T00:00:00",
+				Collections.emptySet());
+
+		// Then
+		ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
+		assertTrue(queryCaptor.getValue().getFieldsObject().isEmpty());
+	}
+
+	@Test
+	void
+			testFindByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields_blankTypesSkipTypeCriteria() {
+		// Given
+		when(operations.find(any(Query.class), eq(JiraIssue.class)))
+				.thenReturn(Collections.emptyList());
+
+		// When
+		jiraIssueRepository.findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(
+				new HashSet<>(Arrays.asList("", "  ")),
+				"6335363749794a18e8a4479b",
+				"2026-02-03T00:00:00",
+				"2026-08-03T00:00:00",
+				null);
+
+		// Then
+		ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
+		assertFalse(queryCaptor.getValue().getQueryObject().containsKey("typeName"));
 	}
 }

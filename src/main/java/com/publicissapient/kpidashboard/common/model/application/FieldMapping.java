@@ -681,6 +681,17 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private List<CycleTimeGroup> jiraFieldsSelectionKPI311;
 
+	// Epic Hygiene (Slingshot / Sandbox) - kpi312
+	private String thresholdValueKPI312;
+
+	/**
+	 * Readiness dimensions for the Epic Hygiene KPI. Every entry is one dimension:
+	 * {@code label} is the dimension name, {@code fieldName} the Jira field that
+	 * carries the evidence and {@code
+	 * prompt} the scoring criteria (optionally prefixed with {@code [weight]:}).
+	 */
+	private List<CycleTimeGroup> jiraFieldsSelectionKPI312;
+
 	/**
 	 * Get jira issue type names string [ ].
 	 *

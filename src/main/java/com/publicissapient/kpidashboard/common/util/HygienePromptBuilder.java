@@ -24,9 +24,16 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Shared utilities for building KPI311 Story Hygiene LLM prompts. Used by both
- * the API service (on-demand, sync path) and the data-processor batch job
- * (scheduled pre-compute path).
+ * Shared utilities for building hygiene-style LLM prompts from a
+ * field-mapping-driven rule set.
+ *
+ * <p>
+ * Used by the Story Hygiene KPI (KPI311, {@code jiraFieldsSelectionKPI311} -
+ * pass/fail rules) and the Epic Hygiene KPI (KPI312,
+ * {@code jiraFieldsSelectionKPI312} - 0-100 readiness dimensions). Both rule
+ * sets share the same {@link CycleTimeGroup} shape, so rendering, weighting and
+ * hashing are identical; only the prompt template and the response schema
+ * differ.
  */
 @Slf4j
 @UtilityClass
@@ -87,12 +94,12 @@ public class HygienePromptBuilder {
 		try {
 			double weight = Double.parseDouble(weightToken);
 			if (weight <= 0) {
-				log.warn("kpi311: rule weight '{}' is not positive - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
+				log.warn("hygiene rules: weight '{}' is not positive - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
 				return new WeightedCriteria(DEFAULT_RULE_WEIGHT, criteria, false);
 			}
 			return new WeightedCriteria(weight, criteria, true);
 		} catch (NumberFormatException e) {
-			log.warn("kpi311: rule weight '{}' is not a number - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
+			log.warn("hygiene rules: weight '{}' is not a number - defaulting to {}", weightToken, DEFAULT_RULE_WEIGHT);
 			return new WeightedCriteria(DEFAULT_RULE_WEIGHT, criteria, false);
 		}
 	}
@@ -103,7 +110,7 @@ public class HygienePromptBuilder {
 	}
 
 	/**
-	 * Renders the configured KPI311 rule sets as a numbered, plain-text listing.
+	 * Renders the configured rule sets as a numbered, plain-text listing.
 	 *
 	 * <p>
 	 * Every {@link CycleTimeGroup} is an INDEPENDENT rule entry, so the same field
@@ -132,7 +139,8 @@ public class HygienePromptBuilder {
 	 * need no escaping.
 	 *
 	 * @param cycleTimeGroups
-	 *          the jiraFieldsSelectionKPI311 list from field mapping
+	 *          the configured rule list from field mapping
+	 *          (jiraFieldsSelectionKPI311 / jiraFieldsSelectionKPI312)
 	 * @return the rules section, or an empty string when nothing is configured
 	 */
 	public static String buildHygieneRules(List<CycleTimeGroup> cycleTimeGroups) {
@@ -217,12 +225,13 @@ public class HygienePromptBuilder {
 	}
 
 	/**
-	 * Computes a deterministic SHA-256 hash of the KPI311 rule-set. The list is
+	 * Computes a deterministic SHA-256 hash of the configured rule-set. The list is
 	 * sorted by label before serialization so reordering rules does not invalidate
 	 * the cache.
 	 *
 	 * @param cycleTimeGroups
-	 *          the jiraFieldsSelectionKPI311 list from field mapping
+	 *          the configured rule list from field mapping
+	 *          (jiraFieldsSelectionKPI311 / jiraFieldsSelectionKPI312)
 	 * @param objectMapper
 	 *          Jackson mapper for serialization
 	 * @return hex SHA-256 string, or empty string on error
@@ -273,7 +282,7 @@ public class HygienePromptBuilder {
 				return f.get(issue);
 			}
 		} catch (IllegalAccessException e) {
-			log.debug("kpi311: could not read field '{}' from JiraIssue", fieldName);
+			log.debug("hygiene rules: could not read field '{}' from JiraIssue", fieldName);
 		}
 		return null;
 	}

@@ -27,6 +27,7 @@ public final class PromptKeys {
 	public static final String KPI_SEARCH = "kpi-search";
 	public static final String KPI_DATA = "kpi-data";
 	public static final String PROJECT_HYGIENE_PROMPT = "project-hygiene";
+	public static final String EPIC_HYGIENE_PROMPT = "epic-hygiene";
 
 	private PromptKeys() {
 		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
