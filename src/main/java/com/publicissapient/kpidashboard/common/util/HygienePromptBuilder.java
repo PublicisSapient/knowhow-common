@@ -40,18 +40,18 @@ import lombok.extern.slf4j.Slf4j;
 public class HygienePromptBuilder {
 
 	/**
-	 * Matches the optional {@code [weight]:} prefix a configured rule prompt may
-	 * carry, e.g. {@code
-	 * [10]: Acceptance criteria must be present} or
-	 * {@code [null]: Priority must be set}. DOTALL so multi-line criteria survive.
+	 * Matches the legacy {@code [weight]:} prefix an older configured prompt may
+	 * still carry, e.g. {@code [10]: Acceptance criteria must be present}. Weights
+	 * now live in {@link CycleTimeGroup#getWeightage()}; this pattern only exists so
+	 * prompts authored before that field existed keep working. DOTALL so multi-line
+	 * criteria survive.
 	 */
 	private static final Pattern WEIGHT_PREFIX = Pattern.compile("^\\s*\\[\\s*([^\\]]*?)\\s*\\]\\s*:\\s*(.*)$",
 			Pattern.DOTALL);
 
 	/**
-	 * Weight applied when a rule declares {@code [null]}, omits the prefix, or
-	 * declares an unusable value - the rule then simply counts once, exactly like
-	 * every other unweighted rule.
+	 * Weight applied when a rule declares no usable {@code weightage} - the rule
+	 * then simply counts once, exactly like every other unweighted rule.
 	 */
 	public static final double DEFAULT_RULE_WEIGHT = 1d;
 
@@ -61,7 +61,7 @@ public class HygienePromptBuilder {
 	 * @param weight
 	 *          the effective weight - always positive, defaulted when not declared
 	 * @param criteria
-	 *          the criteria text with the {@code [weight]:} prefix stripped
+	 *          the criteria text with any legacy {@code [weight]:} prefix stripped
 	 * @param explicit
 	 *          {@code true} when a usable weight was actually declared
 	 */
@@ -69,8 +69,14 @@ public class HygienePromptBuilder {
 	}
 
 	/**
-	 * Splits a configured prompt of the form {@code [10]: criteria text} into its
-	 * weight and criteria parts.
+	 * Splits a legacy prompt of the form {@code [10]: criteria text} into its weight
+	 * and criteria parts.
+	 *
+	 * <p>
+	 * <b>Deprecated authoring style.</b> New configuration should set
+	 * {@link CycleTimeGroup#getWeightage()} and keep the prompt free of any weight
+	 * prefix; this parser is retained only so previously configured prompts do not
+	 * regress.
 	 *
 	 * <p>
 	 * {@code [null]}, a missing prefix, or a non-numeric / non-positive value all
@@ -127,12 +133,13 @@ public class HygienePromptBuilder {
 	 * ... in declaration order.
 	 *
 	 * <p>
-	 * Each prompt may carry a {@code [weight]:} prefix declaring how much the rule
-	 * contributes to the issue's hygiene score - {@code [10]: ...} weights the rule
-	 * ten times as heavily as an unweighted one, while {@code [null]: ...} (or no
-	 * prefix) falls back to {@link #DEFAULT_RULE_WEIGHT}. The prefix is stripped
-	 * here so the LLM only ever sees clean criteria text plus an explicit
-	 * {@code weight} line.
+	 * How much a rule contributes to the score comes from
+	 * {@link CycleTimeGroup#getWeightage()} - a weightage of 10 moves the score ten
+	 * times as much as a rule of weightage 1. Null, zero or negative values fall
+	 * back to {@link #DEFAULT_RULE_WEIGHT}. For prompts authored before that field
+	 * existed a leading {@code [weight]:} prefix is still honoured, but only when no
+	 * weightage is set; the prefix is stripped either way so the LLM sees clean
+	 * criteria text plus an explicit {@code weight} line.
 	 *
 	 * <p>
 	 * Plain text (rather than JSON) is used deliberately so user-authored criteria
@@ -165,13 +172,35 @@ public class HygienePromptBuilder {
 			String label = ctg.getLabel();
 			int occurrence = seenPerLabel.merge(label, 1, Integer::sum);
 			String ruleName = totalPerLabel.get(label) > 1 ? label + " (" + occurrence + ")" : label;
+			// The prompt is always run through the legacy parser so a pre-existing
+			// "[10]: ..." prefix never leaks into the criteria text, but the configured
+			// weightage field always wins when it carries a usable value.
 			WeightedCriteria weighted = parseWeightedCriteria(ctg.getPrompt());
+			double weight = resolveWeight(ctg.getWeightage(), weighted.weight());
 
 			renderedRules.add("Rule " + (renderedRules
 					.size() + 1) + "\n" + "  ruleName: " + ruleName + "\n" + "  field: " + label + "\n" + "  weight: " + formatWeight(
-							weighted.weight()) + "\n" + "  criteria: " + weighted.criteria());
+							weight) + "\n" + "  criteria: " + weighted.criteria());
 		}
 		return String.join("\n\n", renderedRules);
+	}
+
+	/**
+	 * Resolves the weight for one rule. {@code weightage} from field mapping is the
+	 * source of truth; null, zero or negative values are treated as "not configured"
+	 * and fall back to the legacy prompt-prefix weight (which is itself
+	 * {@link #DEFAULT_RULE_WEIGHT} unless an old {@code [n]:} prefix was present).
+	 */
+	private static double resolveWeight(Integer weightage, double legacyPromptWeight) {
+		if (weightage == null) {
+			return legacyPromptWeight;
+		}
+		if (weightage <= 0) {
+			log.warn("hygiene rules: weightage '{}' is not positive - defaulting to {}", weightage,
+					DEFAULT_RULE_WEIGHT);
+			return DEFAULT_RULE_WEIGHT;
+		}
+		return weightage.doubleValue();
 	}
 
 	/**
