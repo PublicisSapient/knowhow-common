@@ -69,6 +69,11 @@ public class E2EBranchResolver {
 				FieldMapping::setE2eTestBranchKPI219, "KPI219", "e2eTestBranchKPI219");
 	}
 
+	public Set<String> resolveAndPersistKPI220(FieldMapping fieldMapping, ObjectId projectConfigId) {
+		return resolveAndPersistInternal(fieldMapping, projectConfigId, FieldMapping::getE2eTestBranchKPI220,
+				FieldMapping::setE2eTestBranchKPI220, "KPI220", "e2eTestBranchKPI220");
+	}
+
 	private Set<String> resolveAndPersistInternal(FieldMapping fieldMapping, ObjectId projectConfigId,
 			Function<FieldMapping, List<String>> getter, BiConsumer<FieldMapping, List<String>> setter, String kpiId,
 			String fieldName) {

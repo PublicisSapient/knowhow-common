@@ -677,6 +677,11 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private String thresholdValueKPI219;
 
+	// Flaky Test Rate (Slingshot / Quality) - kpi220
+	private List<String> e2eTestBranchKPI220;
+
+	private String thresholdValueKPI220;
+
 	private String thresholdValueKPI311;
 
 	private List<CycleTimeGroup> jiraFieldsSelectionKPI311;
