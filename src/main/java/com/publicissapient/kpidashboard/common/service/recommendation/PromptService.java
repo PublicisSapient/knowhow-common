@@ -39,6 +39,8 @@ public class PromptService {
 	public static final String KPI_DATA_BY_PROJECT_PLACEHOLDER = "KPI_DATA_BY_PROJECT_PLACEHOLDER";
 	public static final String PERSONA_PLACEHOLDER = "Persona_PLACEHOLDER";
 	public static final String KPI_DATA_PLACEHOLDER = "KPI_DATA_PLACEHOLDER";
+	public static final String HYGIENE_RULES_PLACEHOLDER = "HYGIENE_RULES_PLACEHOLDER";
+	public static final String JIRA_ISSUES_PLACEHOLDER = "JIRA_ISSUES_PLACEHOLDER";
 
 	private final PromptDetailsRepository promptDetailsRepository;
 
@@ -108,6 +110,59 @@ public class PromptService {
 		} catch (Exception e) {
 			log.error("Error building KPI-specific prompt for KPI {}: {}", kpiId, e.getMessage(), e);
 			throw new RuntimeException("Failed to generate KPI-specific prompt", e);
+		}
+	}
+
+	/**
+	 * Generates the Project Hygiene prompt by hydrating the {@code project-hygiene}
+	 * template stored in the {@code prompt_details} collection with the project
+	 * specific hygiene rules and the Jira issues that have to be evaluated.
+	 *
+	 * @param hygieneRules
+	 *          map of {ruleName -&gt; evaluation criteria} configured at project
+	 *          level
+	 * @param jiraIssues
+	 *          the Jira issues (JSON/array representation) to be evaluated
+	 * @return the fully resolved prompt string
+	 */
+	public String getProjectHygienePrompt(Object hygieneRules, Object jiraIssues) {
+		try {
+			PromptDetails projectHygienePrompt = getPromptDetails(PromptKeys.PROJECT_HYGIENE_PROMPT);
+
+			return projectHygienePrompt.toString().replace(HYGIENE_RULES_PLACEHOLDER, String.valueOf(hygieneRules))
+					.replace(JIRA_ISSUES_PLACEHOLDER, String.valueOf(jiraIssues));
+		} catch (Exception e) {
+			log.error("Error building project hygiene prompt: {}", e.getMessage(), e);
+			throw new RuntimeException("Failed to generate project hygiene prompt", e);
+		}
+	}
+
+	/**
+	 * Generates the Epic Hygiene prompt by hydrating the {@code epic-hygiene}
+	 * template stored in the {@code prompt_details} collection with the project
+	 * specific readiness dimensions and the Epics that have to be evaluated.
+	 *
+	 * <p>
+	 * The template shares the placeholder contract of
+	 * {@link #getProjectHygienePrompt(Object, Object)} so the same
+	 * {@code HygienePromptBuilder} helpers can render both rule sets.
+	 *
+	 * @param readinessRules
+	 *          the readiness dimensions (rendered rule listing) configured at
+	 *          project level via {@code jiraFieldsSelectionKPI312}
+	 * @param epicIssues
+	 *          the Epics (JSON array representation) to be evaluated
+	 * @return the fully resolved prompt string
+	 */
+	public String getEpicHygienePrompt(Object readinessRules, Object epicIssues) {
+		try {
+			PromptDetails epicHygienePrompt = getPromptDetails(PromptKeys.EPIC_HYGIENE_PROMPT);
+
+			return epicHygienePrompt.toString().replace(HYGIENE_RULES_PLACEHOLDER, String.valueOf(readinessRules))
+					.replace(JIRA_ISSUES_PLACEHOLDER, String.valueOf(epicIssues));
+		} catch (Exception e) {
+			log.error("Error building epic hygiene prompt: {}", e.getMessage(), e);
+			throw new RuntimeException("Failed to generate epic hygiene prompt", e);
 		}
 	}
 }

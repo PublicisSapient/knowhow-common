@@ -241,6 +241,9 @@ public class JiraIssue extends BasicModel implements Cloneable {
 
 	private String aiUsageType;
 
+	private String description;
+	private String summary;
+
 	public boolean isDefectRaisedByQA() {
 		return defectRaisedByQA;
 	}
