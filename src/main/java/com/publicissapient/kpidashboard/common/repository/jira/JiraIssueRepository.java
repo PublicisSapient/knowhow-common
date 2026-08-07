@@ -231,7 +231,7 @@ public interface JiraIssueRepository
 	 *          the basic project configuration ID
 	 * @return a list of Jira issues
 	 */
-	@Query(value = "{ 'sprintID': { $in: ?0 }, 'basicProjectConfigId': ?1 }", fields = "{ 'sprintID': 1, 'number': 1, '_id': 0 }")
+	@Query(value = "{ 'sprintID': { $in: ?0 }, 'basicProjectConfigId': ?1 }")
 	List<JiraIssue> findBySprintIDInAndBasicProjectConfigId(Set<String> sprintIDs, String basicProjectConfigId);
 
 	@Query(value = "{ 'basicProjectConfigId': { $in: ?0 } }", fields = "{ '_id': 1 , 'sprintID': 1, 'basicProjectConfigId':1 }")

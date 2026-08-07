@@ -668,9 +668,37 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private String thresholdValueKPI215;
 
 	// E2E Test Pass Rate (Slingshot / Quality) - kpi218
-	private String e2eTestBranchKPI218;
+	private List<String> e2eTestBranchKPI218;
 
 	private String thresholdValueKPI218;
+
+	// Mean Time to Test Feedback (Slingshot / Quality) - kpi219
+	private List<String> e2eTestBranchKPI219;
+
+	private String thresholdValueKPI219;
+
+	@Builder.Default
+	private String calculationStrategyKPI219 = "BUILD";
+
+	// Flaky Test Rate (Slingshot / Quality) - kpi220
+	private List<String> e2eTestBranchKPI220;
+
+	private String thresholdValueKPI220;
+
+	private String thresholdValueKPI311;
+
+	private List<CycleTimeGroup> jiraFieldsSelectionKPI311;
+
+	// Epic Hygiene (Slingshot / Sandbox) - kpi312
+	private String thresholdValueKPI312;
+
+	/**
+	 * Readiness dimensions for the Epic Hygiene KPI. Every entry is one dimension:
+	 * {@code label} is the dimension name, {@code fieldName} the Jira field that
+	 * carries the evidence and {@code
+	 * prompt} the scoring criteria (optionally prefixed with {@code [weight]:}).
+	 */
+	private List<CycleTimeGroup> jiraFieldsSelectionKPI312;
 
 	/**
 	 * Get jira issue type names string [ ].

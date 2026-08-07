@@ -18,10 +18,12 @@
 
 package com.publicissapient.kpidashboard.common.repository.application;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
@@ -79,6 +81,9 @@ public interface FieldMappingRepository extends MongoRepository<FieldMapping, Ob
 	 * @return field mapping of the tool
 	 */
 	Optional<FieldMapping> findById(ObjectId id);
+
+	@Query("{ 'jiraFieldsSelectionKPI311': { $exists: true, $ne: [] } }")
+	List<FieldMapping> findAllWithHygieneRuleSetConfigured();
 
 	default FieldMapping findByProjectConfigId(String projectConfigId) {
 		if (ObjectId.isValid(projectConfigId)) {

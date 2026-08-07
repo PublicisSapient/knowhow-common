@@ -307,4 +307,47 @@ public interface JiraIssueRepositoryCustom { // NOPMD
 	 * @return list of matching JiraIssues (number field populated)
 	 */
 	List<JiraIssue> findIssuesByDateAndFilters(Map<String, List<String>> mapOfFilters, String dateFrom, String dateTo);
+
+	/**
+	 * Finds Jira issues by sprint IDs and project, returning only the specified
+	 * subset of fields via a Mongo projection. Intended for callers (e.g. the Story
+	 * Hygiene KPI) that only need a handful of columns so we don't ship the whole
+	 * JiraIssue document over the wire and, downstream, into the LLM prompt.
+	 *
+	 * @param sprintIDs
+	 *          set of sprint identifiers to match against {@code sprintID}
+	 * @param basicProjectConfigId
+	 *          project identifier
+	 * @param includeFields
+	 *          Mongo field names to project. If {@code null} or empty the full
+	 *          document is returned.
+	 * @return matching JiraIssues with only the requested fields populated
+	 */
+	List<JiraIssue> findBySprintIDInAndBasicProjectConfigIdWithFields(Set<String> sprintIDs, String basicProjectConfigId,
+			Set<String> includeFields);
+
+	/**
+	 * Finds Jira issues of the given type(s) created within a date window for one
+	 * project, returning only the specified subset of fields via a Mongo
+	 * projection. Intended for the Epic Hygiene KPI, which grades every Epic
+	 * created in the trailing N months and only needs the handful of columns the
+	 * readiness rules reference.
+	 *
+	 * @param typeNames
+	 *          issue type names to match against {@code typeName} (case
+	 *          insensitive)
+	 * @param basicProjectConfigId
+	 *          project identifier
+	 * @param startDate
+	 *          inclusive lower bound compared against {@code createdDate} (ISO-8601
+	 *          string, e.g. {@code 2026-02-03T00:00:00})
+	 * @param endDate
+	 *          inclusive upper bound compared against {@code createdDate}
+	 * @param includeFields
+	 *          Mongo field names to project. If {@code null} or empty the full
+	 *          document is returned.
+	 * @return matching JiraIssues with only the requested fields populated
+	 */
+	List<JiraIssue> findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(Set<String> typeNames,
+			String basicProjectConfigId, String startDate, String endDate, Set<String> includeFields);
 }

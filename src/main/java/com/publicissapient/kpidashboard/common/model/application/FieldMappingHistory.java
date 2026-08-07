@@ -617,6 +617,8 @@ public class FieldMappingHistory extends BasicModel {
 
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI212;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI213;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI311;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI311;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI215;
 
 	// KPI217 — Mean Time to Recover (Slingshot)
@@ -628,4 +630,17 @@ public class FieldMappingHistory extends BasicModel {
 	// KPI218 — E2E Test Pass Rate (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI218;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI218;
+
+	// KPI219 — Mean Time to Test Feedback (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI219;
+	private List<ConfigurationHistoryChangeLog> historycalculationStrategyKPI219;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI219;
+
+	// KPI220 — Flaky Test Rate (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI220;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI220;
+
+	// KPI312 — Epic Hygiene (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI312;
+	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI312;
 }

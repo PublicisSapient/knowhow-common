@@ -453,6 +453,10 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String calculationStrategyKPI214 = "DEPLOYMENT";
 
 	private String thresholdValueKPI214;
+
+	// Mean Time to Test Feedback (Slingshot / Quality) - kpi219
+	@Builder.Default
+	private String calculationStrategyKPI219 = "BUILD";
 	private Map<String, Integer> startDateCountKPI150;
 	private List<String> jiraDevDoneStatusKPI150;
 	private boolean populateByDevDoneKPI150;
