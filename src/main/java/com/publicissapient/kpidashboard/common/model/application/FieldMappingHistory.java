@@ -633,6 +633,7 @@ public class FieldMappingHistory extends BasicModel {
 
 	// KPI219 — Mean Time to Test Feedback (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI219;
+	private List<ConfigurationHistoryChangeLog> historycalculationStrategyKPI219;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI219;
 
 	// KPI220 — Flaky Test Rate (Slingshot)

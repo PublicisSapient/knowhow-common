@@ -677,6 +677,9 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	private String thresholdValueKPI219;
 
+	@Builder.Default
+	private String calculationStrategyKPI219 = "BUILD";
+
 	// Flaky Test Rate (Slingshot / Quality) - kpi220
 	private List<String> e2eTestBranchKPI220;
 
