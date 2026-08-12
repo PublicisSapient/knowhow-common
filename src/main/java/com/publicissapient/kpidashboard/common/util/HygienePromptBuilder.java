@@ -6,10 +6,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -186,6 +189,134 @@ public class HygienePromptBuilder {
 	}
 
 	/**
+	 * Renders the readiness criteria for the Epic Hygiene KPI (kpi312) as ONE block
+	 * per {@link EpicReadinessDimension} - the dimensions are fixed, only the way
+	 * they are scored is configurable.
+	 *
+	 * <p>
+	 * Every configured {@link CycleTimeGroup} is matched onto a dimension by its
+	 * label (see {@link EpicReadinessDimension#from(String)}) and rendered as a
+	 * criteria line of that dimension, carrying the Jira field to read and the
+	 * weight it was configured with. A dimension no rule matched is marked
+	 * {@code criteriaSource: DEFAULT} and simply points the model at the default
+	 * criteria carried by the {@code epic-hygiene} prompt itself - no prompt text
+	 * is ever assembled in code.
+	 *
+	 * <p>
+	 * Rules whose label names none of the dimensions are not dropped: they are
+	 * emitted in a trailing section the prompt instructs the model to fold into the
+	 * closest dimension, so a project keeps the benefit of its configuration even
+	 * when it words a rule freely.
+	 *
+	 * <p>
+	 * The dimension weight is the SUM of the weights of the rules matched onto it
+	 * (a dimension carrying two rules of weight 5 counts as much as one rule of
+	 * weight 10) and defaults to {@link #DEFAULT_RULE_WEIGHT} when nothing is
+	 * configured for it.
+	 *
+	 * @param configuredDimensions
+	 *          the configured rule list from field mapping ({@code
+	 *     jiraFieldsSelectionKPI312}), may be null or empty
+	 * @return the readiness criteria section, never empty
+	 */
+	public static String buildEpicReadinessRules(List<CycleTimeGroup> configuredDimensions) {
+		List<CycleTimeGroup> validGroups = configuredDimensions == null
+				? List.of()
+				: configuredDimensions.stream()
+						.filter(ctg -> ctg != null && ctg.getPrompt() != null && !ctg.getPrompt().isBlank()).toList();
+
+		Map<EpicReadinessDimension, List<CycleTimeGroup>> rulesByDimension = new EnumMap<>(EpicReadinessDimension.class);
+		List<CycleTimeGroup> unmatchedRules = new ArrayList<>();
+		for (CycleTimeGroup ctg : validGroups) {
+			Optional<EpicReadinessDimension> dimension = EpicReadinessDimension.from(ctg.getLabel());
+			if (dimension.isPresent()) {
+				rulesByDimension.computeIfAbsent(dimension.get(), key -> new ArrayList<>()).add(ctg);
+			} else {
+				unmatchedRules.add(ctg);
+			}
+		}
+
+		List<String> blocks = new ArrayList<>();
+		EpicReadinessDimension[] dimensions = EpicReadinessDimension.values();
+		for (int index = 0; index < dimensions.length; index++) {
+			blocks.add(
+					renderDimension(dimensions[index], index + 1, dimensions.length, rulesByDimension.get(dimensions[index])));
+		}
+		if (!unmatchedRules.isEmpty()) {
+			blocks.add(renderUnmatchedRules(unmatchedRules));
+		}
+		return String.join("\n\n", blocks);
+	}
+
+	/**
+	 * Renders one fixed dimension with either its configured or its default
+	 * criteria.
+	 */
+	private static String renderDimension(EpicReadinessDimension dimension, int position, int total,
+			List<CycleTimeGroup> configuredRules) {
+
+		boolean configured = configuredRules != null && !configuredRules.isEmpty();
+		double weight = DEFAULT_RULE_WEIGHT;
+		List<String> criteriaLines = new ArrayList<>();
+		LinkedHashSet<String> evidenceFields = new LinkedHashSet<>();
+
+		if (configured) {
+			double totalWeight = 0d;
+			for (CycleTimeGroup ctg : configuredRules) {
+				WeightedCriteria weighted = parseWeightedCriteria(ctg.getPrompt());
+				double ruleWeight = resolveWeight(ctg.getWeightage(), weighted.weight());
+				totalWeight += ruleWeight;
+				String field = firstNonBlank(ctg.getFieldName(), ctg.getLabel(), "(field not mapped)");
+				evidenceFields.add(field);
+				criteriaLines
+						.add("    - (field: " + field + ", weight: " + formatWeight(ruleWeight) + ") " + weighted.criteria());
+			}
+			weight = totalWeight > 0 ? totalWeight : DEFAULT_RULE_WEIGHT;
+		} else {
+			// No prompt text is assembled here: the criteria to apply in this case are
+			// part of the epic-hygiene prompt stored in prompt_details.
+			evidenceFields.addAll(dimension.getDefaultEvidenceFields());
+			criteriaLines.add("    - Apply the DEFAULT CRITERIA defined for this dimension in your instructions.");
+		}
+
+		return "Dimension " + position + " of " + total + "\n" + "  dimension: " + dimension
+				.getDisplayName() + "\n" + "  weight: " + formatWeight(weight) + "\n" + "  evidenceFields: " + String.join(", ",
+						evidenceFields) + "\n" + "  criteriaSource: " + (configured
+								? "PROJECT FIELD MAPPING"
+								: "DEFAULT (project configured no rule for this dimension)") + "\n" + "  criteria:\n" + String
+										.join("\n", criteriaLines);
+	}
+
+	/**
+	 * Renders the configured rules that name none of the fixed dimensions so the
+	 * model can still honour them.
+	 */
+	private static String renderUnmatchedRules(List<CycleTimeGroup> unmatchedRules) {
+		List<String> rendered = new ArrayList<>();
+		rendered.add(
+				"=== Additional configured checks ===\n" + "These checks were configured for this project but do not name one of the five dimensions above. Fold EACH of " + "them into the SINGLE dimension it informs most, add its weight to that dimension and cite it in the reason. " + "Never emit an extra result element for them.");
+		for (int index = 0; index < unmatchedRules.size(); index++) {
+			CycleTimeGroup ctg = unmatchedRules.get(index);
+			WeightedCriteria weighted = parseWeightedCriteria(ctg.getPrompt());
+			double ruleWeight = resolveWeight(ctg.getWeightage(), weighted.weight());
+			rendered.add("Check " + (index + 1) + "\n" + "  configuredName: " + firstNonBlank(ctg.getLabel(),
+					"(unnamed)") + "\n" + "  field: " + firstNonBlank(ctg.getFieldName(), ctg.getLabel(),
+							"(field not mapped)") + "\n" + "  weight: " + formatWeight(
+									ruleWeight) + "\n" + "  criteria: " + weighted.criteria());
+		}
+		return String.join("\n\n", rendered);
+	}
+
+	private static String firstNonBlank(String... values) {
+		for (String value : values) {
+			if (value != null && !value.isBlank()) {
+				return value.trim();
+			}
+		}
+		return "";
+	}
+
+	/**
 	 * Resolves the weight for one rule. {@code weightage} from field mapping is the
 	 * source of truth; null, zero or negative values are treated as "not
 	 * configured" and fall back to the legacy prompt-prefix weight (which is itself
@@ -247,6 +378,54 @@ public class HygienePromptBuilder {
 					node.set(ctg.getLabel(), objectMapper.valueToTree(value));
 					writtenFields.add(ctg.getFieldName());
 				}
+			}
+		}
+		return node;
+	}
+
+	/**
+	 * Builds the slim JSON object handed to the LLM for ONE Epic (kpi312).
+	 *
+	 * <p>
+	 * Unlike {@link #buildIssueNode(JiraIssue, List, List, ObjectMapper)} - which
+	 * keys the evidence by the configured rule label - the Epic node is keyed by
+	 * the REAL Jira field name. The readiness dimensions are fixed and their
+	 * criteria (configured or default) always cite a field name, so keying the
+	 * payload the same way keeps the prompt and the data in one vocabulary and lets
+	 * a default dimension read a field another dimension already uses.
+	 *
+	 * @param ji
+	 *          the Epic to serialise
+	 * @param anchorFieldNames
+	 *          identity fields always written first
+	 * @param configuredDimensions
+	 *          the configured rules ({@code jiraFieldsSelectionKPI312}), may be
+	 *          null
+	 * @param objectMapper
+	 *          Jackson mapper used to convert the field values
+	 * @return the slim Epic node - only fields carrying a value are written
+	 */
+	public static ObjectNode buildEpicIssueNode(JiraIssue ji, List<String> anchorFieldNames,
+			List<CycleTimeGroup> configuredDimensions, ObjectMapper objectMapper) {
+
+		LinkedHashSet<String> fieldNames = new LinkedHashSet<>();
+		if (anchorFieldNames != null) {
+			fieldNames.addAll(anchorFieldNames);
+		}
+		if (configuredDimensions != null) {
+			configuredDimensions.stream()
+					.filter(ctg -> ctg != null && ctg.getFieldName() != null && !ctg.getFieldName().isBlank())
+					.forEach(ctg -> fieldNames.add(ctg.getFieldName()));
+		}
+		// Always add the fallback evidence fields: a dimension the project did not
+		// configure is graded on its default criteria and would otherwise see nothing.
+		fieldNames.addAll(EpicReadinessDimension.allDefaultEvidenceFields());
+
+		ObjectNode node = objectMapper.createObjectNode();
+		for (String fieldName : fieldNames) {
+			Object value = getFieldValue(ji, fieldName);
+			if (value != null) {
+				node.set(fieldName, objectMapper.valueToTree(value));
 			}
 		}
 		return node;
