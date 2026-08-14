@@ -640,6 +640,9 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historye2eTestBranchKPI220;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI220;
 
+	// KPI221 — Change Failure Rate (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI221;
+
 	// KPI312 — Epic Hygiene (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI312;
 	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI312;
