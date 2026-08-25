@@ -649,6 +649,9 @@ public class FieldMappingHistory extends BasicModel {
 	// KPI221 — Change Failure Rate (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI221;
 
+	// KPI223 — Security Vulnerability Lead Time (Slingshot)
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI223;
+
 	// KPI312 — Epic Hygiene (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI312;
 	private List<ConfigurationHistoryChangeLog> historyjiraFieldsSelectionKPI312;
