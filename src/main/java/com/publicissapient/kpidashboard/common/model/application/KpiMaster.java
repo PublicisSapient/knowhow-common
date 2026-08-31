@@ -63,6 +63,9 @@ public class KpiMaster extends BasicModel {
 	@Schema(description = "Sub-category of the KPI", example = "Code Quality")
 	private String kpiSubCategory;
 
+	@Schema(description = "Display order of the sub-category tab (Slingshot only)", example = "1")
+	private Integer kpiSubCategoryOrder;
+
 	@Schema(description = "Indicates if the KPI is part of aggregated feed", example = "Yes")
 	private String kpiInAggregatedFeed;
 
