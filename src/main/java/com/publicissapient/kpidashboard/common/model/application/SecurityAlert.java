@@ -20,6 +20,7 @@ package com.publicissapient.kpidashboard.common.model.application;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Document(collection = "security_alerts")
+@CompoundIndex(name = "project_alert_source_unique", def = "{'basicProjectConfigId': 1, 'alertId': 1, 'source': 1}", unique = true)
 @Data
 @Builder
 @NoArgsConstructor
