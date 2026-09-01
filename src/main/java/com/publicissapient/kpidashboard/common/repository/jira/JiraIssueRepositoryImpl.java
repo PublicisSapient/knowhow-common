@@ -580,6 +580,44 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		return operations.find(query, JiraIssue.class);
 	}
 
+	/** Backlog Aging (kpi224). {@inheritDoc} */
+	@Override
+	public List<JiraIssue> findBacklogIssuesByStatusAndType(String basicProjectConfigId, Set<String> statuses,
+			Set<String> typeNames) {
+		List<Pattern> statusPatterns = toCaseInsensitivePatterns(statuses);
+		if (CollectionUtils.isEmpty(statusPatterns)) {
+			return new ArrayList<>();
+		}
+
+		Criteria criteria = Criteria.where(CONFIG_ID).is(basicProjectConfigId).and(STATUS).in(statusPatterns);
+
+		List<Pattern> typePatterns = toCaseInsensitivePatterns(typeNames);
+		if (CollectionUtils.isNotEmpty(typePatterns)) {
+			criteria = criteria.and(TYPE_NAME).in(typePatterns);
+		}
+
+		Query query = new Query(criteria);
+		query.fields().include(CONFIG_ID);
+		query.fields().include(NUMBER);
+		query.fields().include(NAME);
+		query.fields().include(URL);
+		query.fields().include(STATUS);
+		query.fields().include(JIRA_ISSUE_STATUS);
+		query.fields().include(TYPE_NAME);
+		query.fields().include(PRIORITY);
+		query.fields().include(TICKET_CREATED_DATE_FIELD);
+		query.fields().include(JIRA_UPDATED_DATE);
+		query.fields().include(STORY_POINTS);
+		query.fields().include(PROJECT_NAME);
+		query.fields().include(QUERY_LABELS);
+		return operations.find(query, JiraIssue.class);
+	}
+
+	private static List<Pattern> toCaseInsensitivePatterns(Set<String> values) {
+		return CollectionUtils.emptyIfNull(values).stream().filter(StringUtils::isNotBlank)
+				.map(value -> Pattern.compile("^" + Pattern.quote(value.trim()) + "$", Pattern.CASE_INSENSITIVE)).toList();
+	}
+
 	/**
 	 * Find defects without story link.
 	 *
