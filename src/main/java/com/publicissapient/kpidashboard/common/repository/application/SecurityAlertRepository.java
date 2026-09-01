@@ -29,8 +29,9 @@ import com.publicissapient.kpidashboard.common.model.application.SecurityAlert;
 @Repository
 public interface SecurityAlertRepository extends MongoRepository<SecurityAlert, ObjectId> {
 
-	List<SecurityAlert> findByBasicProjectConfigIdAndFixedAtIsNotNullAndDetectedAtGreaterThanEqual(
-			ObjectId basicProjectConfigId, long detectedAtFrom);
+	List<SecurityAlert> findByBasicProjectConfigIdAndFixedAtGreaterThanEqual(ObjectId basicProjectConfigId,
+			long fixedAtFrom);
 
-	boolean existsByBasicProjectConfigIdAndAlertIdAndSource(ObjectId basicProjectConfigId, String alertId, String source);
+	List<SecurityAlert> findByBasicProjectConfigIdAndAlertIdAndSource(ObjectId basicProjectConfigId, String alertId,
+			String source);
 }
