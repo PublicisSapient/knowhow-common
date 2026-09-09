@@ -627,9 +627,16 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForRefinementKPI222;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI222;
 
+	// KPI225 — Mid-Sprint Re-Refinement Rate (Slingshot / Intake)
+	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI225;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusStartDevKPI225;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusReturnToRefinementKPI225;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI225;
+
 	// KPI224 — Backlog Aging (Slingshot / Intake)
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI224;
 	private List<ConfigurationHistoryChangeLog> historyjiraBacklogStatusKPI224;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusToStartBacklogKPI224;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForRefinedKPI224;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI224;
 
