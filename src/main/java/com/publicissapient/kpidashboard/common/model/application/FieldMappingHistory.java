@@ -640,12 +640,12 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForRefinedKPI224;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI224;
 
-	// KPI225 — Refinement-to-Defect Linkage (Slingshot / Quality)
-	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI225;
-	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectIdentificationKPI225;
-	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectValueKPI225;
-	private List<ConfigurationHistoryChangeLog> historyjiraRefinementRootCauseValuesKPI225;
-	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI225;
+	// KPI226 — Refinement-to-Defect Linkage (Slingshot / Quality)
+	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI226;
+	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectIdentificationKPI226;
+	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectValueKPI226;
+	private List<ConfigurationHistoryChangeLog> historyjiraRefinementRootCauseValuesKPI226;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI226;
 
 	// KPI217 — Mean Time to Recover (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI217;

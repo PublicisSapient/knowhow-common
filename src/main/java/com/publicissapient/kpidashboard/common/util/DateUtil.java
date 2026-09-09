@@ -96,7 +96,7 @@ public class DateUtil {
 	 * @return formatted date
 	 */
 	public static String dateTimeFormatter(LocalDateTime dateTime, final String format) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format, Locale.ENGLISH);
 		return dateTime.format(formatter);
 	}
 
@@ -108,7 +108,7 @@ public class DateUtil {
 	 * @return parsed date
 	 */
 	public static Date dateTimeParser(String dateTime, final String format) {
-		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.ENGLISH);
 		Date date = null;
 		try {
 			date = formatter.parse(dateTime);
@@ -126,7 +126,7 @@ public class DateUtil {
 	 * @return formatted date
 	 */
 	public static String dateTimeFormatter(Date dateTime, final String format) {
-		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.ENGLISH);
 		return formatter.format(dateTime);
 	}
 
@@ -161,9 +161,11 @@ public class DateUtil {
 			final String toFormat) {
 		if (dateTime != null) {
 			try {
-				org.joda.time.format.DateTimeFormatter sourceFormatter = DateTimeFormat.forPattern(fromFormat);
+				org.joda.time.format.DateTimeFormatter sourceFormatter = DateTimeFormat.forPattern(fromFormat)
+						.withLocale(Locale.ENGLISH);
 				DateTime parsedDateTime = sourceFormatter.parseDateTime(dateTime.toString());
-				org.joda.time.format.DateTimeFormatter targetFormatter = DateTimeFormat.forPattern(toFormat);
+				org.joda.time.format.DateTimeFormatter targetFormatter = DateTimeFormat.forPattern(toFormat)
+						.withLocale(Locale.ENGLISH);
 				return parsedDateTime.toString(targetFormatter);
 			} catch (IllegalArgumentException e) {
 				log.error("error while parse date", e);
@@ -183,7 +185,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static LocalDateTime stringToLocalDateTime(String time, String format) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format, Locale.ENGLISH);
 		return LocalDateTime.parse(time, formatter);
 	}
 
@@ -247,12 +249,12 @@ public class DateUtil {
 	}
 
 	public static DateTime stringToDateTime(String date, String formater) {
-		return DateTimeFormat.forPattern(formater).parseDateTime(date);
+		return DateTimeFormat.forPattern(formater).withLocale(Locale.ENGLISH).parseDateTime(date);
 	}
 
 	public static LocalDate stringToLocalDate(String time, String format) {
 		LocalDate formattedDate;
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format, Locale.ENGLISH);
 		try {
 			formattedDate = LocalDate.parse(time, formatter);
 		} catch (DateTimeParseException dateTimeParseException) {
