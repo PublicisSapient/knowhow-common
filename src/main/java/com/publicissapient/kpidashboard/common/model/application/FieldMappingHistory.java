@@ -636,6 +636,7 @@ public class FieldMappingHistory extends BasicModel {
 	// KPI224 — Backlog Aging (Slingshot / Intake)
 	private List<ConfigurationHistoryChangeLog> historyjiraIssueTypeKPI224;
 	private List<ConfigurationHistoryChangeLog> historyjiraBacklogStatusKPI224;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusToStartBacklogKPI224;
 	private List<ConfigurationHistoryChangeLog> historyjiraStatusForRefinedKPI224;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI224;
 
