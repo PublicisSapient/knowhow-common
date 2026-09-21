@@ -52,7 +52,7 @@ public enum EpicReadinessDimension {
 					"value clarity", "objective clarity")),
 
 	/** WHAT is being delivered - deliverables, boundaries, acceptance. */
-	SCOPE_DEFINITION("Scope Definition", List.of("description", "labels", "summary"),
+	SCOPE_DEFINITION("Scope Definition", List.of("description", "acceptanceCriteria", "labels", "summary"),
 			Set.of("scope", "scope clarity", "requirement", "requirements", "requirement clarity", "acceptance criteria",
 					"definition of done", "deliverables", "story breakdown")),
 

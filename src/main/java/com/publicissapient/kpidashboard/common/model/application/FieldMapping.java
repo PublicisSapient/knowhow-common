@@ -51,6 +51,16 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiradefecttype;
 	private String epicLink;
 	private List<String> jiraSubTaskDefectType;
+
+	/**
+	 * Id of the Jira custom field carrying the Acceptance Criteria of an issue (for
+	 * example {@code
+	 * customfield_11111}). Acceptance Criteria is not a built-in Jira field, so a
+	 * project has to declare which custom field holds it before the processor can
+	 * collect it.
+	 */
+	private String jiraAcceptanceCriteriaCustomField;
+
 	private String updatedAt;
 	private String updatedBy;
 
@@ -585,6 +595,29 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraProductionDefectValueKPI226;
 	private List<String> jiraRefinementRootCauseValuesKPI226;
 	private String thresholdValueKPI226;
+
+	// KPI227 — Acceptance Criteria Coverage (Slingshot / Intake)
+	/**
+	 * Issue types treated as a "story" by the KPI. Defaults to Story when left
+	 * blank.
+	 */
+	private List<String> jiraStoryIdentificationKPI227;
+
+	/**
+	 * Statuses that mean "work has started". The first transition into any of these
+	 * is the moment the acceptance criteria are sampled. Defaults to "In Progress"
+	 * when left blank.
+	 */
+	private List<String> jiraStatusForInProgressKPI227;
+
+	/**
+	 * How the acceptance criteria text is split into individual criteria:
+	 * {@code AUTO} (detect the shape of the text), {@code GHERKIN}, {@code LIST} or
+	 * {@code LINE}. Defaults to {@code AUTO}.
+	 */
+	private String acceptanceCriteriaFormatKPI227;
+
+	private String thresholdValueKPI227;
 
 	// KPI217 — Mean Time to Recover (Slingshot) — decoupled from KPI166
 	private List<String> jiraStoryIdentificationKPI217;

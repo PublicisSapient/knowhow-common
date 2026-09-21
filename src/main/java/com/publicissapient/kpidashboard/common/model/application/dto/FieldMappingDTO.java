@@ -49,6 +49,13 @@ public class FieldMappingDTO extends FieldMappingHistory {
 	private String epicLink;
 	private List<String> jiraSubTaskDefectType;
 
+	/**
+	 * Id of the Jira custom field carrying the Acceptance Criteria of an issue (for
+	 * example {@code
+	 * customfield_11111}).
+	 */
+	private String jiraAcceptanceCriteriaCustomField;
+
 	// defectPriority
 	private List<String> defectPriority;
 	private List<LabelCount> defectPriorityKPI135;
