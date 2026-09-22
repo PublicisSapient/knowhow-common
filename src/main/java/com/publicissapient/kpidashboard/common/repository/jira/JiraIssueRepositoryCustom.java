@@ -130,6 +130,25 @@ public interface JiraIssueRepositoryCustom { // NOPMD
 	List<JiraIssue> findUnassignedIssues(String startDate, String endDate, Map<String, List<String>> mapOfFilters);
 
 	/**
+	 * Backlog Aging (kpi224) — fetches the issues that are currently sitting in the
+	 * backlog for a project. Issues are matched case-insensitively on
+	 * {@code status} and (optionally) on {@code
+	 * typeName}. Only the fields required to compute the age distribution are
+	 * projected so the query stays light even for very large backlogs.
+	 *
+	 * @param basicProjectConfigId
+	 *          the project this backlog belongs to
+	 * @param statuses
+	 *          the workflow statuses that represent the backlog (e.g. Backlog, To
+	 *          Do). Must not be empty.
+	 * @param typeNames
+	 *          the issue types to include; when empty all types are considered
+	 * @return the matching backlog issues, projected to the aging-relevant fields
+	 */
+	List<JiraIssue> findBacklogIssuesByStatusAndType(String basicProjectConfigId, Set<String> statuses,
+			Set<String> typeNames);
+
+	/**
 	 * Find stories by type list.
 	 *
 	 * @param mapOfFilters
