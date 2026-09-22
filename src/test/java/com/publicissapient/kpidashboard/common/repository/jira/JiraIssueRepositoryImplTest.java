@@ -906,4 +906,74 @@ public class JiraIssueRepositoryImplTest {
 		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
 		assertFalse(queryCaptor.getValue().getQueryObject().containsKey("typeName"));
 	}
+
+	// ---------------------------------------------------------------------
+	// Backlog Aging (kpi224) - status + type bounded, projected lookup
+	// ---------------------------------------------------------------------
+
+	@Test
+	void testFindBacklogIssuesByStatusAndType_buildsProjectedQuery() {
+		// Given
+		when(operations.find(any(Query.class), eq(JiraIssue.class)))
+				.thenReturn(Collections.emptyList());
+
+		// When
+		List<JiraIssue> result =
+				jiraIssueRepository.findBacklogIssuesByStatusAndType(
+						"6335363749794a18e8a4479b",
+						new LinkedHashSet<>(Arrays.asList("Backlog", "To Do")),
+						new LinkedHashSet<>(List.of("Story")));
+
+		// Then
+		assertEquals(Collections.emptyList(), result);
+
+		ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
+		Query query = queryCaptor.getValue();
+
+		String criteria = query.getQueryObject().toJson();
+		assertTrue(criteria.contains("basicProjectConfigId"));
+		assertTrue(criteria.contains("status"));
+		assertTrue(criteria.contains("typeName"));
+
+		// aging-relevant fields are projected
+		assertEquals(1, query.getFieldsObject().getInteger("number"));
+		assertEquals(1, query.getFieldsObject().getInteger("status"));
+		assertEquals(1, query.getFieldsObject().getInteger("typeName"));
+		assertEquals(1, query.getFieldsObject().getInteger("createdDate"));
+		assertEquals(1, query.getFieldsObject().getInteger("priority"));
+		assertEquals(1, query.getFieldsObject().getInteger("url"));
+	}
+
+	@Test
+	void testFindBacklogIssuesByStatusAndType_blankTypesSkipTypeCriteria() {
+		// Given
+		when(operations.find(any(Query.class), eq(JiraIssue.class)))
+				.thenReturn(Collections.emptyList());
+
+		// When
+		jiraIssueRepository.findBacklogIssuesByStatusAndType(
+				"6335363749794a18e8a4479b",
+				new LinkedHashSet<>(List.of("Backlog")),
+				new LinkedHashSet<>(Arrays.asList("", "  ")));
+
+		// Then
+		ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(operations).find(queryCaptor.capture(), eq(JiraIssue.class));
+		assertFalse(queryCaptor.getValue().getQueryObject().containsKey("typeName"));
+	}
+
+	@Test
+	void testFindBacklogIssuesByStatusAndType_noStatusesShortCircuits() {
+		// When — no backlog statuses means there is nothing meaningful to age
+		List<JiraIssue> emptyStatuses = jiraIssueRepository.findBacklogIssuesByStatusAndType("6335363749794a18e8a4479b",
+				Collections.emptySet(), null);
+		List<JiraIssue> nullStatuses = jiraIssueRepository.findBacklogIssuesByStatusAndType("6335363749794a18e8a4479b",
+				null, null);
+
+		// Then — the DB is never hit
+		assertEquals(Collections.emptyList(), emptyStatuses);
+		assertEquals(Collections.emptyList(), nullStatuses);
+		verify(operations, never()).find(any(Query.class), eq(JiraIssue.class));
+	}
 }
