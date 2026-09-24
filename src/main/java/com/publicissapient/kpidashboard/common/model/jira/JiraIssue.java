@@ -244,6 +244,13 @@ public class JiraIssue extends BasicModel implements Cloneable {
 	private String description;
 	private String summary;
 
+	/**
+	 * Plain text Acceptance Criteria of the issue, collected from the Jira custom
+	 * field declared in {@code fieldMapping.jiraAcceptanceCriteriaCustomField}.
+	 * Null when the project did not map the field or the issue left it empty.
+	 */
+	private String acceptanceCriteria;
+
 	public boolean isDefectRaisedByQA() {
 		return defectRaisedByQA;
 	}

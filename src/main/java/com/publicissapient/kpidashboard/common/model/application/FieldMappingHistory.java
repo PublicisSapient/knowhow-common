@@ -42,6 +42,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiradefecttype;
 	private List<ConfigurationHistoryChangeLog> historyepicLink;
 	private List<ConfigurationHistoryChangeLog> historyjiraSubTaskDefectType;
+	private List<ConfigurationHistoryChangeLog> historyjiraAcceptanceCriteriaCustomField;
 	private List<ConfigurationHistoryChangeLog> historydefectPriority;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI135;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI35;
@@ -646,6 +647,12 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectValueKPI226;
 	private List<ConfigurationHistoryChangeLog> historyjiraRefinementRootCauseValuesKPI226;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI226;
+
+	// KPI227 — Acceptance Criteria Coverage (Slingshot / Intake)
+	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI227;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI227;
+	private List<ConfigurationHistoryChangeLog> historyacceptanceCriteriaFormatKPI227;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI227;
 
 	// KPI217 — Mean Time to Recover (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI217;

@@ -369,4 +369,23 @@ public interface JiraIssueRepositoryCustom { // NOPMD
 	 */
 	List<JiraIssue> findByTypeNameInAndBasicProjectConfigIdAndCreatedDateBetweenWithFields(Set<String> typeNames,
 			String basicProjectConfigId, String startDate, String endDate, Set<String> includeFields);
+
+	/**
+	 * Finds Jira issues by issue key for one project, returning only the specified
+	 * subset of fields via a Mongo projection. Intended for KPIs that start from
+	 * {@code jira_issue_custom_history} (which carries the status transitions but
+	 * not the issue fields) and then need to enrich a known set of issue keys with
+	 * a couple of columns — e.g. Acceptance Criteria Coverage.
+	 *
+	 * @param numbers
+	 *          issue keys to match against {@code number}
+	 * @param basicProjectConfigId
+	 *          project identifier
+	 * @param includeFields
+	 *          Mongo field names to project. If {@code null} or empty the full
+	 *          document is returned.
+	 * @return matching JiraIssues with only the requested fields populated
+	 */
+	List<JiraIssue> findByNumberInAndBasicProjectConfigIdWithFields(Set<String> numbers, String basicProjectConfigId,
+			Set<String> includeFields);
 }
