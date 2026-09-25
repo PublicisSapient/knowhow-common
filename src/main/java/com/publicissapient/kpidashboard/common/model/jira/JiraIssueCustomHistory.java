@@ -87,6 +87,13 @@ public class JiraIssueCustomHistory extends BasicModel {
 	private List<JiraHistoryChangeLog> workLog = new ArrayList<>();
 	private List<JiraHistoryChangeLog> severityUpdationLog = new ArrayList<>();
 
+	/**
+	 * Changes to the acceptance criteria custom field, with the full text before
+	 * and after each edit, so the criteria can be read as they were at any point in
+	 * time.
+	 */
+	private List<JiraHistoryChangeLog> acceptanceCriteriaUpdationLog = new ArrayList<>();
+
 	private List<AdditionalFilter> additionalFilters;
 
 	private String url;
