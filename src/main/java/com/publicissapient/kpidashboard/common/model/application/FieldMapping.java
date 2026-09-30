@@ -598,15 +598,15 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 
 	// KPI227 — Acceptance Criteria Coverage (Slingshot / Intake)
 	/**
-	 * Issue types treated as a "story" by the KPI. Defaults to Story when left
-	 * blank.
+	 * Issue types treated as a "story" by the KPI. No default: when left blank the
+	 * KPI shows no data.
 	 */
 	private List<String> jiraStoryIdentificationKPI227;
 
 	/**
 	 * Statuses that mean "work has started". The first transition into any of these
-	 * is the moment the acceptance criteria are sampled. Defaults to "In Progress"
-	 * when left blank.
+	 * is the moment the acceptance criteria are sampled. No default: when left
+	 * blank the KPI shows no data.
 	 */
 	private List<String> jiraStatusForInProgressKPI227;
 
