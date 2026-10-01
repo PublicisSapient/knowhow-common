@@ -654,6 +654,15 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyacceptanceCriteriaFormatKPI227;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI227;
 
+	// KPI228 — DOR Acceptance Rate (Slingshot / Intake)
+	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI228;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForReadyKPI228;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorRevisionFieldsKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorSubstantiveChangePercentKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorMajorRewriteRevisionCountKPI228;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI228;
+
 	// KPI217 — Mean Time to Recover (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI217;
 	private List<ConfigurationHistoryChangeLog> historyjiraProductionIncidentIdentificationKPI217;

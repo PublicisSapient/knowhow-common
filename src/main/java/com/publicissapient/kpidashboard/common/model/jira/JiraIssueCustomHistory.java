@@ -94,6 +94,12 @@ public class JiraIssueCustomHistory extends BasicModel {
 	 */
 	private List<JiraHistoryChangeLog> acceptanceCriteriaUpdationLog = new ArrayList<>();
 
+	/**
+	 * Changes to the issue description, with the full text before and after each
+	 * edit, so kpi228 can tell a substantive rewrite apart from a formatting tweak.
+	 */
+	private List<JiraHistoryChangeLog> descriptionUpdationLog = new ArrayList<>();
+
 	private List<AdditionalFilter> additionalFilters;
 
 	private String url;
