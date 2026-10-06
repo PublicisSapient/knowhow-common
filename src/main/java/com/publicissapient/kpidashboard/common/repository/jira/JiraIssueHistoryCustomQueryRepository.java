@@ -79,4 +79,19 @@ public interface JiraIssueHistoryCustomQueryRepository {
 	 */
 	List<JiraIssueCustomHistory> findByFilterAndFromStatusMapWithDateFilter(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo);
+
+	/**
+	 * Fetches issue history for DOR Acceptance Rate (kpi228), including description
+	 * and acceptance criteria revision logs. No createdDate filter is applied — the
+	 * service already constrains the window via sprint and weekly time buckets.
+	 *
+	 * @param mapOfFilters
+	 *          project-level filters (e.g. basicProjectConfigId, storyType)
+	 * @param uniqueProjectMap
+	 *          per-project filter overrides
+	 * @return issue history with status, description and acceptance-criteria
+	 *         revision logs
+	 */
+	List<JiraIssueCustomHistory> findForDorAnalysis(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap);
 }

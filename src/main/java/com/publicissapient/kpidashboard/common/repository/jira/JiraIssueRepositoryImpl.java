@@ -580,6 +580,21 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom { // N
 		return operations.find(query, JiraIssue.class);
 	}
 
+	/** Acceptance Criteria Coverage (kpi227). {@inheritDoc} */
+	@Override
+	public List<JiraIssue> findByNumberInAndBasicProjectConfigIdWithFields(Set<String> numbers,
+			String basicProjectConfigId, Set<String> includeFields) {
+		if (CollectionUtils.isEmpty(numbers)) {
+			return new ArrayList<>();
+		}
+		Criteria criteria = Criteria.where(NUMBER).in(numbers).and(CONFIG_ID).is(basicProjectConfigId);
+		Query query = new Query(criteria);
+		if (CollectionUtils.isNotEmpty(includeFields)) {
+			includeFields.forEach(field -> query.fields().include(field));
+		}
+		return operations.find(query, JiraIssue.class);
+	}
+
 	/** Backlog Aging (kpi224). {@inheritDoc} */
 	@Override
 	public List<JiraIssue> findBacklogIssuesByStatusAndType(String basicProjectConfigId, Set<String> statuses,
