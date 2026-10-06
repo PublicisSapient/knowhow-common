@@ -18,12 +18,17 @@ package com.publicissapient.kpidashboard.common.util;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -417,6 +422,145 @@ public final class FieldMappingHelper {
 			return ((String[]) dbValue).length == 0;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Backfills a hand picked set of fields on an already configured mapping.
+	 *
+	 * <p>
+	 * Unlike {@link #mergeIntoTarget(FieldMapping, FieldMapping)}, which walks
+	 * every field and is only safe on a mapping that has not been configured yet,
+	 * this variant touches nothing beyond {@code fieldNames} and only writes a
+	 * field that is still unset in the database. A value a user has already chosen
+	 * is therefore never overwritten, which makes the call safe to run against live
+	 * project configuration on every collection cycle.
+	 *
+	 * <p>
+	 * Unknown field names are skipped with a warning rather than failing the whole
+	 * merge, so a configuration document that references a field belonging to a
+	 * newer or older release still applies cleanly.
+	 *
+	 * @param dbFieldMapping
+	 *          the mapping loaded from the database, mutated in place
+	 * @param source
+	 *          the freshly derived mapping to take values from
+	 * @param fieldNames
+	 *          the only fields allowed to be written
+	 * @return the names of the fields that were actually updated, empty when
+	 *         nothing changed
+	 */
+	public static List<String> mergeUnsetFields(FieldMapping dbFieldMapping, FieldMapping source,
+			Collection<String> fieldNames) {
+		List<String> updatedFields = new ArrayList<>();
+		if (dbFieldMapping == null || source == null || CollectionUtils.isEmpty(fieldNames)) {
+			return updatedFields;
+		}
+		for (String fieldName : fieldNames) {
+			if (StringUtils.isBlank(fieldName)) {
+				continue;
+			}
+			try {
+				Field field = FieldMapping.class.getDeclaredField(fieldName);
+				setAccessible(field);
+				Object sourceValue = field.get(source);
+				// nothing discovered, so there is nothing worth writing
+				if (isUnset(sourceValue) || sourceValue instanceof ObjectId) {
+					continue;
+				}
+				// the project already decided this one, leave it alone
+				if (!isUnset(field.get(dbFieldMapping))) {
+					log.debug("Keeping the configured value of field '{}'", fieldName);
+					continue;
+				}
+				setFieldValue(dbFieldMapping, fieldName, sourceValue);
+				updatedFields.add(fieldName);
+			} catch (NoSuchFieldException e) {
+				log.warn("Field '{}' is not part of FieldMapping, skipping it", fieldName);
+			} catch (IllegalAccessException | IllegalArgumentException | ClassCastException e) {
+				log.error("Error while backfilling field mapping '{}'", fieldName, e);
+			}
+		}
+		return updatedFields;
+	}
+
+	/**
+	 * Resolves configuration keys onto the {@link FieldMapping} properties they
+	 * populate.
+	 *
+	 * <p>
+	 * Only {@code String} properties are considered, because the callers of this
+	 * method resolve a single identifier such as a Jira custom field id.
+	 * Restricting the match by type keeps an unrelated key from ever landing on a
+	 * list or a numeric property. An exact match always wins; a case insensitive
+	 * match is only attempted when no property carries the exact name, so a key
+	 * spelled {@code rootcause} still resolves onto {@code rootCause}.
+	 *
+	 * @param candidateNames
+	 *          keys coming from configuration, typically metadata identifier types
+	 * @return the resolvable keys mapped onto the property they should be written
+	 *         to, in encounter order
+	 */
+	public static Map<String, String> resolveStringFieldNames(Collection<String> candidateNames) {
+		Map<String, String> resolved = new LinkedHashMap<>();
+		if (CollectionUtils.isEmpty(candidateNames)) {
+			return resolved;
+		}
+		Set<String> stringFields = new HashSet<>();
+		Map<String, String> stringFieldsByLowerCaseName = new LinkedHashMap<>();
+		for (Field field : FieldMapping.class.getDeclaredFields()) {
+			if (field.getType() == String.class) {
+				stringFields.add(field.getName());
+				stringFieldsByLowerCaseName.putIfAbsent(field.getName().toLowerCase(Locale.ROOT), field.getName());
+			}
+		}
+		for (String candidate : candidateNames) {
+			if (StringUtils.isBlank(candidate)) {
+				continue;
+			}
+			if (stringFields.contains(candidate)) {
+				resolved.put(candidate, candidate);
+				continue;
+			}
+			String caseInsensitiveMatch = stringFieldsByLowerCaseName.get(candidate.toLowerCase(Locale.ROOT));
+			if (caseInsensitiveMatch != null) {
+				resolved.put(candidate, caseInsensitiveMatch);
+			}
+		}
+		return resolved;
+	}
+
+	/**
+	 * Tells whether a field still holds nothing meaningful and can safely be filled
+	 * in.
+	 *
+	 * <p>
+	 * A blank string counts as unset on purpose: a mapping saved before a field
+	 * existed, or one saved from a form where the input was left empty, ends up
+	 * holding {@code ""} rather than {@code
+	 * null} and would otherwise stay empty forever.
+	 *
+	 * @param value
+	 *          the value to inspect
+	 * @return true when the value is null, blank, or an empty collection, map or
+	 *         array
+	 */
+	public static boolean isUnset(Object value) {
+		if (value == null) {
+			return true;
+		}
+		if (value instanceof CharSequence charSequence) {
+			return StringUtils.isBlank(charSequence);
+		}
+		if (value instanceof Collection<?> collection) {
+			return collection.isEmpty();
+		}
+		if (value instanceof Map<?, ?> map) {
+			return map.isEmpty();
+		}
+		if (value instanceof Object[] array) {
+			return array.length == 0;
+		}
 		return false;
 	}
 }

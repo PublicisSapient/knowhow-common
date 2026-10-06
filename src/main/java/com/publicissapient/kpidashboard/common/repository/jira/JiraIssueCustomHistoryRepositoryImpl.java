@@ -60,6 +60,8 @@ public class JiraIssueCustomHistoryRepositoryImpl implements JiraIssueHistoryCus
 	public static final String URL = "url";
 	public static final String DESCRIPTION = "description";
 	public static final String ESTIMATE = "estimate";
+	private static final String DESCRIPTION_UPDATION_LOG = "descriptionUpdationLog";
+	private static final String ACCEPTANCE_CRITERIA_UPDATION_LOG = "acceptanceCriteriaUpdationLog";
 
 	private final MongoOperations mongoOperations;
 
@@ -115,6 +117,16 @@ public class JiraIssueCustomHistoryRepositoryImpl implements JiraIssueHistoryCus
 		query.fields().include(BASIC_PROJ_CONF_ID);
 		query.fields().include(STATUS_CHANGE_LOG);
 		query.fields().include(VERSION_CHANGE_LOG);
+		return mongoOperations.find(query, JiraIssueCustomHistory.class);
+	}
+
+	@Override
+	public List<JiraIssueCustomHistory> findForDorAnalysis(Map<String, List<String>> mapOfFilters,
+			Map<String, Map<String, Object>> uniqueProjectMap) {
+		Criteria criteria = buildCommonCriteria(mapOfFilters);
+		Query query = buildQueryWithProjectCriteria(criteria, uniqueProjectMap);
+		addFieldInclusions(query, STORY_ID, STORY_TYPE, BASIC_PROJ_CONF_ID, STATUS_CHANGE_LOG, TICKET_CREATED_DATE_FIELD,
+				URL, DESCRIPTION, DESCRIPTION_UPDATION_LOG, ACCEPTANCE_CRITERIA_UPDATION_LOG);
 		return mongoOperations.find(query, JiraIssueCustomHistory.class);
 	}
 

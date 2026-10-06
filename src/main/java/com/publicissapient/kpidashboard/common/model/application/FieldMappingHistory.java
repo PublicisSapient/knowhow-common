@@ -42,6 +42,7 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiradefecttype;
 	private List<ConfigurationHistoryChangeLog> historyepicLink;
 	private List<ConfigurationHistoryChangeLog> historyjiraSubTaskDefectType;
+	private List<ConfigurationHistoryChangeLog> historyjiraAcceptanceCriteriaCustomField;
 	private List<ConfigurationHistoryChangeLog> historydefectPriority;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI135;
 	private List<ConfigurationHistoryChangeLog> historydefectPriorityKPI35;
@@ -646,6 +647,21 @@ public class FieldMappingHistory extends BasicModel {
 	private List<ConfigurationHistoryChangeLog> historyjiraProductionDefectValueKPI226;
 	private List<ConfigurationHistoryChangeLog> historyjiraRefinementRootCauseValuesKPI226;
 	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI226;
+
+	// KPI227 — Acceptance Criteria Coverage (Slingshot / Intake)
+	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI227;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI227;
+	private List<ConfigurationHistoryChangeLog> historyacceptanceCriteriaFormatKPI227;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI227;
+
+	// KPI228 — DOR Acceptance Rate (Slingshot / Intake)
+	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI228;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForReadyKPI228;
+	private List<ConfigurationHistoryChangeLog> historyjiraStatusForInProgressKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorRevisionFieldsKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorSubstantiveChangePercentKPI228;
+	private List<ConfigurationHistoryChangeLog> historydorMajorRewriteRevisionCountKPI228;
+	private List<ConfigurationHistoryChangeLog> historythresholdValueKPI228;
 
 	// KPI217 — Mean Time to Recover (Slingshot)
 	private List<ConfigurationHistoryChangeLog> historyjiraStoryIdentificationKPI217;

@@ -51,6 +51,16 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiradefecttype;
 	private String epicLink;
 	private List<String> jiraSubTaskDefectType;
+
+	/**
+	 * Id of the Jira custom field carrying the Acceptance Criteria of an issue (for
+	 * example {@code
+	 * customfield_11111}). Acceptance Criteria is not a built-in Jira field, so a
+	 * project has to declare which custom field holds it before the processor can
+	 * collect it.
+	 */
+	private String jiraAcceptanceCriteriaCustomField;
+
 	private String updatedAt;
 	private String updatedBy;
 
@@ -585,6 +595,72 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	private List<String> jiraProductionDefectValueKPI226;
 	private List<String> jiraRefinementRootCauseValuesKPI226;
 	private String thresholdValueKPI226;
+
+	// KPI227 — Acceptance Criteria Coverage (Slingshot / Intake)
+	/**
+	 * Issue types treated as a "story" by the KPI. No default: when left blank the
+	 * KPI shows no data.
+	 */
+	private List<String> jiraStoryIdentificationKPI227;
+
+	/**
+	 * Statuses that mean "work has started". The first transition into any of these
+	 * is the moment the acceptance criteria are sampled. No default: when left
+	 * blank the KPI shows no data.
+	 */
+	private List<String> jiraStatusForInProgressKPI227;
+
+	/**
+	 * How the acceptance criteria text is split into individual criteria:
+	 * {@code AUTO} (detect the shape of the text), {@code GHERKIN}, {@code LIST} or
+	 * {@code LINE}. Defaults to {@code AUTO}.
+	 */
+	private String acceptanceCriteriaFormatKPI227;
+
+	private String thresholdValueKPI227;
+
+	// KPI228 — DOR Acceptance Rate (Slingshot / Intake)
+	/**
+	 * Issue types treated as a refined "story" by the KPI. No default: when left
+	 * blank the KPI shows no data.
+	 */
+	private List<String> jiraStoryIdentificationKPI228;
+
+	/**
+	 * Statuses that mean the story has passed Definition of Ready. The first
+	 * transition into any of these opens the revision window. No default: when left
+	 * blank the KPI shows no data.
+	 */
+	private List<String> jiraStatusForReadyKPI228;
+
+	/**
+	 * Statuses that mean development has started. The first transition into any of
+	 * these after the Ready transition closes the revision window and puts the
+	 * story in the denominator. No default: when left blank the KPI shows no data.
+	 */
+	private List<String> jiraStatusForInProgressKPI228;
+
+	/**
+	 * Which issue fields are inspected for revisions: {@code DESCRIPTION} and/or
+	 * {@code
+	 * ACCEPTANCE_CRITERIA}. Defaults to Description.
+	 */
+	private List<String> dorRevisionFieldsKPI228 = Arrays.asList("DESCRIPTION");
+
+	/**
+	 * Minimum percentage of the text that must change for an edit to be counted as
+	 * a substantive revision. Formatting-only tweaks fall below it. Defaults to 20.
+	 */
+	private Double dorSubstantiveChangePercentKPI228 = 20D;
+
+	/**
+	 * Number of substantive revisions a story is allowed before it is treated as a
+	 * major rewrite. A story fails DOR when it has strictly more than this many.
+	 * Defaults to 2.
+	 */
+	private Integer dorMajorRewriteRevisionCountKPI228 = 2;
+
+	private Double thresholdValueKPI228;
 
 	// KPI217 — Mean Time to Recover (Slingshot) — decoupled from KPI166
 	private List<String> jiraStoryIdentificationKPI217;
