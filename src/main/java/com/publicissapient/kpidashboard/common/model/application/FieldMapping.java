@@ -643,22 +643,22 @@ public class FieldMapping extends FieldMappingHistory implements Cloneable {
 	/**
 	 * Which issue fields are inspected for revisions: {@code DESCRIPTION} and/or
 	 * {@code
-	 * ACCEPTANCE_CRITERIA}. Defaults to both.
+	 * ACCEPTANCE_CRITERIA}. Defaults to Description.
 	 */
-	private List<String> dorRevisionFieldsKPI228;
+	private List<String> dorRevisionFieldsKPI228 = Arrays.asList("DESCRIPTION");
 
 	/**
 	 * Minimum percentage of the text that must change for an edit to be counted as
 	 * a substantive revision. Formatting-only tweaks fall below it. Defaults to 20.
 	 */
-	private Double dorSubstantiveChangePercentKPI228;
+	private Double dorSubstantiveChangePercentKPI228 = 20D;
 
 	/**
 	 * Number of substantive revisions a story is allowed before it is treated as a
 	 * major rewrite. A story fails DOR when it has strictly more than this many.
 	 * Defaults to 2.
 	 */
-	private Integer dorMajorRewriteRevisionCountKPI228;
+	private Integer dorMajorRewriteRevisionCountKPI228 = 2;
 
 	private Double thresholdValueKPI228;
 
